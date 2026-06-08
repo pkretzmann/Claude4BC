@@ -90,4 +90,102 @@
   window.addEventListener('scroll', function () {
     toTop.classList.toggle('visible', window.scrollY > 400);
   }, { passive: true });
+
+  /* ── Reading-progress bar: grows from 0–100% as the page scrolls ── */
+  var progress = document.createElement('div');
+  progress.className = 'reading-progress';
+  document.body.appendChild(progress);
+  function updateProgress() {
+    var docEl = document.documentElement;
+    var scrolled = docEl.scrollTop || document.body.scrollTop;
+    var height = docEl.scrollHeight - docEl.clientHeight;
+    progress.style.width = (height > 0 ? (scrolled / height) * 100 : 0) + '%';
+  }
+  window.addEventListener('scroll', updateProgress, { passive: true });
+  updateProgress();
+
+  /* ── FAQ search / filter — live-filters a .faq accordion, highlights
+        matches, auto-opens hits and shows a result count. No-op when the
+        page has no .faq, so it is safe to ship in every guide. ── */
+  var faqWrap = document.querySelector('.faq');
+  if (faqWrap) {
+    var faqItems = Array.prototype.slice.call(faqWrap.querySelectorAll('details'));
+    faqItems.forEach(function (d) {
+      var s = d.querySelector('summary');
+      var b = d.querySelector('.faq-body');
+      if (s) s.setAttribute('data-orig', s.innerHTML);
+      if (b) b.setAttribute('data-orig', b.innerHTML);
+    });
+
+    var search = document.createElement('div');
+    search.className = 'doc-search';
+    var input = document.createElement('input');
+    input.type = 'search';
+    input.placeholder = 'Søg i ofte stillede spørgsmål…';
+    input.setAttribute('aria-label', 'Søg i ofte stillede spørgsmål');
+    var count = document.createElement('span');
+    count.className = 'doc-search-count';
+    search.appendChild(input);
+    search.appendChild(count);
+    faqWrap.parentNode.insertBefore(search, faqWrap);
+
+    var noResults = document.createElement('div');
+    noResults.className = 'faq-no-results';
+    noResults.textContent = 'Ingen spørgsmål matcher din søgning.';
+    noResults.style.display = 'none';
+    faqWrap.appendChild(noResults);
+
+    function escapeRegExp(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+
+    function highlight(el, re) {
+      var orig = el.getAttribute('data-orig');
+      el.innerHTML = orig;
+      if (!re) return;
+      walkAndHighlight(el, re);
+    }
+    function walkAndHighlight(node, re) {
+      for (var i = node.childNodes.length - 1; i >= 0; i--) {
+        var child = node.childNodes[i];
+        if (child.nodeType === 3) {
+          var text = child.nodeValue;
+          var replaced = text.replace(re, '<mark class="search-hit">$1</mark>');
+          if (replaced !== text) {
+            var span = document.createElement('span');
+            span.innerHTML = replaced;
+            child.parentNode.replaceChild(span, child);
+          }
+        } else if (child.nodeType === 1 && child.nodeName !== 'MARK') {
+          walkAndHighlight(child, re);
+        }
+      }
+    }
+
+    function runSearch() {
+      var q = input.value.trim();
+      var ql = q.toLowerCase();
+      var re = q ? new RegExp('(' + escapeRegExp(q) + ')', 'gi') : null;
+      var shown = 0;
+      faqItems.forEach(function (d) {
+        var s = d.querySelector('summary');
+        var b = d.querySelector('.faq-body');
+        var hay = ((s ? s.getAttribute('data-orig') : '') + ' ' +
+                   (b ? b.getAttribute('data-orig') : ''))
+                   .replace(/<[^>]+>/g, ' ').toLowerCase();
+        var match = ql === '' || hay.indexOf(ql) !== -1;
+        d.style.display = match ? '' : 'none';
+        if (match) {
+          shown++;
+          if (s) highlight(s, re);
+          if (b) highlight(b, re);
+          d.open = ql !== '';
+        } else {
+          d.open = false;
+        }
+      });
+      count.textContent = q === '' ? '' : shown + ' resultat' + (shown === 1 ? '' : 'er');
+      noResults.style.display = shown === 0 ? 'block' : 'none';
+    }
+
+    input.addEventListener('input', runSearch);
+  }
 })();
