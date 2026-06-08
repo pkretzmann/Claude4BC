@@ -1,5 +1,5 @@
 {
-    "servers": {
+    "mcpServers": {
       "ado": {
         "type": "stdio",
         "command": "npx",

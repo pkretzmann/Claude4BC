@@ -1,3 +1,8 @@
+---
+description: Konvertér en eller flere markdown-brugervejledninger til en selvstændig, interaktiv HTML-side
+argument-hint: "<fil.md | \"fil1.md\" \"fil2.md\" | mappe>"
+---
+
 # html-guide — Konverter markdown brugervejledning til HTML
 
 Konverter en markdown-brugervejledning til en professionel, interaktiv HTML-fil med projektets farvepalette og designsystem (CSS i `.website/styles.css` med fald-tilbage til `${CLAUDE_PLUGIN_ROOT}/html-guide/styles-default.css`, JavaScript i `${CLAUDE_PLUGIN_ROOT}/html-guide/script.js`).

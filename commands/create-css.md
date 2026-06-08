@@ -1,3 +1,8 @@
+---
+description: Udled brandfarver fra en hjemmeside og skriv dem ind i projektets .website/styles.css (til html-guide)
+argument-hint: "<website-url> [type]"
+---
+
 # create-css — Generér brandfarver til html-guide ud fra en hjemmeside
 
 Udled en farvepalette fra en virksomheds hjemmeside (og en valgfri branche-"flavor") og skriv den
