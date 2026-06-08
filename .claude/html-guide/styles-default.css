@@ -1,0 +1,79 @@
+/* styles-default.css — Sand color palette */
+
+:root {
+    /* Core sand tones */
+    --sand-50:  #faf6ef;
+    --sand-100: #f5eddd;
+    --sand-200: #ecdcc0;
+    --sand-300: #e0c79c;
+    --sand-400: #d4b27a;
+    --sand-500: #c69c5d;  /* primary sand */
+    --sand-600: #ad8249;
+    --sand-700: #8a663a;
+    --sand-800: #5f4729;
+    --sand-900: #3b2c19;
+
+    /* Semantic roles */
+    --color-background: var(--sand-50);
+    --color-surface:    var(--sand-100);
+    --color-border:     var(--sand-300);
+    --color-primary:    var(--sand-500);
+    --color-primary-hover: var(--sand-600);
+    --color-text:       var(--sand-900);
+    --color-text-muted: var(--sand-700);
+    --color-accent:     var(--sand-400);
+}
+
+body {
+    margin: 0;
+    font-family: "Segoe UI", system-ui, sans-serif;
+    line-height: 1.6;
+    color: var(--color-text);
+    background-color: var(--color-background);
+}
+
+a {
+    color: var(--color-primary);
+    text-decoration: none;
+}
+
+a:hover {
+    color: var(--color-primary-hover);
+    text-decoration: underline;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: var(--sand-800);
+}
+
+hr {
+    border: none;
+    border-top: 1px solid var(--color-border);
+}
+
+.surface {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+}
+
+.btn {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--color-primary);
+    border-radius: 6px;
+    background-color: var(--color-primary);
+    color: var(--sand-50);
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+.btn:hover {
+    background-color: var(--color-primary-hover);
+    border-color: var(--color-primary-hover);
+}
+
+.text-muted {
+    color: var(--color-text-muted);
+}
