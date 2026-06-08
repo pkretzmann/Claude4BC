@@ -1,0 +1,14 @@
+{
+    "servers": {
+      "ado": {
+        "type": "stdio",
+        "command": "npx",
+        "args": ["-y", "@azure-devops/mcp", "Kretzmann",
+                 "-d", "core", "work", "work-items",
+                 "test-plans", "search"],
+        "env": {
+          "AZURE_DEVOPS_PAT": "${AZURE_DEVOPS_PAT}"
+        }
+      }
+    }
+}

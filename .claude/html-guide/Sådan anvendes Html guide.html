@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sådan anvendes Html-guide</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+/* ============================================================
+   html-guide — canonical stylesheet
+   The /html-guide command reads this file and inlines it verbatim
+   into the generated HTML's <style>. Do NOT rewrite CSS from memory.
+   ============================================================ */
+
+/* ============================================================
+   BRAND — the ONLY per-project edit zone.
+   Edit these by hand, or run:  /create-css <website-url> [type]
+   Company: Ebrofrost
+   ============================================================ */
+:root {
+  --brand-dark:    #003F7F;   /* primary — headers, primary       */
+  --brand-mid:     #0069B4;   /* buttons, links, table headers    */
+  --brand-light:   #00AEEF;   /* accents, arrows, badges          */
+  --brand-pale:    #E3F2FB;   /* hover, decision boxes            */
+  --brand-subtle:  #F0F7FC;   /* step backgrounds                 */
+  --accent:        #00AEEF;   /* general accent                   */
+}
+
+/* ── System tokens (brand-neutral — usually leave as-is) ── */
+:root {
+  --white:        #FFFFFF;
+  --gray-100:     #F4F6F8;   /* page background  */
+  --gray-200:     #E1E8EF;   /* borders          */
+  --gray-400:     #9BAFC0;
+  --gray-700:     #4A5C6A;   /* secondary text   */
+  --text:         #1A2A38;   /* primary text     */
+  --note-bg:      #FFF8E1;   /* warning/note bg  */
+  --note-border:  #F4A918;   /* warning/note border */
+  --success:      #1A7F4B;
+  --success-bg:   #E6F6EE;
+  --code-bg:      #0E2230;
+  --code-text:    #D6E7F2;
+}
+
+/* ── Reset & base ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Inter', -apple-system, sans-serif;
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--text);
+  background: var(--gray-100);
+}
+
+/* ── Header ── */
+header {
+  background: linear-gradient(135deg, var(--brand-dark) 0%, var(--brand-mid) 60%, var(--brand-light) 100%);
+  color: var(--white);
+  padding: 48px 48px 36px;
+  position: relative;
+  overflow: hidden;
+}
+header::before {
+  content: '';
+  position: absolute;
+  top: -60px; right: -60px;
+  width: 280px; height: 280px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.06);
+}
+header::after {
+  content: '';
+  position: absolute;
+  bottom: -80px; left: 30%;
+  width: 360px; height: 360px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.04);
+}
+.header-badge {
+  display: inline-block;
+  background: rgba(255,255,255,0.18);
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 20px;
+  padding: 4px 14px;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+header h1 {
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  margin-bottom: 8px;
+  position: relative;
+  z-index: 1;
+}
+header p {
+  font-size: 15px;
+  opacity: 0.85;
+  font-weight: 300;
+  position: relative;
+  z-index: 1;
+}
+.header-pills {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+  position: relative;
+  z-index: 1;
+}
+.pill {
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 20px;
+  padding: 5px 14px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* ── Layout ── */
+.container {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 40px 24px 64px;
+}
+
+/* ── Table of contents ── */
+.toc {
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-left: 4px solid var(--brand-mid);
+  border-radius: 8px;
+  padding: 24px 28px;
+  margin-bottom: 40px;
+}
+.toc h2 {
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--brand-mid);
+  margin-bottom: 14px;
+}
+.toc ol {
+  padding-left: 20px;
+  column-count: 2;
+  column-gap: 32px;
+}
+.toc li { margin-bottom: 5px; }
+.toc a {
+  color: var(--brand-dark);
+  text-decoration: none;
+  font-size: 14px;
+  transition: color 0.15s;
+}
+.toc a:hover { color: var(--brand-light); }
+
+/* ── Section cards ── */
+.section {
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: 12px;
+  padding: 36px 40px;
+  margin-bottom: 28px;
+  box-shadow: 0 2px 8px rgba(0,63,127,0.06);
+}
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 24px;
+  padding-bottom: 18px;
+  border-bottom: 2px solid var(--brand-pale);
+}
+.section-icon {
+  width: 40px; height: 40px;
+  border-radius: 10px;
+  background: var(--brand-pale);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+h2 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--brand-dark);
+  letter-spacing: -0.3px;
+}
+h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--brand-mid);
+  margin: 24px 0 12px;
+}
+h4 {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--gray-700);
+  margin: 18px 0 8px;
+}
+p { margin-bottom: 14px; }
+ul.bullets { margin: 0 0 14px 20px; }
+ul.bullets li { margin-bottom: 6px; }
+strong { font-weight: 600; }
+
+/* ── Inline code & code blocks ── */
+code {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 12.5px;
+  background: var(--brand-subtle);
+  border: 1px solid var(--gray-200);
+  border-radius: 4px;
+  padding: 1px 6px;
+  color: var(--brand-dark);
+  overflow-wrap: break-word;   /* wrap long identifiers instead of overflowing in multiline text */
+}
+pre {
+  background: var(--code-bg);
+  color: var(--code-text);
+  border-radius: 10px;
+  padding: 18px 20px;
+  margin: 16px 0;
+  overflow-x: auto;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 12.5px;
+  line-height: 1.6;
+}
+pre code {
+  background: none;
+  border: none;
+  padding: 0;
+  color: inherit;
+  white-space: pre;
+  font-size: inherit;
+}
+pre .cmt { color: #6F94A8; font-style: italic; }
+pre .kw  { color: #62B6E8; }
+pre .str { color: #9AD9A0; }
+
+/* ── Numbered steps ──
+   IMPORTANT 1: do NOT use display:flex on the <li>. Flex turns each text
+   run and inline <code> into separate flex items on one non-wrapping
+   line, so a step longer than one line collapses to one word per line.
+   Use block flow + an absolutely-positioned number marker instead.
+   IMPORTANT 2: rules are scoped with the child combinator (.steps > li),
+   NOT a descendant (.steps li). A descendant selector would also match a
+   nested <ul class="sub-steps"> inside a step, leaking the 26px number
+   circle onto the sub-step's marker and overlapping its text. */
+.steps {
+  counter-reset: step;
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.steps > li {
+  counter-increment: step;
+  position: relative;
+  padding: 14px 18px 14px 52px;
+  background: var(--brand-subtle);
+  border-radius: 8px;
+  font-size: 14px;
+  border: 1px solid var(--brand-pale);
+}
+.steps > li::before {
+  content: counter(step);
+  position: absolute;
+  left: 14px;
+  top: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  background: var(--brand-mid);
+  color: white;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* ── Sub-steps (nested) ── same wrap-safe approach as .steps;
+   also scoped with > so a deeper nested list won't inherit the arrow. */
+.sub-steps {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.sub-steps > li {
+  position: relative;
+  padding: 8px 12px 8px 32px;
+  background: var(--white);
+  border-radius: 6px;
+  font-size: 13.5px;
+  border: 1px solid var(--gray-200);
+}
+.sub-steps > li::before {
+  content: '→';
+  position: absolute;
+  left: 14px;
+  top: 8px;
+  color: var(--brand-light);
+  font-weight: 700;
+}
+
+/* ── Tables ── */
+.table-wrap { overflow-x: auto; margin: 16px 0; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+}
+thead tr {
+  background: var(--brand-dark);
+  color: var(--white);
+}
+thead th {
+  padding: 11px 14px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.2px;
+}
+tbody tr:nth-child(even) { background: var(--brand-subtle); }
+tbody tr:hover { background: var(--brand-pale); }
+tbody td {
+  padding: 9px 14px;
+  border-bottom: 1px solid var(--gray-200);
+  vertical-align: top;
+}
+table code { white-space: nowrap; }
+.num { text-align: right; font-variant-numeric: tabular-nums; }
+
+/* ── Status-badges ── */
+.badge-ok {
+  display: inline-block;
+  background: var(--success-bg);
+  color: var(--success);
+  border: 1px solid #B8E2CC;
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.status-tag {
+  display: inline-block;
+  background: var(--brand-pale);
+  color: var(--brand-dark);
+  border: 1px solid #BBDCF2;
+  border-radius: 4px;
+  padding: 1px 8px;
+  font-size: 12.5px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.type-tag {
+  display: inline-block;
+  background: var(--gray-100);
+  color: var(--gray-700);
+  border: 1px solid var(--gray-200);
+  border-radius: 4px;
+  padding: 1px 8px;
+  font-size: 11.5px;
+  font-weight: 600;
+}
+
+/* ── Day-badge (highlight concrete days/times in examples) ── */
+.day-tag {
+  display: inline-block;
+  background: #FFF3E0;
+  border: 1px solid #FFB74D;
+  border-radius: 4px;
+  padding: 1px 7px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #BF5E00;
+}
+
+/* ── Tech-details grid ── */
+dl.tech {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 8px 18px;
+  margin: 16px 0;
+  font-size: 14px;
+}
+dl.tech dt {
+  font-weight: 600;
+  color: var(--gray-700);
+}
+dl.tech dd {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 13px;
+  color: var(--brand-dark);
+}
+
+/* ── Note box ── */
+.note {
+  background: var(--note-bg);
+  border-left: 4px solid var(--note-border);
+  border-radius: 0 8px 8px 0;
+  padding: 14px 18px;
+  margin: 18px 0;
+  font-size: 14px;
+}
+.note strong { color: #B7770A; }
+
+/* ── Info box ── */
+.info-box {
+  background: var(--brand-pale);
+  border-left: 4px solid var(--brand-mid);
+  border-radius: 0 8px 8px 0;
+  padding: 14px 18px;
+  margin: 18px 0;
+  font-size: 14px;
+}
+
+/* ── Flowchart ── */
+.flowchart {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  padding: 24px 0;
+  font-size: 13px;
+}
+.fc-node {
+  background: var(--white);
+  border: 2px solid var(--brand-mid);
+  border-radius: 8px;
+  padding: 11px 22px;
+  text-align: center;
+  max-width: 560px;
+  width: 100%;
+  color: var(--text);
+  font-weight: 500;
+  box-shadow: 0 2px 6px rgba(0,63,127,0.1);
+}
+.fc-node code { white-space: normal; }
+.fc-node .fc-status {
+  display: block;
+  margin-top: 5px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--brand-mid);
+}
+.fc-node.start {
+  background: var(--brand-dark);
+  border-color: var(--brand-dark);
+  color: white;
+  font-weight: 600;
+  border-radius: 24px;
+}
+.fc-node.start code { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.25); color: #fff; }
+.fc-node.decision {
+  background: var(--brand-pale);
+  border-color: var(--brand-mid);
+  border-style: dashed;
+}
+.fc-node.action {
+  background: var(--success-bg);
+  border-color: var(--success);
+}
+.fc-node.action .fc-status { color: var(--success); }
+.fc-node.end {
+  background: var(--gray-200);
+  border-color: var(--gray-400);
+  color: var(--gray-700);
+  border-radius: 24px;
+  font-weight: 600;
+}
+.fc-arrow {
+  color: var(--brand-mid);
+  font-size: 22px;
+  line-height: 1;
+  margin: 2px 0;
+}
+
+/* ── Footer ── */
+footer {
+  background: var(--brand-dark);
+  color: rgba(255,255,255,0.6);
+  text-align: center;
+  padding: 20px;
+  font-size: 12px;
+  margin-top: 32px;
+}
+footer strong { color: rgba(255,255,255,0.9); }
+
+/* ── Interactive UI (injected by script.js — progressive enhancement) ──
+   These styles only matter when script.js runs; with JS disabled the
+   elements are never created and the guide reads exactly the same. */
+.toc a.active { color: var(--brand-light); font-weight: 600; }
+
+pre { position: relative; }   /* anchor for the copy button */
+.copy-btn {
+  position: absolute; top: 8px; right: 8px;
+  background: rgba(255,255,255,0.12); color: var(--code-text);
+  border: 1px solid rgba(255,255,255,0.25); border-radius: 5px;
+  padding: 2px 10px; font-size: 11.5px; font-weight: 600;
+  cursor: pointer; font-family: 'Inter', -apple-system, sans-serif;
+}
+.copy-btn:hover { background: rgba(255,255,255,0.22); }
+
+.expand-all-btn {
+  display: inline-block; align-self: flex-start; margin-bottom: 12px;
+  background: var(--brand-pale); color: var(--brand-dark);
+  border: 1px solid var(--brand-mid); border-radius: 6px;
+  padding: 5px 14px; font-size: 13px; font-weight: 600;
+  cursor: pointer; font-family: 'Inter', -apple-system, sans-serif;
+}
+.expand-all-btn:hover { background: var(--brand-mid); color: #fff; }
+
+.to-top-btn {
+  position: fixed; bottom: 24px; right: 24px;
+  width: 44px; height: 44px; border-radius: 50%;
+  background: var(--brand-mid); color: #fff; border: none;
+  font-size: 20px; line-height: 1; cursor: pointer;
+  box-shadow: 0 3px 10px rgba(0,63,127,0.25);
+  opacity: 0; visibility: hidden; transition: opacity 0.2s, visibility 0.2s;
+  z-index: 50;
+}
+.to-top-btn.visible { opacity: 1; visibility: visible; }
+.to-top-btn:hover { background: var(--brand-dark); }
+
+/* ── Print ── */
+@media print {
+  body { background: white; font-size: 13px; }
+  .section { box-shadow: none; border: 1px solid #ccc; page-break-inside: avoid; }
+  header { background: var(--brand-dark) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  pre { background: #f4f4f4 !important; color: #111 !important; border: 1px solid #ccc; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .to-top-btn, .copy-btn, .expand-all-btn { display: none !important; }
+}
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-badge">Business Central · Dokumentationsværktøj</div>
+  <h1>Sådan anvendes Html-guide</h1>
+  <p>Sådan laver du flotte, selvstændige HTML-vejledninger fra dine markdown-filer — og hvordan du tilpasser farver og interaktivitet.</p>
+  <div class="header-pills">
+    <span class="pill">⚡ Slash-kommando</span>
+    <span class="pill">🎨 styles.css</span>
+    <span class="pill">🧩 script.js</span>
+    <span class="pill">📦 Portabel</span>
+  </div>
+</header>
+
+<div class="container">
+
+  <nav class="toc">
+    <h2>Indholdsfortegnelse</h2>
+    <ol>
+      <li><a href="#overblik">1 · Overblik</a></li>
+      <li><a href="#brug">2 · Sådan kalder du den</a></li>
+      <li><a href="#kom-i-gang">3 · Kom i gang i et nyt projekt</a></li>
+      <li><a href="#design">4 · Design og farver</a></li>
+      <li><a href="#interaktivitet">5 · Interaktivitet</a></li>
+    </ol>
+  </nav>
+
+  <!-- ── 1 Overblik ── -->
+  <div class="section" id="overblik">
+    <div class="section-header">
+      <div class="section-icon">🧭</div>
+      <h2>1 · Overblik</h2>
+    </div>
+    <p>Kommandoen <code>/html-guide</code> konverterer en markdown-brugervejledning til en professionel, selvstændig HTML-fil med projektets farvepalette og designsystem. Selve kommandoen er beskrevet i <code>.claude/commands/html-guide.md</code>, som indeholder designreglerne og en tabel over, hvordan markdown-elementer bliver til HTML-komponenter.</p>
+    <div class="info-box"><strong>Virker med det samme.</strong> <code>/html-guide</code> dukker op i listen over tilgængelige skills, så kommandoen kan bruges direkte — både i denne og i fremtidige sessioner.</div>
+  </div>
+
+  <!-- ── 2 Brug ── -->
+  <div class="section" id="brug">
+    <div class="section-header">
+      <div class="section-icon">⚡</div>
+      <h2>2 · Sådan kalder du den</h2>
+    </div>
+    <p>Kald kommandoen med stien til en eller flere markdown-filer — eller en hel mappe:</p>
+    <ul class="bullets">
+      <li><code>/html-guide &lt;fil.md&gt;</code> — én fil bliver til én HTML i <strong>samme mappe</strong> med samme navn.</li>
+      <li><code>/html-guide &lt;fil1.md&gt; &lt;fil2.md&gt; …</code> — flere filer samles til <strong>ét</strong> dokument (i den angivne rækkefølge).</li>
+      <li><code>/html-guide &lt;mappe&gt;</code> — alle <strong>.md</strong>-filer i mappen samles til <strong>ét</strong> dokument (i naturlig navnerækkefølge).</li>
+    </ul>
+  </div>
+
+  <!-- ── 3 Kom i gang ── -->
+  <div class="section" id="kom-i-gang">
+    <div class="section-header">
+      <div class="section-icon">🚀</div>
+      <h2>3 · Kom i gang i et nyt projekt</h2>
+    </div>
+    <p>Hele værktøjet er portabelt. For at bruge det i et andet projekt:</p>
+    <ol class="steps">
+      <li>Kopiér <code>.claude/commands/html-guide.md</code>, <code>.claude/commands/create-css.md</code> og mappen <code>.claude/html-guide/</code> (med <strong>styles.css</strong> og <strong>script.js</strong>) ind i projektet.</li>
+      <li>Kør <code>/create-css &lt;hjemmeside-url&gt; [type]</code> for at hente kundens brandfarver fra deres hjemmeside og opdatere farvepaletten.</li>
+      <li>Kør <code>/html-guide</code> på dine markdown-vejledninger — de får automatisk det nye projekts design.</li>
+    </ol>
+  </div>
+
+  <!-- ── 4 Design og farver ── -->
+  <div class="section" id="design">
+    <div class="section-header">
+      <div class="section-icon">🎨</div>
+      <h2>4 · Design og farver</h2>
+    </div>
+    <p>Hele designsystemet — farvepalette <strong>og</strong> alle komponenter — ligger i én fil: <code>.claude/html-guide/styles.css</code>. Kommandoen lægger filens indhold direkte ind i hver genereret HTML, så hver vejledning er selvstændig og kan deles, printes og åbnes uden internet.</p>
+    <p>Du ændrer farverne nemt med kommandoen <code>/create-css</code>, der henter brandfarver fra en hjemmeside:</p>
+    <pre><code>/create-css https://www.kunde.dk "Wine Retail"</code></pre>
+    <div class="note"><strong>Tip:</strong> Brandfarverne styres af <code>--brand-*</code>-variablerne øverst i <code>styles.css</code>. <code>/create-css</code> opdaterer kun dem — resten af designet er låst, så layoutet altid ser ensartet ud, uanset farvevalg.</div>
+  </div>
+
+  <!-- ── 5 Interaktivitet ── -->
+  <div class="section" id="interaktivitet">
+    <div class="section-header">
+      <div class="section-icon">🖱️</div>
+      <h2>5 · Interaktivitet</h2>
+    </div>
+    <p>Vejledningerne er <strong>interaktive som standard</strong>. Et lille JavaScript-lag (i <code>.claude/html-guide/script.js</code>) tilføjer automatisk:</p>
+    <ul class="bullets">
+      <li>Blød scroll og fremhævning af det aktive punkt i indholdsfortegnelsen (prøv at scrolle på denne side).</li>
+      <li>Kopiér-knap på kodeblokke (se knappen i feltet ovenfor).</li>
+      <li>"Fold alle ud/ind" på FAQ-sektioner.</li>
+      <li>En "til toppen"-knap, der dukker op nederst til højre, når du scroller.</li>
+    </ul>
+    <p>Alt fungerer også <strong>uden</strong> JavaScript — laget tilføjer kun ekstra bekvemmelighed og skjuler sig selv ved print.</p>
+  </div>
+
+</div>
+
+<footer>
+  <strong>Ebrofrost</strong> · Dokumentationsværktøj · html-guide · Opdateret juni 2026
+</footer>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ── Smooth in-page scrolling for TOC / anchor links ── */
+  document.querySelectorAll('a[href^="#"]').forEach(function (link) {
+    link.addEventListener('click', function (e) {
+      var id = link.getAttribute('href').slice(1);
+      var target = id && document.getElementById(id);
+      if (!target) return;
+      e.preventDefault();
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if (history.replaceState) history.replaceState(null, '', '#' + id);
+    });
+  });
+
+  /* ── Scroll-spy: highlight the current section in the TOC ── */
+  var tocLinks = Array.prototype.slice.call(
+    document.querySelectorAll('.toc a[href^="#"]')
+  );
+  if (tocLinks.length && 'IntersectionObserver' in window) {
+    var byId = {};
+    tocLinks.forEach(function (l) { byId[l.getAttribute('href').slice(1)] = l; });
+    var sections = tocLinks
+      .map(function (l) { return document.getElementById(l.getAttribute('href').slice(1)); })
+      .filter(Boolean);
+    var spy = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        var link = byId[entry.target.id];
+        if (link && entry.isIntersecting) {
+          tocLinks.forEach(function (l) { l.classList.remove('active'); });
+          link.classList.add('active');
+        }
+      });
+    }, { rootMargin: '0px 0px -75% 0px', threshold: 0 });
+    sections.forEach(function (s) { spy.observe(s); });
+  }
+
+  /* ── Copy-to-clipboard buttons on code blocks (technical guides) ── */
+  if (navigator.clipboard) {
+    document.querySelectorAll('pre').forEach(function (pre) {
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'copy-btn';
+      btn.textContent = 'Kopiér';
+      btn.addEventListener('click', function () {
+        var code = pre.querySelector('code') || pre;
+        navigator.clipboard.writeText(code.innerText).then(function () {
+          btn.textContent = 'Kopieret ✓';
+          setTimeout(function () { btn.textContent = 'Kopiér'; }, 1500);
+        });
+      });
+      pre.appendChild(btn);
+    });
+  }
+
+  /* ── Expand / collapse all for FAQ accordions ── */
+  var details = Array.prototype.slice.call(document.querySelectorAll('details'));
+  if (details.length > 1) {
+    var first = details[0];
+    var allOpen = false;
+    var toggle = document.createElement('button');
+    toggle.type = 'button';
+    toggle.className = 'expand-all-btn';
+    toggle.textContent = 'Fold alle ud';
+    toggle.addEventListener('click', function () {
+      allOpen = !allOpen;
+      details.forEach(function (d) { d.open = allOpen; });
+      toggle.textContent = allOpen ? 'Fold alle ind' : 'Fold alle ud';
+    });
+    if (first.parentNode) first.parentNode.insertBefore(toggle, first);
+  }
+
+  /* ── Back-to-top button ── */
+  var toTop = document.createElement('button');
+  toTop.type = 'button';
+  toTop.className = 'to-top-btn';
+  toTop.setAttribute('aria-label', 'Til toppen');
+  toTop.textContent = '↑';
+  toTop.addEventListener('click', function () {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+  document.body.appendChild(toTop);
+  window.addEventListener('scroll', function () {
+    toTop.classList.toggle('visible', window.scrollY > 400);
+  }, { passive: true });
+})();
+</script>
+
+</body>
+</html>
