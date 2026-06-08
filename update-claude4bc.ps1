@@ -9,10 +9,14 @@ if (-not $gitRoot) {
     exit 1
 }
 
-# Find submodule stien relativt til git-roden
-$submodulePath = git -C $gitRoot submodule status | 
-    Where-Object { $_ -match "claude4bc" } | 
-    ForEach-Object { ($_.Trim() -split "\s+")[1] }
+# Find submodule stien relativt til git-roden.
+# Linjeformat: "<status-tegn><SHA> <sti> (<branch>)" — stien kan indeholde
+# mellemrum (fx "EbroFrost Base App/..."), saa vi kan IKKE bare splitte paa
+# whitespace. Vi fanger i stedet stien mellem SHA og det afsluttende " (...)".
+$submodulePath = git -C $gitRoot submodule status |
+    Where-Object { $_ -match "claude4bc" } |
+    ForEach-Object { if ($_ -match '^[\s+\-U]*[0-9a-f]{7,}\s+(.+?)\s+\([^)]*\)\s*$') { $matches[1] } } |
+    Select-Object -First 1
 
 if (-not $submodulePath) {
     Write-Host "Fejl: Kunne ikke finde claude4bc submodulet." -ForegroundColor Red
