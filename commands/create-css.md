@@ -1,7 +1,7 @@
 # create-css — Generér brandfarver til html-guide ud fra en hjemmeside
 
 Udled en farvepalette fra en virksomheds hjemmeside (og en valgfri branche-"flavor") og skriv den
-ind i `:root`-blokken øverst i `.claude/html-guide/styles.css`. Bruges til at brande
+ind i `:root`-blokken øverst i projektets `.website/styles.css`. Bruges til at brande
 `/html-guide`-output til et nyt projekt med én kommando.
 
 ## Brug
@@ -55,12 +55,13 @@ Eksempler:
 
 4. **Skriv til stylesheetet.** Opdatér **kun** `:root`-BRAND-blokken (variablerne `--brand-dark`,
    `--brand-mid`, `--brand-light`, `--brand-pale`, `--brand-subtle`, `--accent`) og linjen
-   `Company:` i toppen af `.claude/html-guide/styles.css`. Rør **ikke** ved de neutrale tokens
+   `Company:` i toppen af `.website/styles.css`. Rør **ikke** ved de neutrale tokens
    eller komponent-CSS længere nede.
-   - Findes `.claude/html-guide/styles.css` **ikke**, hører den til `/html-guide`-kommandoen og bør
-     kopieres med over i projektet først. Opret som minimum filen med BRAND-`:root`-blokken, og gør
-     brugeren opmærksom på, at resten af det kanoniske stylesheet (komponent-CSS) mangler og skal
-     kopieres fra html-guide-bundtet.
+   - Findes `.website/styles.css` **ikke**, så **kopiér først** det fulde kanoniske stylesheet
+     `.claude/claude4bc/html-guide/styles-default.css` til `.website/styles.css`, og sæt derefter
+     brandfarverne i `:root`. Så får projektet et komplet stylesheet (komponenter + neutrale tokens)
+     med sine egne brandfarver.
+   - Findes `.website/`-mappen ikke, så bed brugeren køre `/init-website` først.
 
 5. **Afslut** med en kort opsummering og forslag om at køre `/html-guide` for at se resultatet.
 
@@ -68,6 +69,6 @@ Eksempler:
 
 - Farveudtræk er best-effort. Hjemmesider eksponerer ikke altid rene brandfarver — `:root`-blokken
   er derfor altid håndredigerbar bagefter.
-- Kommandoen ændrer kun farver. Layout og komponenter er låst i resten af `styles.css` og påvirkes
-  ikke.
+- Kommandoen ændrer kun farver. Layout og komponenter er låst i resten af `.website/styles.css` og
+  påvirkes ikke.
 - Sproget i selve vejledningerne styres af `/html-guide`, ikke her.

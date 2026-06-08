@@ -9,10 +9,13 @@ Claude4BC/
   commands/
     create-css.md          ← Generér brandfarver fra en hjemmeside
     html-guide.md          ← Konverter markdown til HTML-brugervejledning
+    init-website.md        ← Stilladsér dokumentationssitet (.website)
+    update-website.md      ← Synkronisér portalens NAV med .website/-sider
     update-translations.md ← Opdatér XLIFF-oversættelsesfiler
   html-guide/
-    styles-default.css     ← Standard stylesheet til HTML-guides
+    styles-default.css     ← Fuldt kanonisk fallback-stylesheet (neutralt brand)
     script.js              ← Standard JavaScript til HTML-guides
+    portal.html            ← Kanonisk skabelon til dokumentationsportalen (index.html)
     Sådan anvendes Html guide.html
   .mcp.json                ← MCP-konfiguration (BC MCP Server m.fl.)
   CLAUDE.md                ← Fælles Claude Code kontekst
@@ -22,7 +25,7 @@ Claude4BC/
 ## Commands
 
 ### `/create-css <website-url> [type]`
-Henter brandfarver fra en virksomheds hjemmeside og skriver dem ind i `:root`-blokken i `.claude/html-guide/styles.css`. Bruges til at brande HTML-guides til et nyt projekt med én kommando.
+Henter brandfarver fra en virksomheds hjemmeside og skriver dem ind i `:root`-blokken i projektets `.website/styles.css`. Findes filen ikke, seedes den først fra den fulde default `styles-default.css`. Bruges til at brande HTML-guides til et nyt projekt med én kommando.
 
 **Eksempler:**
 ```
@@ -45,7 +48,7 @@ Konverterer en eller flere markdown-brugervejledninger til en professionel, selv
 /html-guide Dokumentation/
 ```
 
-Bruger `.claude/html-guide/styles.css` hvis den findes — ellers falder den tilbage på `.claude/claude4bc/html-guide/styles-default.css`. CSS og JavaScript indsættes ordret i den genererede HTML, så filen er selvstændig og virker offline.
+Bruger projektets `.website/styles.css` hvis den findes — ellers falder den tilbage på `.claude/claude4bc/html-guide/styles-default.css`. CSS og JavaScript indsættes ordret i den genererede HTML, så filen er selvstændig og virker offline.
 
 ---
 
@@ -60,6 +63,32 @@ Opdaterer projektets XLIFF-oversættelsesfiler (`.xlf`) så alle trans-units er 
 ```
 
 Behandler alle `.xlf`-filer i projektet og sætter oversatte units til `state="translated"`. Afslutter med `COMPLETE` når alle filer og sprog er fuldt oversat.
+
+---
+
+### `/init-website [projektrod]`
+Stilladsér dokumentationssitet i et nyt projekt: opretter `.website/`-mappen med kildemateriale-mappe, README'er og start-script.
+
+**Eksempler:**
+```
+/init-website
+/init-website C:\sti\til\projekt
+```
+
+Opretter `.website/`, `.website/.sourcematerial.md/` samt `Readme.md`-filer og `Start dokumentation.cmd`. Kommandoen er idempotent — eksisterende filer overskrives aldrig. Selve portalen (`index.html`) dannes af `/update-website`.
+
+---
+
+### `/update-website [sti]`
+Synkroniserer dokumentationsportalen `.website/index.html` med de HTML-sider der ligger i `.website/`. Scanner filsystemet og (gen)bygger `NAV`-listen grupperet efter undermappe — idempotent, og håndterer nye/omdøbte/slettede sider automatisk.
+
+**Eksempler:**
+```
+/update-website
+/update-website C:\sti\til\projekt\.website
+```
+
+Findes `index.html` ikke i forvejen, oprettes den fra den kanoniske skabelon `html-guide/portal.html`. Findes den, opdateres **kun** `NAV`-listen (mellem `NAV:START`/`NAV:END`) — resten af portalen bevares. `/html-guide` rører ikke `index.html`; det er denne kommandos opgave.
 
 ---
 
@@ -117,4 +146,4 @@ git submodule update --init
 
 ## Lokal CSS-override
 
-`styles-default.css` er standardstylesheetet til HTML-guides. Ønsker du et projekt-specifikt stylesheet, opret `.claude/html-guide/styles.css` i dit projekt — `/html-guide`-kommandoen bruger den automatisk frem for default.
+`.claude/claude4bc/html-guide/styles-default.css` er det fulde, neutralt-brandede standardstylesheet til HTML-guides og **deles** via submodulet — rediger den ikke per projekt. Ønsker du et projekt-specifikt stylesheet, opret `.website/styles.css` i dit projekt (typisk via `/create-css`, der seeder fra default'en og sætter dine brandfarver) — `/html-guide` bruger den automatisk frem for default'en.
