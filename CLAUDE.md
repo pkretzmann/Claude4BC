@@ -33,7 +33,7 @@ WHEN CREATING WORK ITEMS:
 
 ### DevOps Project Name
 
-The organization is Kretzmann and the project name is Ebrofrost.
+The organization is Kretzmann and the project name is <Project Name>.
 
 ### Interview Process
 
