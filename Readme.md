@@ -16,6 +16,7 @@ Claude4BC/
     Sådan anvendes Html guide.html
   .mcp.json                ← MCP-konfiguration (BC MCP Server m.fl.)
   CLAUDE.md                ← Fælles Claude Code kontekst
+  update-claude4bc.ps1     ← Opdatér submodulet til seneste version (PowerShell)
 ```
 
 ## Commands
@@ -79,7 +80,17 @@ Submodulet lander i `.claude/claude4bc/` og Claude Code finder automatisk comman
 
 ## Opdatér Claude4BC i et eksisterende projekt
 
-Når der er ændringer i Claude4BC, kør i dit projekt:
+Når der er ændringer i Claude4BC, kør medfølgende script fra git-roden i dit projekt:
+
+```powershell
+.\.claude\claude4bc\update-claude4bc.ps1
+```
+
+Scriptet finder selv git-roden, viser nuværende og seneste commit, og springer over hvis du allerede er på seneste version. Ellers beder det om bekræftelse (`j/n`) og udfører derefter: opdaterer submodulet (`git submodule update --remote`), committer ændringen (`"Bump Claude4BC to latest"`) og pusher.
+
+### Manuelt
+
+Foretrækker du at køre trinene selv:
 
 ```bash
 git submodule update --remote .claude/claude4bc
