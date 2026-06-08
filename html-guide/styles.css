@@ -524,11 +524,38 @@ pre { position: relative; }   /* anchor for the copy button */
 .to-top-btn.visible { opacity: 1; visibility: visible; }
 .to-top-btn:hover { background: var(--brand-dark); }
 
+/* ── Reading-progress bar (top of viewport, grows with scroll) ── */
+.reading-progress {
+  position: fixed; top: 0; left: 0; height: 3px; width: 0;
+  background: linear-gradient(90deg, var(--brand-mid), var(--brand-light));
+  z-index: 60; transition: width 0.1s ease-out;
+}
+
+/* ── FAQ search / filter — only created when a .faq accordion exists ── */
+.doc-search {
+  position: relative; margin-bottom: 16px;
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+}
+.doc-search input {
+  flex: 1; min-width: 220px;
+  padding: 10px 14px; font-size: 14px; font-family: 'Inter', -apple-system, sans-serif;
+  border: 1px solid var(--gray-200); border-radius: 8px;
+  color: var(--text); background: var(--white);
+}
+.doc-search input:focus {
+  outline: none; border-color: var(--brand-mid);
+  box-shadow: 0 0 0 3px var(--brand-pale);
+}
+.doc-search-count { font-size: 13px; color: var(--gray-700); font-weight: 500; }
+mark.search-hit { background: #FFE9A8; color: inherit; border-radius: 3px; padding: 0 1px; }
+.faq-no-results { padding: 14px 18px; font-size: 14px; color: var(--gray-700); font-style: italic; }
+
 /* ── Print ── */
 @media print {
   body { background: white; font-size: 13px; }
   .section { box-shadow: none; border: 1px solid #ccc; page-break-inside: avoid; }
   header { background: var(--brand-dark) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   pre { background: #f4f4f4 !important; color: #111 !important; border: 1px solid #ccc; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  .to-top-btn, .copy-btn, .expand-all-btn { display: none !important; }
+  .to-top-btn, .copy-btn, .expand-all-btn,
+  .reading-progress, .doc-search, .faq-no-results { display: none !important; }
 }
