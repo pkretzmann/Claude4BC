@@ -1,6 +1,5 @@
 # update-claude4bc.ps1
 # Tjekker om Claude4BC submodulet er opdateret, og opdaterer det hvis ønsket.
-# Skriptet finder selv projektets git-rod.
 
 # Find projektets git-rod (ikke submodulets)
 $gitRoot = git -C $PSScriptRoot rev-parse --show-superproject-working-tree 2>$null
