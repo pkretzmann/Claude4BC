@@ -1,6 +1,6 @@
 # html-guide — Konverter markdown brugervejledning til HTML
 
-Konverter en markdown-brugervejledning til en professionel, interaktiv HTML-fil med projektets farvepalette og designsystem (CSS i `.website/styles.css` med fald-tilbage til `.claude/claude4bc/html-guide/styles-default.css`, JavaScript i `.claude/claude4bc/html-guide/script.js`).
+Konverter en markdown-brugervejledning til en professionel, interaktiv HTML-fil med projektets farvepalette og designsystem (CSS i `.website/styles.css` med fald-tilbage til `${CLAUDE_PLUGIN_ROOT}/html-guide/styles-default.css`, JavaScript i `${CLAUDE_PLUGIN_ROOT}/html-guide/script.js`).
 
 ## Brug
 
@@ -20,7 +20,7 @@ Eksempler:
 **Én fil (uændret):**
 1. Læser den angivne `.md`-fil
 2. Genererer en selvstændig `.html`-fil i **samme mappe** med samme basisnavn
-3. Anvender projektets farvepalette og designsystem fra `.website/styles.css` — eller fald-tilbage-filen `.claude/claude4bc/html-guide/styles-default.css` hvis `.website/styles.css` ikke findes (se nedenfor)
+3. Anvender projektets farvepalette og designsystem fra `.website/styles.css` — eller fald-tilbage-filen `${CLAUDE_PLUGIN_ROOT}/html-guide/styles-default.css` hvis `.website/styles.css` ikke findes (se nedenfor)
 
 **Flere filer / en mappe (multi-fil-tilstand):**
 1. Indsamler kildefilerne — enten de angivne filer (i argument-rækkefølge) eller alle `.md` i den
@@ -57,14 +57,14 @@ Når der gives flere filer eller en mappe, samles alt til **ét** sammenhængend
 
 Hele designsystemet — farvepalette **og** alle komponenter — ligger i ét stylesheet. Projektets
 udgave er `.website/styles.css`; findes den ikke, bruges den fulde, neutralt-brandede default
-`.claude/claude4bc/html-guide/styles-default.css`.
+`${CLAUDE_PLUGIN_ROOT}/html-guide/styles-default.css`.
 
 - **Kommandoen skal læse stylesheetet og indsætte dets indhold ordret** i et
   `<style>`-element i `<head>` på den genererede HTML. Genskriv **aldrig** CSS fra hukommelsen —
   så undgås drift og layout-fejl (f.eks. den ombrydnings-sikre step-layout).
 - **Valg af stylesheet (fald-tilbage-rækkefølge):**
   1. Findes `.website/styles.css` (projekt-specifik), bruges den.
-  2. Findes den **ikke**, bruges default'en `.claude/claude4bc/html-guide/styles-default.css`.
+  2. Findes den **ikke**, bruges default'en `${CLAUDE_PLUGIN_ROOT}/html-guide/styles-default.css`.
   - Findes **ingen** af de to filer, så stop og bed brugeren køre `/create-css <website-url> [type]`
     (eller `/init-website` efterfulgt af `/create-css`) før konverteringen fortsætter.
 - **Brandfarver** ændres kun i `:root`-BRAND-blokken øverst i `.website/styles.css` (variablerne
@@ -76,9 +76,9 @@ udgave er `.website/styles.css`; findes den ikke, bruges den fulde, neutralt-bra
 ## Interaktivitet (JavaScript)
 
 Vejledningerne er **som standard interaktive**. Et lille, kanonisk forbedringslag ligger i
-`.claude/claude4bc/html-guide/script.js`.
+`${CLAUDE_PLUGIN_ROOT}/html-guide/script.js`.
 
-- **Kommandoen skal læse `.claude/claude4bc/html-guide/script.js` og indsætte dens indhold ordret** i et
+- **Kommandoen skal læse `${CLAUDE_PLUGIN_ROOT}/html-guide/script.js` og indsætte dens indhold ordret** i et
   `<script>`-element **lige før `</body>`**. Genskriv **aldrig** scriptet fra hukommelsen — på samme
   måde som CSS'en holdes kanonisk i `styles.css`.
 - **Ren vanilla JS, ingen afhængigheder, intet build-step.** Alt er *progressive enhancement*:
@@ -120,7 +120,7 @@ en brugervejledning — og hører ikke under denne kommando.
 ## HTML-skelet
 
 CSS hentes **altid** fra `.website/styles.css` — eller fald-tilbage-filen
-`.claude/claude4bc/html-guide/styles-default.css` hvis `.website/styles.css` ikke findes (se afsnittet *Styling (CSS)*)
+`${CLAUDE_PLUGIN_ROOT}/html-guide/styles-default.css` hvis `.website/styles.css` ikke findes (se afsnittet *Styling (CSS)*)
 — ikke fra en eksempel-HTML. Selve dokument-skelettet er:
 
 ```html
@@ -145,7 +145,7 @@ CSS hentes **altid** fra `.website/styles.css` — eller fald-tilbage-filen
   </div>
   <footer> … </footer>
   <script>
-    /* ← indsæt hele indholdet af .claude/claude4bc/html-guide/script.js her, ordret */
+    /* ← indsæt hele indholdet af ${CLAUDE_PLUGIN_ROOT}/html-guide/script.js her, ordret */
   </script>
 </body>
 </html>
@@ -186,8 +186,8 @@ Vejledningerne er skrevet til **slutbrugere** — ikke udviklere. Sproget skal v
 Alle HTML-filer skal indeholde:
 - `<meta charset="UTF-8">` og viewport
 - Google Fonts Inter-import
-- Hele indholdet af `.website/styles.css` (eller fald-tilbage `.claude/claude4bc/html-guide/styles-default.css`) indsat ordret i `<style>`
-- Hele indholdet af `.claude/claude4bc/html-guide/script.js` indsat ordret i `<script>` lige før `</body>`
+- Hele indholdet af `.website/styles.css` (eller fald-tilbage `${CLAUDE_PLUGIN_ROOT}/html-guide/styles-default.css`) indsat ordret i `<style>`
+- Hele indholdet af `${CLAUDE_PLUGIN_ROOT}/html-guide/script.js` indsat ordret i `<script>` lige før `</body>`
 - `<header>` med gradient, badge, titel og pills
 - `<nav class="toc">` med indholdsfortegnelse
 - `<footer>` med firmanavn og dato

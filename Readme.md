@@ -1,11 +1,13 @@
 # Claude4BC
 
-Delt samling af Claude Code commands, HTML-guide og MCP-konfiguration til Business Central AL-projekter. Vedligeholdes ét sted og bruges på tværs af alle projekter via Git Submodule.
+Delt samling af Claude Code commands, HTML-guide og MCP-konfiguration til Business Central AL-projekter. Vedligeholdes ét sted og bruges på tværs af alle projekter via Git Submodule. Loades som et **in-place Claude Code-plugin** (`claude4bc@skills-dir`), så kommandoerne er tilgængelige med namespace `/claude4bc:*`.
 
 ## Indhold
 
 ```
 Claude4BC/
+  .claude-plugin/
+    plugin.json            ← Plugin-manifest (gør bundtet til et in-place plugin)
   commands/
     create-css.md          ← Generér brandfarver fra en hjemmeside
     html-guide.md          ← Konverter markdown til HTML-brugervejledning
@@ -48,7 +50,7 @@ Konverterer en eller flere markdown-brugervejledninger til en professionel, selv
 /html-guide Dokumentation/
 ```
 
-Bruger projektets `.website/styles.css` hvis den findes — ellers falder den tilbage på `.claude/claude4bc/html-guide/styles-default.css`. CSS og JavaScript indsættes ordret i den genererede HTML, så filen er selvstændig og virker offline.
+Bruger projektets `.website/styles.css` hvis den findes — ellers falder den tilbage på `.claude/skills/claude4bc/html-guide/styles-default.css`. CSS og JavaScript indsættes ordret i den genererede HTML, så filen er selvstændig og virker offline.
 
 ---
 
@@ -97,13 +99,13 @@ Findes `index.html` ikke i forvejen, oprettes den fra den kanoniske skabelon `ht
 Kør følgende fra git-roden i dit projekt:
 
 ```bash
-git submodule add https://github.com/pkretzmann/Claude4BC .claude/claude4bc
+git submodule add https://github.com/pkretzmann/Claude4BC .claude/skills/claude4bc
 git add .
 git commit -m "Add Claude4BC as submodule"
 git push
 ```
 
-Submodulet lander i `.claude/claude4bc/` og Claude Code finder automatisk commands og konfiguration.
+Submodulet **skal ligge under en `.claude/skills/`-mappe** (gerne i git-roden, så det dækker alle apps i et monorepo). Det indeholder en `.claude-plugin/plugin.json` og loades derfor automatisk som et **in-place plugin** (`claude4bc@skills-dir`) — uden marketplace eller install-trin. Kommandoerne bliver tilgængelige med namespace, fx `/claude4bc:html-guide`, og submodulets `.mcp.json` loades som plugin-MCP (med per-server-godkendelse). Genstart Claude Code efter tilføjelsen, så det nye plugin opdages.
 
 ---
 
@@ -112,7 +114,7 @@ Submodulet lander i `.claude/claude4bc/` og Claude Code finder automatisk comman
 Når der er ændringer i Claude4BC, kør medfølgende script fra git-roden i dit projekt:
 
 ```powershell
-.\.claude\claude4bc\update-claude4bc.ps1
+.\.claude\skills\claude4bc\update-claude4bc.ps1
 ```
 
 Scriptet finder selv git-roden, viser nuværende og seneste commit, og springer over hvis du allerede er på seneste version. Ellers beder det om bekræftelse (`j/n`) og udfører derefter: opdaterer submodulet (`git submodule update --remote`), committer ændringen (`"Bump Claude4BC to latest"`) og pusher.
@@ -122,8 +124,8 @@ Scriptet finder selv git-roden, viser nuværende og seneste commit, og springer 
 Foretrækker du at køre trinene selv:
 
 ```bash
-git submodule update --remote .claude/claude4bc
-git add .claude/claude4bc
+git submodule update --remote .claude/skills/claude4bc
+git add .claude/skills/claude4bc
 git commit -m "Bump Claude4BC to latest"
 git push
 ```
@@ -146,4 +148,4 @@ git submodule update --init
 
 ## Lokal CSS-override
 
-`.claude/claude4bc/html-guide/styles-default.css` er det fulde, neutralt-brandede standardstylesheet til HTML-guides og **deles** via submodulet — rediger den ikke per projekt. Ønsker du et projekt-specifikt stylesheet, opret `.website/styles.css` i dit projekt (typisk via `/create-css`, der seeder fra default'en og sætter dine brandfarver) — `/html-guide` bruger den automatisk frem for default'en.
+`.claude/skills/claude4bc/html-guide/styles-default.css` er det fulde, neutralt-brandede standardstylesheet til HTML-guides og **deles** via submodulet — rediger den ikke per projekt. Ønsker du et projekt-specifikt stylesheet, opret `.website/styles.css` i dit projekt (typisk via `/create-css`, der seeder fra default'en og sætter dine brandfarver) — `/html-guide` bruger den automatisk frem for default'en.

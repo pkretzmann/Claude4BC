@@ -64,7 +64,7 @@ Generér JavaScript med **2-mellemrums indrykning**, præcis dette format:
   markørerne samtidig.
 
 **Hvis `.website/index.html` ikke findes (første gang):**
-- Læs den kanoniske skabelon `.claude/claude4bc/html-guide/portal.html`.
+- Læs den kanoniske skabelon `${CLAUDE_PLUGIN_ROOT}/html-guide/portal.html`.
 - Erstat pladsholderne:
   - `{{SITE_TITLE}}` → projektets titel. Brug `$ARGUMENTS` hvis det ligner en titel, ellers et
     fornuftigt standardnavn (fx `"<Firmanavn> Dokumentation"` udledt af repoet, eller `"Dokumentation"`).
@@ -81,6 +81,6 @@ i forhold til den tidligere NAV-liste.
 
 - `index.html`'s **NAV-liste er et genereret artefakt** — rediger den ikke i hånden; kør kommandoen igen.
 - Portalens *udseende/opførsel* (sidebar, søgning, routing) ændres i skabelonen
-  `.claude/claude4bc/html-guide/portal.html`, ikke i den enkelte `index.html`.
+  `${CLAUDE_PLUGIN_ROOT}/html-guide/portal.html`, ikke i den enkelte `index.html`.
 - Sti-værdier skal være **relative til `index.html`** (dvs. til `.website/`), så portalen kan
   loade siderne i sin iframe og fuldtekst-søgningen kan `fetch`'e dem.

@@ -58,7 +58,7 @@ Eksempler:
    `Company:` i toppen af `.website/styles.css`. Rør **ikke** ved de neutrale tokens
    eller komponent-CSS længere nede.
    - Findes `.website/styles.css` **ikke**, så **kopiér først** det fulde kanoniske stylesheet
-     `.claude/claude4bc/html-guide/styles-default.css` til `.website/styles.css`, og sæt derefter
+     `${CLAUDE_PLUGIN_ROOT}/html-guide/styles-default.css` til `.website/styles.css`, og sæt derefter
      brandfarverne i `:root`. Så får projektet et komplet stylesheet (komponenter + neutrale tokens)
      med sine egne brandfarver.
    - Findes `.website/`-mappen ikke, så bed brugeren køre `/init-website` først.
