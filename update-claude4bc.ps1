@@ -31,10 +31,10 @@ $remoteCommit = git -C $fullSubmodulePath ls-remote origin HEAD 2>$null |
 Write-Host ""
 Write-Host "Claude4BC submodule status" -ForegroundColor Cyan
 Write-Host "--------------------------"
-Write-Host "Projekt         : $gitRoot"
-Write-Host "Submodule sti   : $submodulePath"
-Write-Host "Nuvaerende commit: $currentCommit"
-Write-Host "Seneste commit  : $remoteCommit"
+Write-Host "Projekt           : $gitRoot"
+Write-Host "Submodule sti     : $submodulePath"
+Write-Host "Nuvaerende commit : $currentCommit"
+Write-Host "Seneste commit    : $remoteCommit"
 Write-Host ""
 
 if ($currentCommit -eq $remoteCommit) {
