@@ -1,23 +1,21 @@
 # update-claude4bc.ps1
 # Tjekker om Claude4BC submodulet er opdateret, og opdaterer det hvis ønsket.
-# Ligger i .claude/claude4bc/ og navigerer selv op til git-roden af projektet.
 
-# Find git-roden ud fra scriptets placering
-$scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
-$gitRoot = git -C $scriptDir rev-parse --show-toplevel 2>$null
+# Find projektets git-rod (ikke submodulets)
+$gitRoot = git -C $PSScriptRoot rev-parse --show-superproject-working-tree 2>$null
 
 if (-not $gitRoot) {
-    Write-Host "Fejl: Kunne ikke finde git-roden." -ForegroundColor Red
+    Write-Host "Fejl: Kunne ikke finde projektets git-rod." -ForegroundColor Red
     exit 1
 }
 
 # Find submodule stien relativt til git-roden
 $submodulePath = git -C $gitRoot submodule status | 
     Where-Object { $_ -match "claude4bc" } | 
-    ForEach-Object { ($_ -split " ")[2] }
+    ForEach-Object { ($_.Trim() -split "\s+")[1] }
 
 if (-not $submodulePath) {
-    Write-Host "Fejl: Kunne ikke finde claude4bc submodulet i dette projekt." -ForegroundColor Red
+    Write-Host "Fejl: Kunne ikke finde claude4bc submodulet." -ForegroundColor Red
     exit 1
 }
 
@@ -34,26 +32,25 @@ Write-Host "Claude4BC submodule status" -ForegroundColor Cyan
 Write-Host "--------------------------"
 Write-Host "Projekt         : $gitRoot"
 Write-Host "Submodule sti   : $submodulePath"
-Write-Host "Nuværende commit: $currentCommit"
+Write-Host "Nuvaerende commit: $currentCommit"
 Write-Host "Seneste commit  : $remoteCommit"
 Write-Host ""
 
 if ($currentCommit -eq $remoteCommit) {
-    Write-Host "✓ Du er på seneste version af Claude4BC." -ForegroundColor Green
-    Write-Host ""
+    Write-Host "Du er paa seneste version af Claude4BC." -ForegroundColor Green
     exit 0
 }
 
-Write-Host "! Der er en nyere version af Claude4BC tilgængelig." -ForegroundColor Yellow
+Write-Host "Der er en nyere version af Claude4BC tilgaengelig." -ForegroundColor Yellow
 Write-Host ""
-Write-Host "Følgende vil blive udført:"
+Write-Host "Foelgende vil blive udfoert:"
 Write-Host "  1. git submodule update --remote $submodulePath"
 Write-Host "  2. git add $submodulePath"
-Write-Host "  3. git commit -m `"Bump Claude4BC to latest`""
+Write-Host "  3. git commit -m 'Bump Claude4BC to latest'"
 Write-Host "  4. git push"
 Write-Host ""
 
-$confirm = Read-Host "Opdatér nu? (j/n)"
+$confirm = Read-Host "Opdater nu? (j/n)"
 if ($confirm -ne "j") {
     Write-Host "Annulleret." -ForegroundColor Yellow
     exit 0
@@ -73,4 +70,4 @@ Write-Host "Pusher..." -ForegroundColor Cyan
 git push
 
 Write-Host ""
-Write-Host "✓ Claude4BC er opdateret til seneste version." -ForegroundColor Green
+Write-Host "Faerdig! Claude4BC er opdateret til seneste version." -ForegroundColor Green
