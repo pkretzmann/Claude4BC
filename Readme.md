@@ -78,7 +78,7 @@ Stilladsér dokumentationssitet i et nyt projekt: opretter `.website/`-mappen me
 /init-website C:\sti\til\projekt
 ```
 
-Opretter `.website/`, `.website/.sourcematerial.md/` samt `Readme.md`-filer og `Start dokumentation.cmd`. Kommandoen er idempotent — eksisterende filer overskrives aldrig. Selve portalen (`index.html`) dannes af `/update-website`.
+Opretter `.website/`, `.website/.sourcematerial.md/` samt `Readme.md`-filer, `favicon.svg`, `Start dokumentation.cmd` og en lokal preview-konfiguration (`.claude/launch.json` i git-roden, til Claude Codes preview). Kommandoen er idempotent — eksisterende filer overskrives aldrig (`launch.json` flettes). Selve portalen (`index.html`) dannes af `/update-website`.
 
 ---
 

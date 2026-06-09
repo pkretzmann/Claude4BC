@@ -27,6 +27,8 @@ Kør denne kommando **én gang** når et nyt projekt skal have dokumentation.
 ├── favicon.svg                   ← sitets ikon (kopieret fra claude4bc-submodulet)
 ├── README.md                     ← forklarer hvordan sitet åbnes/vedligeholdes
 └── Start dokumentation.cmd       ← starter lokal server + åbner portalen
+
+.claude/launch.json               ← (i git-roden) lokal preview-server til Claude Code
 ```
 
 > `index.html` (selve portalen) oprettes **ikke** her — den dannes af `/update-website`,
@@ -43,7 +45,21 @@ Kør denne kommando **én gang** når et nyt projekt skal have dokumentation.
 4. **Kopiér `favicon.svg`** fra `${CLAUDE_PLUGIN_ROOT}/favicon.svg` til `.website/favicon.svg`,
    men kun hvis `.website/favicon.svg` **ikke allerede findes** — en eksisterende fil må
    **aldrig overskrives** (den kan være tilpasset til projektets brand).
-5. **Rapportér** kort hvad der blev oprettet, og hvad der blev sprunget over fordi det fandtes.
+5. **Opret/flet `.claude/launch.json`** (lokal preview-server til Claude Code):
+   - Find git-roden med `git rev-parse --show-toplevel`. Slår det fejl (intet git-repo),
+     så spring dette trin over.
+   - Beregn `.website`-stien **relativ til git-roden**, med skråstreger
+     (fx `.website` eller `EbroFrost Base App/.website`).
+   - Målfilen er **`<git-rod>/.claude/launch.json`** — Claude Codes preview-værktøj læser
+     **kun** `launch.json` i git-roden, så den kan ikke ligge i submodulet eller under `.website/`.
+   - **Findes filen ikke** → opret den fra skabelonen herunder med `.website`-stien indsat i
+     `--directory`.
+   - **Findes filen** → læs den som JSON. Har `configurations` allerede en post, hvis
+     `runtimeArgs` peger på samme `.website` (`--directory`-værdien), så lad den være
+     (idempotent). Ellers **tilføj** en ny post — vælg et ledigt `name` (`docs`, ellers
+     `docs-2`, …) og en ledig `port` (8765, ellers næste ledige) — og bevar alle
+     eksisterende poster og felter uændret.
+6. **Rapportér** kort hvad der blev oprettet/flettet, og hvad der blev sprunget over fordi det fandtes.
 
 ## Skabeloner
 
@@ -188,9 +204,35 @@ Hver emnemappe kan indeholde flere filtyper:
 3. Kør `/update-website` for at opdatere portalens menu (se `.website/README.md`).
 ````
 
+### Fil: `.claude/launch.json` (i git-roden)
+
+> Indsæt `.website`-stien (relativ til git-roden) i `--directory`. Findes filen allerede,
+> **flettes** posten ind som beskrevet i fremgangsmåden — hele filen overskrives **ikke**.
+
+```json
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "docs",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "8765", "--directory", "<WEBSITE_REL>"],
+      "port": 8765
+    }
+  ]
+}
+```
+
+`<WEBSITE_REL>` = `.website`-stien relativ til git-roden (fx `.website` eller
+`EbroFrost Base App/.website`). Start serveren i Claude Code via preview (konfigurationen
+hedder `docs`); den serverer dokumentationen på <http://localhost:8765/>.
+
 ## Bemærk
 
 - Kommandoen er **idempotent**: kør den trygt igen — eksisterende filer røres ikke.
 - `script.js`, `styles-default.css`, `favicon.svg` og selve `/html-guide` ligger i claude4bc-submodulet.
   Projektets brandede `.website/styles.css` oprettes med `/create-css`. Kun `favicon.svg`
   kopieres herfra til `.website/`; resten oprettes ikke her.
+- `launch.json` ligger i **git-roden** (`.claude/launch.json`), ikke i submodulet — Claude
+  Codes preview-værktøj læser kun den placering. Den supplerer `Start dokumentation.cmd`
+  (dobbeltklik-launcheren): begge starter den samme lokale server på port 8765.
