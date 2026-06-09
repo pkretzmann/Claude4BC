@@ -24,6 +24,7 @@ Kør denne kommando **én gang** når et nyt projekt skal have dokumentation.
 .website/
 ├── .sourcematerial.md/
 │   └── Readme.md                 ← forklarer kildemateriale-mappen
+├── favicon.svg                   ← sitets ikon (kopieret fra claude4bc-submodulet)
 ├── README.md                     ← forklarer hvordan sitet åbnes/vedligeholdes
 └── Start dokumentation.cmd       ← starter lokal server + åbner portalen
 ```
@@ -39,7 +40,10 @@ Kør denne kommando **én gang** når et nyt projekt skal have dokumentation.
 2. **Opret mapperne** `.website/` og `.website/.sourcematerial.md/` hvis de ikke findes.
 3. **Opret hver fil nedenfor**, men kun hvis den **ikke allerede findes** — eksisterende
    filer må **aldrig overskrives** (de kan være tilpasset). Brug skabelonerne herunder verbatim.
-4. **Rapportér** kort hvad der blev oprettet, og hvad der blev sprunget over fordi det fandtes.
+4. **Kopiér `favicon.svg`** fra `${CLAUDE_PLUGIN_ROOT}/favicon.svg` til `.website/favicon.svg`,
+   men kun hvis `.website/favicon.svg` **ikke allerede findes** — en eksisterende fil må
+   **aldrig overskrives** (den kan være tilpasset til projektets brand).
+5. **Rapportér** kort hvad der blev oprettet, og hvad der blev sprunget over fordi det fandtes.
 
 ## Skabeloner
 
@@ -187,5 +191,6 @@ Hver emnemappe kan indeholde flere filtyper:
 ## Bemærk
 
 - Kommandoen er **idempotent**: kør den trygt igen — eksisterende filer røres ikke.
-- `script.js`, `styles-default.css` og selve `/html-guide` ligger i claude4bc-submodulet.
-  Projektets brandede `.website/styles.css` oprettes med `/create-css`. Intet af det oprettes her.
+- `script.js`, `styles-default.css`, `favicon.svg` og selve `/html-guide` ligger i claude4bc-submodulet.
+  Projektets brandede `.website/styles.css` oprettes med `/create-css`. Kun `favicon.svg`
+  kopieres herfra til `.website/`; resten oprettes ikke her.

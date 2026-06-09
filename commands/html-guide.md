@@ -106,6 +106,23 @@ ind i et hvilket som helst projekt, åbnes ved at dobbeltklikke, printes og virk
 Har en opgave brug for ægte app-dynamik (formularer, data, beregninger), er det en **webapp** — ikke
 en brugervejledning — og hører ikke under denne kommando.
 
+## Favicon
+
+Sitet har et fælles ikon, `favicon.svg`, som ligger i **roden af `.website/`** (lægges der af
+`/init-website`). Hver genereret side skal pege på det med et `<link rel="icon">` i `<head>`.
+
+- **Relativ sti — beregnes ud fra sidens placering i forhold til `.website/`.** Da siderne ligger i
+  undermapper (`.website/<emne>/<side>.html`), skal `href` pege **tilbage til roden**:
+  - side direkte i `.website/` → `href="favicon.svg"`
+  - side i `.website/<emne>/` (ét niveau) → `href="../favicon.svg"`
+  - side i `.website/<emne>/<under>/` (to niveauer) → `href="../../favicon.svg"`
+  - dvs. ét `../` pr. mappeniveau mellem siden og `.website/`.
+- **Hvorfor relativ (ikke `/favicon.svg`):** en rod-relativ sti virker kun når sitet serveres over
+  `http://localhost`/GitHub Pages — ikke når en enkelt side åbnes som `file://`. Den relative sti
+  virker i begge tilfælde og holder siden portabel.
+- **Findes `.website/favicon.svg` ikke** (fx hvis `/init-website` ikke er kørt), så udelad
+  `<link rel="icon">`-linjen helt frem for at lave et dødt link.
+
 ## Designregler
 
 - **`<strong>`**: Altid `font-weight: 600` (ikke browser-default 700) — undgår visuelt "luft" i løbende tekst. Ingen farveoverride på `strong` i steps/info-bokse; brug kun farve i `.note strong` og `footer strong`
@@ -135,6 +152,7 @@ CSS hentes **altid** fra `.website/styles.css` — eller fald-tilbage-filen
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>…</title>
+  <link rel="icon" type="image/svg+xml" href="<relativ-sti-til-favicon.svg>" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
   <style>
@@ -190,6 +208,7 @@ Vejledningerne er skrevet til **slutbrugere** — ikke udviklere. Sproget skal v
 
 Alle HTML-filer skal indeholde:
 - `<meta charset="UTF-8">` og viewport
+- `<link rel="icon" type="image/svg+xml">` med relativ sti til `.website/favicon.svg` (se *Favicon* — udelades hvis filen ikke findes)
 - Google Fonts Inter-import
 - Hele indholdet af `.website/styles.css` (eller fald-tilbage `${CLAUDE_PLUGIN_ROOT}/html-guide/styles-default.css`) indsat ordret i `<style>`
 - Hele indholdet af `${CLAUDE_PLUGIN_ROOT}/html-guide/script.js` indsat ordret i `<script>` lige før `</body>`

@@ -62,6 +62,9 @@ Generér JavaScript med **2-mellemrums indrykning**, præcis dette format:
   med de genererede grupper. Lad **alt andet** i filen stå urørt (titel, layout, scripts).
 - Findes markørerne ikke (ældre fil), så erstat hele `const NAV = [ … ];`-arrayet og indsæt
   markørerne samtidig.
+- **Favicon:** mangler `<head>` et `<link rel="icon" …>`, så indsæt
+  `<link rel="icon" type="image/svg+xml" href="favicon.svg" />` lige efter `<title>` (portalen
+  ligger i `.website/`-roden, så stien er blot `favicon.svg`). Findes linjen allerede, røres den ikke.
 
 **Hvis `.website/index.html` ikke findes (første gang):**
 - Læs den kanoniske skabelon `${CLAUDE_PLUGIN_ROOT}/html-guide/portal.html`.
