@@ -1,40 +1,51 @@
 ---
-description: Synkronisér dokumentationsportalen (.website/index.html) med de HTML-sider der ligger i .website/
-argument-hint: "(valgfrit) sti til .website — standard er projektets .website-mappe"
+description: Synkronisér dokumentationsportalen pr. sprog (.website/<sprog>/index.html) med de HTML-sider der ligger i sprogmappen, og hold rod-redirectens sprogliste opdateret
+argument-hint: "(valgfrit) sti til .website eller til en bestemt sprogmappe — standard er alle sprog"
 ---
 
-# update-website — Byg/opdatér dokumentationsportalens NAV
+# update-website — Byg/opdatér dokumentationsportalens NAV (pr. sprog)
 
-Holder portalen `.website/index.html` i sync med de faktiske HTML-sider i `.website/`.
-Kommandoen **scanner filsystemet** og (gen)bygger `NAV`-listen — den er idempotent og
-håndterer nye, omdøbte og slettede sider automatisk. `/html-guide` rører ikke `index.html`;
-det er denne kommandos opgave.
+Holder hver sprogmappes portal `.website/<sprog>/index.html` i sync med de faktiske
+HTML-sider i **samme** sprogmappe. Kommandoen **scanner filsystemet** og (gen)bygger
+`NAV`-listen pr. sprog — den er idempotent og håndterer nye, omdøbte og slettede sider
+automatisk. Den holder også rod-redirectens (`.website/index.html`) sprogliste opdateret.
+`/html-guide` rører ikke nogen `index.html`; det er denne kommandos opgave.
 
 ## Brug
 
 ```
-/update-website                → synkroniser projektets .website/index.html
-/update-website <sti-til-.website>
+/update-website                       → synkroniser alle sprogmappers portaler i projektets .website/
+/update-website <sti-til-.website>    → som ovenfor, men under den angivne .website-mappe
+/update-website <sti-til-sprogmappe>  → synkroniser kun ét sprog (fx …/.website/da-DK)
 ```
 
 ## Fremgangsmåde (for Claude)
 
-### 1. Find portalmappen
-- Hvis `$ARGUMENTS` er angivet, brug den sti. Ellers brug `<projektrod>/.website`.
-- Findes mappen ikke, så bed brugeren køre `/init-website` først, og stop.
+### 1. Find .website-mappen og sprogmapperne
+- **Bestem `.website`-mappen og hvilke sprog der skal behandles:**
+  - Ingen `$ARGUMENTS` → brug `<projektrod>/.website` og behandl **alle** sprogmapper i den.
+  - `$ARGUMENTS` peger på en `.website`-mappe → brug den og behandl **alle** sprogmapper i den.
+  - `$ARGUMENTS` peger på en **sprogmappe** (en undermappe i et `.website`, fx `.website/da-DK`)
+    → behandl **kun** det sprog. `.website`-roden er da forældermappen (bruges til redirecten i trin 7).
+  - Findes `.website` ikke, så bed brugeren køre `/init-website` først, og stop.
+- **Sprogmapper** = de umiddelbare undermapper i `.website/`, hvis navn **ikke** starter med `.`
+  (fx `da-DK`, `en-US`). Mapper der starter med `.` (`.sourcematerial.md` osv.) er **ikke** sprog.
+  Findes ingen sprogmapper, så bed brugeren køre `/init-website` først, og stop.
 
-### 2. Find siderne
-Søg rekursivt efter `*.html` i `.website/`, men **udelad**:
-- `.website/index.html` (selve portalen)
+Behandl **hver** valgt sprogmappe med trin 2–6. Kør derefter trin 7 (rod-redirect) og trin 8 (rapport).
+
+### 2. Find siderne (i den aktuelle sprogmappe)
+Søg rekursivt efter `*.html` i `.website/<sprog>/`, men **udelad**:
+- `.website/<sprog>/index.html` (selve portalen)
 - alt under `.sourcematerial.md/` (kildemateriale, ikke færdige sider)
 - alt under mapper der starter med `.`
 
 ### 3. Udled NAV-data pr. side
 For hver fundet side:
-- **`path`** = stien **relativ til `.website/`**, med skråstreger (`/`), fx
+- **`path`** = stien **relativ til sprogmappen `.website/<sprog>/`**, med skråstreger (`/`), fx
   `Warehouse/Jungheinrich/Spærring og synkronisering med Jungheinrich.html`.
 - **`group`** = den **øverste undermappe** i stien (fx `Warehouse`). Ligger siden direkte i
-  `.website/`, brug gruppen `"Generelt"`.
+  sprogmappen, brug gruppen `"Generelt"`.
 - **`title`** = en kort, læsbar titel. Tag den fra sidens `<header>`-`<h1>` (foretrukket), ellers
   fra `<title>` (fjern et evt. site-suffiks som `" · …"` eller `" — …"`). Hold den kortfattet.
 
@@ -55,35 +66,65 @@ Generér JavaScript med **2-mellemrums indrykning**, præcis dette format:
 - Brug **dobbelt-citationstegn** om JS-strenge. Indeholder en titel/sti et `"` eller `\`, så
   escape det (`\"`, `\\`). Tegn som `&`, `æ`, `ø`, `å`, `—` er fine uden escaping.
 
-### 6. Skriv `index.html`
+### 6. Skriv `.website/<sprog>/index.html`
 
-**Hvis `.website/index.html` allerede findes:**
+**Hvis portalen allerede findes:**
 - Erstat **kun** indholdet mellem markørerne `// === NAV:START …` og `// === NAV:END ===`
   med de genererede grupper. Lad **alt andet** i filen stå urørt (titel, layout, scripts).
 - Findes markørerne ikke (ældre fil), så erstat hele `const NAV = [ … ];`-arrayet og indsæt
   markørerne samtidig.
-- **Favicon:** mangler `<head>` et `<link rel="icon" …>`, så indsæt
-  `<link rel="icon" type="image/svg+xml" href="favicon.svg" />` lige efter `<title>` (portalen
-  ligger i `.website/`-roden, så stien er blot `favicon.svg`). Findes linjen allerede, røres den ikke.
+- **Favicon:** portalen ligger **én mappe nede** (i sprogmappen), så den deler favicon peger
+  **tilbage til `.website`-roden** med `../favicon.svg`:
+  - mangler `<head>` et `<link rel="icon" …>`, så indsæt
+    `<link rel="icon" type="image/svg+xml" href="../favicon.svg" />` lige efter `<title>`.
+  - findes linjen allerede, men peger på `favicon.svg` (rod-relativ til sprogmappen — typisk fra
+    en migreret/ældre portal), så ret den til `../favicon.svg`. Peger den allerede på
+    `../favicon.svg`, så rør den ikke.
 
-**Hvis `.website/index.html` ikke findes (første gang):**
+**Hvis portalen ikke findes (første gang for dette sprog):**
 - Læs den kanoniske skabelon `${CLAUDE_PLUGIN_ROOT}/html-guide/portal.html`.
 - Erstat pladsholderne:
-  - `{{SITE_TITLE}}` → projektets titel. Brug `$ARGUMENTS` hvis det ligner en titel, ellers et
-    fornuftigt standardnavn (fx `"<Firmanavn> Dokumentation"` udledt af repoet, eller `"Dokumentation"`).
-    Husk: `{{SITE_TITLE}}` optræder **tre** steder (`<title>`, sidebar-`<h1>` og `document.title`-suffikset).
+  - `{{SITE_TITLE}}` → projektets titel for dette sprog. Brug `$ARGUMENTS` hvis det ligner en titel,
+    ellers et fornuftigt standardnavn (fx `"<Firmanavn> Dokumentation"` udledt af repoet, eller
+    `"Dokumentation"`). Husk: `{{SITE_TITLE}}` optræder **tre** steder (`<title>`, sidebar-`<h1>`
+    og `document.title`-suffikset).
   - `{{SITE_BADGE}}` → en kort label, fx `"Business Central"` (eller `"Dokumentation"`).
+- **Favicon:** skabelonen peger på `favicon.svg`. Da portalen nu ligger i en sprogmappe, **ret**
+  `href="favicon.svg"` til `href="../favicon.svg"`, så den finder den delte favicon i `.website`-roden.
 - Indsæt de genererede grupper mellem `NAV:START`/`NAV:END`.
-- Skriv resultatet til `.website/index.html`.
+- Skriv resultatet til `.website/<sprog>/index.html`.
 
-### 7. Rapportér
-Vis en kort oversigt: antal sider fundet, grupper, og hvad der er **tilføjet/fjernet/omdøbt**
-i forhold til den tidligere NAV-liste.
+### 7. Opdatér rod-redirecten `.website/index.html`
+Hold redirect-sidens sprogliste i sync med de sprogmapper, der faktisk findes i `.website/`.
+- **Find alle sprogmapper** i `.website/` (umiddelbare undermapper hvis navn ikke starter med `.`),
+  **uanset** om kørslen kun behandlede ét sprog i `$ARGUMENTS` — listen skal afspejle hele sitet.
+- **Bestem standardsproget:** `da-DK` hvis den findes blandt sprogmapperne, ellers den
+  første i alfabetisk orden. Sortér `LOCALES` med standardsproget **først**.
+- **Findes `.website/index.html`** → erstat **kun** indholdet mellem `// === LOCALES:START …`
+  og `// === LOCALES:END ===` med de opdaterede værdier:
+
+  ```js
+      var LOCALES = ["<standardsprog>", "<øvrige sprog>"];
+      var DEFAULT = "<standardsprog>";
+  ```
+
+  Lad alt andet i filen stå urørt. Findes markørerne ikke (ældre/manuel redirect), så lad filen
+  være og **bemærk** i rapporten, at sproglisten ikke kunne opdateres automatisk.
+- **Findes `.website/index.html` ikke** → opret den **ikke** her; bed brugeren køre `/init-website`
+  for at danne redirect-siden, og bemærk det i rapporten.
+
+### 8. Rapportér
+Vis en kort oversigt **pr. sprog**: antal sider fundet, grupper, og hvad der er
+**tilføjet/fjernet/omdøbt** i forhold til den tidligere NAV-liste. Nævn desuden, om
+rod-redirectens sprogliste blev opdateret (og til hvilke sprog/standardsprog).
 
 ## Vigtigt
 
-- `index.html`'s **NAV-liste er et genereret artefakt** — rediger den ikke i hånden; kør kommandoen igen.
+- Hver portals **NAV-liste er et genereret artefakt** — rediger den ikke i hånden; kør kommandoen igen.
 - Portalens *udseende/opførsel* (sidebar, søgning, routing) ændres i skabelonen
   `${CLAUDE_PLUGIN_ROOT}/html-guide/portal.html`, ikke i den enkelte `index.html`.
-- Sti-værdier skal være **relative til `index.html`** (dvs. til `.website/`), så portalen kan
-  loade siderne i sin iframe og fuldtekst-søgningen kan `fetch`'e dem.
+- Sti-værdier i `NAV` skal være **relative til portalen** (dvs. til sprogmappen `.website/<sprog>/`),
+  så portalen kan loade siderne i sin iframe og fuldtekst-søgningen kan `fetch`'e dem. Hold derfor
+  hver sides kildemateriale og færdige HTML i **samme** sprogmappe.
+- Rod-`index.html` er **kun** en redirect — den har ingen NAV og skal ikke have sider lagt ved siden af.
+  Denne kommando opdaterer kun dens `LOCALES`/`DEFAULT` mellem markørerne.

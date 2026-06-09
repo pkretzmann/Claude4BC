@@ -641,7 +641,7 @@ pre { position: relative; }   /* anchor for the copy button */
     </div>
     <p>Fordi værktøjet er et delt submodul, der virker som et plugin, skal du <strong>ikke kopiere filer manuelt</strong>. Du låner bundtet ind under projektets <code>.claude/skills/</code>, og Claude Code aktiverer det automatisk:</p>
     <ol class="steps">
-      <li>Tilføj submodulet under <code>.claude/skills/</code> i projektet:<br><code>git submodule add &lt;repo-url&gt; .claude/skills/claude4bc</code></li>
+      <li>Tilføj submodulet under <code>.claude/skills/</code> i projektet — repoets sti er <code>https://github.com/pkretzmann/Claude4BC.git</code>:<br><code>git submodule add https://github.com/pkretzmann/Claude4BC.git .claude/skills/claude4bc</code></li>
       <li><strong>Genstart Claude Code.</strong> Mappen indeholder en <code>plugin.json</code>, så den loades automatisk som pluginnet <code>claude4bc</code> — og kommandoerne <code>/claude4bc:…</code> dukker op.</li>
       <li>Kør <code>/claude4bc:create-css &lt;hjemmeside-url&gt; [type]</code> for at hente kundens brandfarver og oprette projektets eget <code>.website/styles.css</code>.</li>
       <li>Kør <code>/claude4bc:html-guide</code> på dine markdown-vejledninger — de får automatisk projektets design.</li>

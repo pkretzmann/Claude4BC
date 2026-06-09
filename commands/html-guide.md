@@ -109,13 +109,15 @@ en brugervejledning — og hører ikke under denne kommando.
 ## Favicon
 
 Sitet har et fælles ikon, `favicon.svg`, som ligger i **roden af `.website/`** (lægges der af
-`/init-website`). Hver genereret side skal pege på det med et `<link rel="icon">` i `<head>`.
+`/init-website`) og **deles på tværs af alle sprog**. Hver genereret side skal pege på det med et
+`<link rel="icon">` i `<head>`.
 
-- **Relativ sti — beregnes ud fra sidens placering i forhold til `.website/`.** Da siderne ligger i
-  undermapper (`.website/<emne>/<side>.html`), skal `href` pege **tilbage til roden**:
-  - side direkte i `.website/` → `href="favicon.svg"`
-  - side i `.website/<emne>/` (ét niveau) → `href="../favicon.svg"`
-  - side i `.website/<emne>/<under>/` (to niveauer) → `href="../../favicon.svg"`
+- **Relativ sti — beregnes ud fra sidens placering i forhold til `.website/`.** Sitet er
+  flersproget: siderne ligger i en sprogmappe (`.website/<sprog>/<emne>/<side>.html`), så `href`
+  skal pege **tilbage til roden** med ét `../` pr. mappeniveau mellem siden og `.website/`:
+  - portal direkte i sprogmappen `.website/<sprog>/` (ét niveau) → `href="../favicon.svg"`
+  - side i `.website/<sprog>/<emne>/` (to niveauer) → `href="../../favicon.svg"`
+  - side i `.website/<sprog>/<emne>/<under>/` (tre niveauer) → `href="../../../favicon.svg"`
   - dvs. ét `../` pr. mappeniveau mellem siden og `.website/`.
 - **Hvorfor relativ (ikke `/favicon.svg`):** en rod-relativ sti virker kun når sitet serveres over
   `http://localhost`/GitHub Pages — ikke når en enkelt side åbnes som `file://`. Den relative sti
