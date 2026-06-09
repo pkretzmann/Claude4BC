@@ -1,5 +1,5 @@
 ---
-description: Stilladsér dokumentationssitet (.website) med kildemateriale-mappe, README'er og start-script
+description: Initialiserer dokumentationssitet (.website) med kildemateriale-mappe, README'er og start-script
 argument-hint: "(valgfrit) sti til projektroden — standard er det aktuelle projekt"
 ---
 
