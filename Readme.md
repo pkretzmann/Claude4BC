@@ -13,6 +13,7 @@ Claude4BC/
     html-guide.md          ← Konverter markdown til HTML-brugervejledning
     init-website.md        ← Stilladsér dokumentationssitet (.website)
     update-website.md      ← Synkronisér portalens NAV med .website/-sider
+    deploy-website.md      ← Publicér .website til GitHub Pages via GitHub Actions
     update-translations.md ← Opdatér XLIFF-oversættelsesfiler
   html-guide/
     styles-default.css     ← Fuldt kanonisk fallback-stylesheet (neutralt brand)
@@ -91,6 +92,19 @@ Synkroniserer dokumentationsportalen `.website/index.html` med de HTML-sider der
 ```
 
 Findes `index.html` ikke i forvejen, oprettes den fra den kanoniske skabelon `html-guide/portal.html`. Findes den, opdateres **kun** `NAV`-listen (mellem `NAV:START`/`NAV:END`) — resten af portalen bevares. `/html-guide` rører ikke `index.html`; det er denne kommandos opgave.
+
+---
+
+### `/deploy-website [sti]`
+Stilladsér GitHub Actions-workflowen `.github/workflows/DeployDocsWebsite.yaml`, der publicerer projektets `.website`-site til **GitHub Pages**. Generisk: finder selv `.website` (i roden eller en app-undermappe, også med mellemrum i stien) og hovedgrenen, og indsætter dem i workflowen.
+
+**Eksempler:**
+```
+/deploy-website
+/deploy-website "EbroFrost Base App/.website"
+```
+
+Idempotent — findes workflowen, vises forskellen og du spørges før overskrivning. Husk bagefter at sætte **Settings → Pages → Source = »GitHub Actions«** i repoet. Selve `.website`-indholdet dannes af `/init-website`, `/html-guide` og `/update-website`.
 
 ---
 

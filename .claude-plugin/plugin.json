@@ -1,6 +1,6 @@
 {
   "name": "claude4bc",
-  "description": "Delt bundt af Business Central-kommandoer (html-guide, create-css, init-website, update-website, update-translations) + html-guide-designsystem til Claude Code.",
+  "description": "Delt bundt af Business Central-kommandoer (html-guide, create-css, init-website, update-website, deploy-website, update-translations) + html-guide-designsystem til Claude Code.",
   "version": "0.1.0",
   "author": { "name": "Peter Kretzmann" }
 }
