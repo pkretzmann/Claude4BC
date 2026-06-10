@@ -1,5 +1,5 @@
 ---
-description: Stilladsér en GitHub Actions-workflow der publicerer dokumentationssitet (.website) til GitHub Pages
+description: Initialisér en GitHub Actions-workflow der publicerer dokumentationssitet (.website) til GitHub Pages
 argument-hint: "(valgfrit) sti til .website — standard er projektets .website-mappe"
 ---
 

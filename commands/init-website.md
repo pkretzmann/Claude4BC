@@ -29,6 +29,7 @@ Kør denne kommando **én gang** når et nyt projekt skal have dokumentation.
 ├── favicon.svg                  ← sitets ikon (delt på tværs af alle sprog)
 ├── README.md                    ← forklarer hvordan sitet åbnes/vedligeholdes
 ├── Start dokumentation.cmd      ← starter lokal server + åbner portalen
+├── serve.py                     ← lokal server uden browser-cache (kopieres fra submodulet)
 ├── da-DK/                       ← standardsprog (redirect peger hertil)
 │   └── .sourcematerial.md/
 │       └── Readme.md            ← forklarer kildemateriale-mappen for da-DK
@@ -49,7 +50,7 @@ Kør denne kommando **én gang** når et nyt projekt skal have dokumentation.
 
 ## Fremgangsmåde (for Claude)
 
-> **Sprog.** Standardsproget er `da-DK`. Sprogene der stilladseres er `da-DK` og `en-US`.
+> **Sprog.** Standardsproget er `da-DK`. Sprogene der initialiseres er `da-DK` og `en-US`.
 > Beder brugeren udtrykkeligt om andre/flere sprog, så brug dem i stedet — det første sprog
 > er standardsproget (redirect-målet).
 
@@ -65,9 +66,12 @@ Kør denne kommando **én gang** når et nyt projekt skal have dokumentation.
    - I roden: `README.md`, `Start dokumentation.cmd` og **rod-`index.html`** (redirect-siden —
      indsæt sprogene fra trin 0 i `LOCALES` og standardsproget i `DEFAULT` samt i `meta refresh`/no-script-linket).
    - Pr. sprog: `.website/<sprog>/.sourcematerial.md/Readme.md`.
-4. **Kopiér `favicon.svg`** fra `${CLAUDE_PLUGIN_ROOT}/favicon.svg` til `.website/favicon.svg`
-   (delt på tværs af sprog), men kun hvis `.website/favicon.svg` **ikke allerede findes** — en
-   eksisterende fil må **aldrig overskrives** (den kan være tilpasset til projektets brand).
+4. **Kopiér delte filer fra submodulet** (kun hvis de **ikke allerede findes** — eksisterende
+   filer må **aldrig overskrives**):
+   - `favicon.svg` fra `${CLAUDE_PLUGIN_ROOT}/favicon.svg` til `.website/favicon.svg`
+     (delt på tværs af sprog; kan være tilpasset til projektets brand).
+   - `serve.py` fra `${CLAUDE_PLUGIN_ROOT}/html-guide/serve.py` til `.website/serve.py`
+     (den lokale no-cache-server, som `Start dokumentation.cmd` og `launch.json` kalder).
 5. **Opret/flet `.claude/launch.json`** (lokal preview-server til Claude Code):
    - Find git-roden med `git rev-parse --show-toplevel`. Slår det fejl (intet git-repo),
      så spring dette trin over.
@@ -77,10 +81,10 @@ Kør denne kommando **én gang** når et nyt projekt skal have dokumentation.
    - Målfilen er **`<git-rod>/.claude/launch.json`** — Claude Codes preview-værktøj læser
      **kun** `launch.json` i git-roden, så den kan ikke ligge i submodulet eller under `.website/`.
    - **Findes filen ikke** → opret den fra skabelonen herunder med `.website`-stien indsat i
-     `--directory`.
+     `runtimeArgs` (både stien til `serve.py` og directory-argumentet, jf. skabelonen).
    - **Findes filen** → læs den som JSON. Har `configurations` allerede en post, hvis
-     `runtimeArgs` peger på samme `.website` (`--directory`-værdien), så lad den være
-     (idempotent). Ellers **tilføj** en ny post — vælg et ledigt `name` (`docs`, ellers
+     `runtimeArgs` peger på samme `.website` (serve.py-stien / directory-argumentet), så lad
+     den være (idempotent). Ellers **tilføj** en ny post — vælg et ledigt `name` (`docs`, ellers
      `docs-2`, …) og en ledig `port` (8765, ellers næste ledige) — og bevar alle
      eksisterende poster og felter uændret.
 6. **Rapportér** kort hvad der blev oprettet/flettet, og hvad der blev sprunget over fordi det fandtes.
@@ -97,7 +101,7 @@ Kør denne kommando **én gang** når et nyt projekt skal have dokumentation.
 ### Fil: `.website/index.html` (rod-redirect)
 
 > Sender videre til standardsprogets portal. `LOCALES`/`DEFAULT` (mellem markørerne) og
-> `meta refresh`/no-script-linket indsættes ud fra de stilladserede sprog — standardsproget
+> `meta refresh`/no-script-linket indsættes ud fra de initialiserede sprog — standardsproget
 > (`da-DK`) er fald-tilbage, mens browserens sprog forsøges matchet først. `/update-website`
 > holder `LOCALES`/`DEFAULT` i sync, når der senere tilføjes eller fjernes sprogmapper.
 
@@ -141,7 +145,7 @@ rem ── Starter dokumentations-sitet lokalt og aabner det i browseren ──
 rem Dobbeltklik denne fil. Luk vinduet for at stoppe serveren igen.
 cd /d "%~dp0"
 set "PORT=8765"
-set "URL=http://localhost:%PORT%/"
+set "URL=http://localhost:%PORT%/da-DK/"
 
 rem ── Find Python (py-launcher foretraekkes, ellers python) ──
 set "PY="
@@ -166,7 +170,8 @@ rem ── Aabn browseren automatisk, lige efter serveren er klar ──
 start "" /min cmd /c "timeout /t 1 >nul & start "" %URL%"
 
 rem ── Start den lokale webserver (blokerer indtil vinduet lukkes) ──
-%PY% -m http.server %PORT%
+rem    serve.py serverer uden browser-cache, saa du altid ser den nyeste side.
+%PY% "%~dp0serve.py" %PORT%
 
 endlocal
 ```
@@ -205,13 +210,13 @@ vindue igen for at stoppe serveren.
 Åbn en terminal (PowerShell) i denne mappe og kør:
 
 ```powershell
-py -m http.server 8765
+py serve.py 8765
 ```
 
 Virker `py` ikke, så prøv:
 
 ```powershell
-python -m http.server 8765
+python serve.py 8765
 ```
 
 Åbn derefter **http://localhost:8765/** i din browser. Stop serveren igen med `Ctrl + C`
@@ -308,7 +313,7 @@ Hver emnemappe kan indeholde flere filtyper:
     {
       "name": "docs",
       "runtimeExecutable": "python",
-      "runtimeArgs": ["-m", "http.server", "8765", "--directory", "<WEBSITE_REL>"],
+      "runtimeArgs": ["<WEBSITE_REL>/serve.py", "8765", "<WEBSITE_REL>"],
       "port": 8765
     }
   ]
@@ -328,9 +333,24 @@ sender videre til standardsproget.
 - `favicon.svg` ligger i **roden af `.website/`** og deles af alle sprog. Sider i en sprogmappe
   peger relativt tilbage til roden (fx `../favicon.svg` for en portal, `../../favicon.svg` for en
   side i `<sprog>/<emne>/`).
-- `script.js`, `styles-default.css`, `favicon.svg` og selve `/html-guide` ligger i claude4bc-submodulet.
-  Projektets brandede `.website/styles.css` oprettes med `/create-css`. Kun `favicon.svg`
-  kopieres herfra til `.website/`; resten oprettes ikke her.
+- `script.js`, `styles-default.css`, `favicon.svg`, `serve.py` og selve `/html-guide` ligger i
+  claude4bc-submodulet. Projektets brandede `.website/styles.css` oprettes med `/create-css`.
+  Kun `favicon.svg` og `serve.py` kopieres herfra til `.website/`; resten oprettes ikke her.
+- `serve.py` er en lille lokal server, der sætter **no-cache-headers** og aldrig svarer
+  `304 Not Modified`. Rå `python -m http.server` sender `Last-Modified`/`304`, så browseren
+  genbruger gamle (cachede) sider — især i portalens fetch-baserede indhold. `serve.py` gør
+  hver genindlæsning frisk, uden `Ctrl+F5`.
 - `launch.json` ligger i **git-roden** (`.claude/launch.json`), ikke i submodulet — Claude
   Codes preview-værktøj læser kun den placering. Den supplerer `Start dokumentation.cmd`
-  (dobbeltklik-launcheren): begge starter den samme lokale server på port 8765 på `.website`-roden.
+  (dobbeltklik-launcheren): begge starter den samme lokale `serve.py` på port 8765 på `.website`-roden.
+
+### Opdatér et eksisterende site (retro-fit)
+
+`/init-website` er idempotent og **overskriver ikke** eksisterende filer, så et site oprettet
+før `serve.py` blev indført, skal opdateres manuelt for at få no-cache-serveren:
+
+1. Kopiér `serve.py` fra submodulets `html-guide/serve.py` til projektets `.website/serve.py`.
+2. Ret sidste serverlinje i `.website/Start dokumentation.cmd` til:
+   `%PY% "%~dp0serve.py" %PORT%`
+3. Ret `runtimeArgs` i `.claude/launch.json` (`docs`-posten) til:
+   `["<WEBSITE_REL>/serve.py", "8765", "<WEBSITE_REL>"]`

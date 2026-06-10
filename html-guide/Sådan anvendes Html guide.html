@@ -643,8 +643,10 @@ pre { position: relative; }   /* anchor for the copy button */
     <ol class="steps">
       <li>Tilføj submodulet under <code>.claude/skills/</code> i projektet — repoets sti er <code>https://github.com/pkretzmann/Claude4BC.git</code>:<br><code>git submodule add https://github.com/pkretzmann/Claude4BC.git .claude/skills/claude4bc</code></li>
       <li><strong>Genstart Claude Code.</strong> Mappen indeholder en <code>plugin.json</code>, så den loades automatisk som pluginnet <code>claude4bc</code> — og kommandoerne <code>/claude4bc:…</code> dukker op.</li>
+      <li>Kør <code>/claude4bc:init-website</code> <strong>én gang</strong> for at initialisere dokumentationssitet — den opretter <code>.website/</code> med sprogmapper (<code>da-DK</code>, <code>en-US</code>), rod-redirect, kildemateriale-mapper, start-script og preview-konfigurationen <code>.claude/launch.json</code>.</li>
       <li>Kør <code>/claude4bc:create-css &lt;hjemmeside-url&gt; [type]</code> for at hente kundens brandfarver og oprette projektets eget <code>.website/styles.css</code>.</li>
       <li>Kør <code>/claude4bc:html-guide</code> på dine markdown-vejledninger — de får automatisk projektets design.</li>
+      <li>Kør <code>/claude4bc:update-website</code> for at bygge sprogenes portal-menu, så de nye sider dukker op i dokumentationssitet.</li>
     </ol>
     <div class="info-box"><strong>Vigtigt om placering:</strong> Pluginnet skal ligge under <strong>den mappe, du åbner Claude Code i</strong> (projektets egen <code>.claude/skills/</code>). Ligger det et niveau højere oppe — fx i en fælles monorepo-rod — bliver det <em>ikke</em> fundet.</div>
   </div>

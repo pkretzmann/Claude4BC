@@ -11,13 +11,14 @@ Claude4BC/
   commands/
     create-css.md          ← Generér brandfarver fra en hjemmeside
     html-guide.md          ← Konverter markdown til HTML-brugervejledning
-    init-website.md        ← Stilladsér dokumentationssitet (.website)
+    init-website.md        ← Initialisér dokumentationssitet (.website)
     update-website.md      ← Synkronisér portalens NAV med .website/-sider
     deploy-website.md      ← Publicér .website til GitHub Pages via GitHub Actions
     update-translations.md ← Opdatér XLIFF-oversættelsesfiler
   html-guide/
     styles-default.css     ← Fuldt kanonisk fallback-stylesheet (neutralt brand)
     script.js              ← Standard JavaScript til HTML-guides
+    serve.py               ← Lokal no-cache dokumentationsserver (kopieres til .website/)
     portal.html            ← Kanonisk skabelon til dokumentationsportalen (index.html)
     Sådan anvendes Html guide.html
   .mcp.json                ← MCP-konfiguration (BC MCP Server m.fl.)
@@ -70,7 +71,7 @@ Behandler alle `.xlf`-filer i projektet og sætter oversatte units til `state="t
 ---
 
 ### `/init-website [projektrod]`
-Stilladsér dokumentationssitet i et nyt projekt: opretter `.website/`-mappen med kildemateriale-mappe, README'er og start-script.
+Initialisér dokumentationssitet i et nyt projekt: opretter `.website/`-mappen med kildemateriale-mappe, README'er og start-script.
 
 **Eksempler:**
 ```
@@ -78,7 +79,7 @@ Stilladsér dokumentationssitet i et nyt projekt: opretter `.website/`-mappen me
 /init-website C:\sti\til\projekt
 ```
 
-Opretter `.website/`, `.website/.sourcematerial.md/` samt `Readme.md`-filer, `favicon.svg`, `Start dokumentation.cmd` og en lokal preview-konfiguration (`.claude/launch.json` i git-roden, til Claude Codes preview). Kommandoen er idempotent — eksisterende filer overskrives aldrig (`launch.json` flettes). Selve portalen (`index.html`) dannes af `/update-website`.
+Opretter `.website/`, `.website/.sourcematerial.md/` samt `Readme.md`-filer, `favicon.svg`, `serve.py`, `Start dokumentation.cmd` og en lokal preview-konfiguration (`.claude/launch.json` i git-roden, til Claude Codes preview). Den lokale server er `serve.py` — en no-cache-server, så browseren ikke viser gamle (cachede) sider; rå `python -m http.server` svarer `304 Not Modified` og genbruger den cachede side. Kommandoen er idempotent — eksisterende filer overskrives aldrig (`launch.json` flettes). Selve portalen (`index.html`) dannes af `/update-website`.
 
 ---
 
@@ -96,7 +97,7 @@ Findes `index.html` ikke i forvejen, oprettes den fra den kanoniske skabelon `ht
 ---
 
 ### `/deploy-website [sti]`
-Stilladsér GitHub Actions-workflowen `.github/workflows/DeployDocsWebsite.yaml`, der publicerer projektets `.website`-site til **GitHub Pages**. Generisk: finder selv `.website` (i roden eller en app-undermappe, også med mellemrum i stien) og hovedgrenen, og indsætter dem i workflowen.
+Initialisér GitHub Actions-workflowen `.github/workflows/DeployDocsWebsite.yaml`, der publicerer projektets `.website`-site til **GitHub Pages**. Generisk: finder selv `.website` (i roden eller en app-undermappe, også med mellemrum i stien) og hovedgrenen, og indsætter dem i workflowen.
 
 **Eksempler:**
 ```
