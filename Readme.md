@@ -20,6 +20,7 @@ Claude4BC/
     script.js              ← Standard JavaScript til HTML-guides
     serve.py               ← Lokal no-cache dokumentationsserver (kopieres til .website/)
     portal.html            ← Kanonisk skabelon til dokumentationsportalen (index.html)
+    build_pages.py         ← Hjælpescript til multi-side-tilstand (wrapper bodies → selvstændige sider)
   docs/
     bc-dev-setup-guide.html ← Komplet guide til opsætning af BC-udviklingsmiljø
     Sådan anvendes Html guide.html ← Sådan bruges /claude4bc:html-guide-kommandoen
