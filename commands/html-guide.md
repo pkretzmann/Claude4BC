@@ -13,12 +13,14 @@ Konverter en markdown-brugervejledning til en professionel, interaktiv HTML-fil 
 /html-guide <fil.md>                       → én fil → én HTML (samme basisnavn, samme mappe)
 /html-guide <fil1.md> <fil2.md> …          → flere filer → ÉN samlet HTML (i angiven rækkefølge)
 /html-guide <mappe>                         → alle .md i mappen → ÉN samlet HTML (naturlig navne-rækkefølge)
+/html-guide <mappe> → .website/<sprog>      → ÉN side pr. emne i sprogmappen (multi-side; til /update-website)
 ```
 
 Eksempler:
 - `/html-guide <mappe>/<vejledning>.md`
 - `/html-guide "<mappe>/Step 0 — Oversigt.md" "<mappe>/Step 1.md"`
 - `/html-guide "<mappe>"`
+- `/html-guide "<mappe>" — skriv som multi-side i .website/da-DK` (multi-side-tilstand, se nedenfor)
 
 ## Hvad kommandoen gør
 
@@ -57,6 +59,48 @@ Når der gives flere filer eller en mappe, samles alt til **ét** sammenhængend
 - **End-user-reglerne gælder på tværs af alle samlede filer** — se "Ingen kode i dokumentationen"
   nedenfor. Tekniske "AL-objekter"-tabeller, objekt-/codeunit-/tabel-ID'er og kodeblokke udelades i
   hele den samlede HTML, uanset hvilken kildefil de stammer fra.
+
+## Multi-side-tilstand (én side pr. emne → `.website/<sprog>`)
+
+Ud over "ét samlet dokument" findes en **multi-side-tilstand**: i stedet for ét stort HTML-dokument
+genereres **én selvstændig side pr. kildefil/emne**, lagt i sprogmappen, klar til at
+`/update-website` binder dem sammen i en portal. Brug den til en **komplet, flersidet
+dokumentationsportal** frem for ét langt dokument.
+
+**Hvornår vælges denne tilstand:** når brugeren beder om "multi-side"/"flersidet" dokumentation,
+**eller** når output-målet er en sprogmappe i et `.website` (fx `.website/da-DK`). Ellers gælder
+enkeltfil-/ét-dokument-reglerne ovenfor.
+
+Regler (forskelle fra "ét dokument"):
+
+- **Én HTML pr. kildefil/emne** — ikke ét samlet dokument. Hver side er fuldt selvstændig efter de
+  samme regler som enkeltfil-tilstanden (CSS **og** JS indlejret ordret, `<header>` med badge/pills,
+  `<footer>`, og en **per-side `<nav class="toc">`** der linker til sidens egne `##`-sektioner).
+- **Placering:** `.website/<sprog>/<gruppe>/<emne>.html`. Læg hver side i en **gruppemappe** der
+  afspejler dokumentets dele (fx "Opsætning", "Daglig brug", "Reference").
+- **Gruppe-rækkefølge:** `/update-website` sorterer grupper **alfabetisk** og bruger mappenavnet som
+  menu-overskrift. Skal grupperne vises i en bestemt læse-rækkefølge, så **nummer-præfiks** mappenavnet
+  (fx `1. Kom godt i gang`, `2. Opsætning`, `3. Daglig brug`).
+- **Filnavne:** korte og helst ascii. Brug nummer-præfiks (`1-…`, `2-…`) for at styre rækkefølgen
+  **inden for** en gruppe (siderne sorteres naturligt).
+- **Favicon:** siderne ligger to mappeniveauer under `.website/`, så `href="../../favicon.svg"`
+  (udelades hvis `.website/favicon.svg` ikke findes — se *Favicon*).
+- **Ingen samlet header/TOC/footer på tværs** (modsat ét-dokument-tilstanden). Portalen fra
+  `/update-website` leverer cross-side-navigationen.
+- **Krydsside-links undgås:** referencer mellem siderne skrives som **tekst** ("se afsnittet
+  Opsætning → Knyt data"), ikke som hyperlinks — siderne loades i portalens iframe, og relative
+  fil-links på tværs af gruppemapper er skrøbelige. Interne ankre **på samme side** er fine.
+- **End-user-/ingen-kode-reglerne gælder uændret** på hver side.
+- **Efterbehandling:** bed brugeren køre `/update-website` bagefter for at bygge portalens menu og
+  opdatere rod-redirectens sprogliste.
+
+> **Hjælpescript (anbefalet for mange sider).** Da hver side skal indlejre `styles.css` + `script.js`
+> **ordret**, er det både hurtigere og mindre fejlbehæftet at lade et lille script wrappe de
+> Claude-skrevne bodies end at indsætte CSS/JS i hånden på N sider. Brug
+> `${CLAUDE_PLUGIN_ROOT}/html-guide/build_pages.py`: Claude skriver **kun** hver sides body (selve
+> `.section`-kortene) + et lille manifest, og scriptet indsætter ordret CSS/JS, bygger per-side-TOC'en,
+> beregner favicon-stien og skriver siderne. Se scriptets egen dok-streng for manifest-formatet.
+> Scriptet wrapper kun boilerplate — **indholdet** (kuratering, oversættelse, opdeling) skriver Claude.
 
 ## Styling (CSS)
 
@@ -205,6 +249,7 @@ Vejledningerne er skrevet til **slutbrugere** — ikke udviklere. Sproget skal v
 | Tekniske detaljer (feltnumre, obj-ID) | **Udelades** |
 | "AL-objekter"-tabel (Objekt/ID/Fil) | **Udelades** |
 | Flere kildefiler / en mappe | Ét dokument med fælles header/TOC/footer; hver fil = sektionsgruppe; AL-objekt-tabeller udelades |
+| Mappe → `.website/<sprog>` (multi-side) | Én selvstændig side pr. emne i gruppemapper; per-side header/TOC/footer; bind sammen med `/update-website` |
 
 ## Påkrævet indhold
 
