@@ -20,11 +20,31 @@ Claude4BC/
     script.js              ← Standard JavaScript til HTML-guides
     serve.py               ← Lokal no-cache dokumentationsserver (kopieres til .website/)
     portal.html            ← Kanonisk skabelon til dokumentationsportalen (index.html)
-    Sådan anvendes Html guide.html
+  docs/
+    bc-dev-setup-guide.html ← Komplet guide til opsætning af BC-udviklingsmiljø
+    Sådan anvendes Html guide.html ← Sådan bruges /claude4bc:html-guide-kommandoen
   .mcp.json                ← MCP-konfiguration (BC MCP Server m.fl.)
   CLAUDE.md                ← Fælles Claude Code kontekst
   update-claude4bc.ps1     ← Opdatér submodulet til seneste version (PowerShell)
 ```
+
+## Kom godt i gang
+
+> 🚀 **Start her — komplet miljøopsætning:** [BC Dev Setup Guide](docs/bc-dev-setup-guide.html) er en omfattende guide til at sætte hele BC-udviklingsmiljøet op (MCP-servere, AL-LSP, BC MCP OAuth, hooks, Claude Code i AL-Go-pipelines og token-optimering) — med interaktivt vars-panel og setup-checkliste. `docs/Sådan anvendes Html guide.html` dækker derimod kun selve `/claude4bc:html-guide`-kommandoen.
+
+Værktøjet er et delt git-submodul, der virker som et **Claude Code-plugin** — du skal derfor **ikke kopiere filer manuelt**. Følg de to trin herunder, så er du i gang; resten af opsætningen (initialisér site, brandfarver, byg guides) er beskrevet i den fulde vejledning.
+
+1. **Tilføj submodulet** under `.claude/skills/` i dit projekt:
+
+   ```bash
+   git submodule add https://github.com/pkretzmann/Claude4BC.git .claude/skills/claude4bc
+   ```
+
+2. **Genstart Claude Code.** Mappen indeholder en `plugin.json`, så den loades automatisk som pluginnet `claude4bc`, og kommandoerne `/claude4bc:…` dukker op i listen over slash-kommandoer.
+
+> 📖 **Fuld vejledning:** Se [Sådan anvendes Html guide](docs/Sådan%20anvendes%20Html%20guide.html) — afsnit **»4 · Kom i gang i et nyt projekt«** gennemgår de resterende trin (`/init-website`, `/create-css`, `/html-guide`, `/update-website`) samt forskellen på submodul og plugin.
+
+---
 
 ## Commands
 
@@ -106,6 +126,22 @@ Initialisér GitHub Actions-workflowen `.github/workflows/DeployDocsWebsite.yaml
 ```
 
 Idempotent — findes workflowen, vises forskellen og du spørges før overskrivning. Husk bagefter at sætte **Settings → Pages → Source = »GitHub Actions«** i repoet. Selve `.website`-indholdet dannes af `/init-website`, `/html-guide` og `/update-website`.
+
+---
+
+## MCP-servere
+
+`.mcp.json` indeholder tre MCP-servere, der loades som plugin-MCP når Claude4BC tilføjes som submodul (med per-server-godkendelse):
+
+- **`ado`** — Azure DevOps MCP Server til arbejde med work items, sprints, test plans og søgning.
+- **`al-mcp`** — AL Dependency MCP Server (`altool`) til BC symbol-opslag i projektets `.alpackages`.
+- **`bc-mcp`** — BC MCP Server (proxy) til live BC-data fra et BC-miljø.
+
+> ⚠️ **Vigtigt:** De tre servere i `.mcp.json` er **kun eksempler** på, hvordan opsætningen kan se ud. Værdierne (organisation, stier, `TenantId`, `ClientId`, `Environment`, `Company` m.fl.) peger på ét konkret miljø og **skal rettes til for det enkelte projekt**, før de virker. Tilpas bl.a.:
+>
+> - `ado`: organisationsnavnet (`Kretzmann`) og `AZURE_DEVOPS_PAT` (sættes som miljøvariabel).
+> - `al-mcp`: stierne til projektmappen og `--packagecachepath` (`.alpackages`).
+> - `bc-mcp`: stien til `BcMCPProxy.exe` samt `TenantId`, `ClientId`, `Environment`, `Company` og `ConfigurationName`.
 
 ---
 

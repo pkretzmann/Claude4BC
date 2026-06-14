@@ -9,6 +9,22 @@
         "env": {
           "AZURE_DEVOPS_PAT": "${AZURE_DEVOPS_PAT}"
         }
+      },
+      "al-mcp": {
+        "command": "altool",
+        "args": ["launchmcpserver", "--transport", "stdio",
+          "C:\\AL\\Toggl\\Toggl",
+          "--packagecachepath", "C:\\AL\\Toggl\\Toggl\\.alpackages"]
+      },
+      "bc-mcp": {
+        "command": "C:\\AL\\BcMCPProxy\\bin\\publish\\BcMCPProxy.exe",
+        "args": [
+          "--TenantId",    "0476380d-1ce8-456a-9996-f8ce7135f7b1",
+          "--ClientId",    "ecfc827b-10b7-4f2d-baa9-d00492801276",
+          "--Environment",        "Sandbox",
+          "--Company",            "bb5b5c61-df6c-ed11-81b8-6045bd8e58dd",
+          "--ConfigurationName",  "MCP Demo"
+        ]
       }
     }
 }

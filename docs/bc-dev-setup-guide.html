@@ -1,0 +1,1787 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BC Dev Setup Guide 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f5efe3;--bg2:#faf6ec;--bg3:#ebe3d1;--border:#c9b896;--border2:#a89878;--navy:#3d4a2a;--blue:#5a6b3a;--blue2:#7a8a52;--teal:#8a7a4e;--green:#6b7d4e;--amber:#c2654a;--amber2:#a8533a;--red:#a83a2a;--text:#2a2a1f;--text2:#4a4a35;--text3:#6b6850;--text4:#8a8770;--mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Sans',sans-serif;--radius:4px;--shadow:0 1px 3px rgba(61,74,42,0.1),0 1px 2px rgba(61,74,42,0.06);--shadow2:0 4px 6px rgba(61,74,42,0.08),0 10px 15px rgba(61,74,42,0.1)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14px;line-height:1.6}
+header{background:linear-gradient(135deg,#2a3520 0%,#3d4a2a 55%,#5a6b3a 100%);color:white;padding:2.5rem 2rem 2rem;position:relative;overflow:hidden}
+header::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#c2654a 0%,#a8533a 50%,#6b7d4e 100%)}
+.header-inner{max-width:960px;margin:0 auto;display:flex;justify-content:space-between;align-items:flex-start;gap:2rem;flex-wrap:wrap}
+.header-logo{font-family:var(--mono);font-size:.7rem;color:rgba(255,255,255,.55);letter-spacing:.12em;text-transform:uppercase;margin-bottom:.6rem}
+h1{font-size:1.75rem;font-weight:700;letter-spacing:-.02em;line-height:1.15;color:#fff}
+h1 .sub{display:block;font-size:1rem;font-weight:300;color:rgba(255,255,255,.7);margin-top:.2rem;letter-spacing:0}
+.header-meta{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:1rem}
+.pill{display:inline-flex;align-items:center;gap:.3rem;padding:.25rem .75rem;border-radius:20px;font-size:.68rem;font-weight:600;letter-spacing:.04em;font-family:var(--mono)}
+.pill-blue{background:rgba(138,122,78,.3);color:#e8dcc0;border:1px solid rgba(138,122,78,.5)}
+.pill-green{background:rgba(194,101,74,.3);color:#f0c4b0;border:1px solid rgba(194,101,74,.5)}
+.pill-teal{background:rgba(107,125,78,.3);color:#c8d4a8;border:1px solid rgba(107,125,78,.5)}
+.pill-amber{background:rgba(168,83,58,.35);color:#f5d4c0;border:1px solid rgba(168,83,58,.55)}
+.header-right{text-align:right;font-family:var(--mono);font-size:.68rem;color:rgba(255,255,255,.45);line-height:1.8}
+nav{background:#2a3520;padding:0;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(26,47,94,.2)}
+.nav-wrap{max-width:960px;margin:0 auto;position:relative}
+.nav-inner{display:flex;align-items:center;overflow-x:auto;scrollbar-width:thin;scrollbar-color:#5a6b3a #2a3520;padding:0 2rem;scroll-behavior:smooth}
+.nav-inner::-webkit-scrollbar{height:4px;background:#2a3520}
+.nav-inner::-webkit-scrollbar-thumb{background:#5a6b3a;border-radius:2px}
+.nav-inner::-webkit-scrollbar-thumb:hover{background:#7a8a52}
+.nav-fade-l,.nav-fade-r{position:absolute;top:0;bottom:0;width:32px;pointer-events:none;z-index:2;opacity:0;transition:opacity .2s}
+.nav-fade-l{left:0;background:linear-gradient(90deg,#2a3520 0%,rgba(42,53,32,0) 100%)}
+.nav-fade-r{right:0;background:linear-gradient(270deg,#2a3520 0%,rgba(42,53,32,0) 100%)}
+.nav-fade-l.visible,.nav-fade-r.visible{opacity:1}
+.nav-arrow{position:absolute;top:50%;transform:translateY(-50%);width:24px;height:24px;background:#3d4a2a;border:1px solid #5a6b3a;color:#f0c4b0;cursor:pointer;border-radius:50%;display:none;align-items:center;justify-content:center;font-size:.85rem;line-height:1;z-index:3;font-family:var(--mono);padding:0}
+.nav-arrow:hover{background:#5a6b3a}
+.nav-arrow.visible{display:flex}
+.nav-arrow-l{left:4px}
+.nav-arrow-r{right:4px}
+nav a{color:rgba(255,255,255,.55);text-decoration:none;font-family:var(--mono);font-size:.66rem;letter-spacing:.04em;padding:.85rem .7rem;white-space:nowrap;border-bottom:2px solid transparent;transition:all .15s;display:block;flex-shrink:0}
+nav a:hover{color:#fff;border-bottom-color:#7a8a52}
+nav a.active{color:#fff;border-bottom-color:#c2654a}
+main{max-width:960px;margin:0 auto;padding:2rem}
+.vars-panel{background:var(--bg2);border:1px solid var(--border2);border-left:4px solid #c2654a;border-radius:var(--radius);box-shadow:var(--shadow2);margin-bottom:2.5rem;overflow:hidden}
+.vars-header{background:linear-gradient(90deg,#3d4a2a 0%,#5a6b3a 100%);border-bottom:3px solid #c2654a;padding:.9rem 1.25rem;display:flex;align-items:center;justify-content:space-between;cursor:pointer}
+.vars-chevron{display:inline-block;color:rgba(255,255,255,.8);font-size:.7rem;transition:transform .2s}
+.vars-panel.collapsed .vars-chevron{transform:rotate(-90deg)}
+.vars-panel.collapsed .vars-header{border-bottom-width:0}
+.vars-panel.collapsed .vars-grid,.vars-panel.collapsed .vars-banner{display:none !important}
+.vars-header-title{color:white;font-weight:700;font-size:.9rem;display:flex;align-items:center;gap:.6rem}
+.vars-header-sub{font-family:var(--mono);font-size:.65rem;color:rgba(255,255,255,.75);margin-top:.1rem}
+.vars-save-btn{background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.4);color:white;padding:.4rem 1rem;border-radius:4px;font-family:var(--mono);font-size:.7rem;cursor:pointer;transition:all .15s;font-weight:600}
+.vars-save-btn:hover{background:rgba(255,255,255,.35)}
+.vars-save-btn.saved{background:rgba(107,125,78,.7);border-color:rgba(107,125,78,.9)}
+.vars-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr))}
+.var-row{padding:.85rem 1.25rem;border-bottom:1px solid var(--bg3);border-right:1px solid var(--bg3);display:flex;flex-direction:column;gap:.35rem}
+.var-label{font-family:var(--mono);font-size:.65rem;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;display:flex;align-items:center;gap:.4rem}
+.var-key{background:#f0e4cc;color:#a8533a;padding:.05rem .4rem;border-radius:3px;font-size:.65rem;border:1px solid #d4b896}
+.var-input{font-family:var(--mono);font-size:.8rem;color:var(--text);background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:.45rem .65rem;width:100%;transition:all .15s}
+.var-input:focus{outline:none;border-color:#c2654a;background:#faf6ec;box-shadow:0 0 0 3px rgba(194,101,74,.18)}
+.var-hint{font-size:.68rem;color:var(--text4);font-style:italic}
+.vars-banner{background:#f5e8dc;border-top:1px solid #c2654a;padding:.6rem 1.25rem;font-size:.75rem;color:#a8533a;font-family:var(--mono);display:none;align-items:center;gap:.5rem}
+.vars-banner.visible{display:flex}
+section{margin-bottom:2.5rem}
+.section-head{display:flex;align-items:center;gap:.85rem;margin-bottom:1.25rem;padding-bottom:.75rem;border-bottom:2px solid var(--border)}
+.step-badge{background:var(--navy);color:white;font-family:var(--mono);font-size:.65rem;font-weight:600;letter-spacing:.06em;padding:.3rem .6rem;border-radius:4px;flex-shrink:0}
+.step-badge.green{background:var(--green)}
+.step-badge.blue{background:#5a6b3a}
+.step-badge.teal{background:var(--teal)}
+.step-badge.amber{background:#c2654a;color:#faf6ec}
+h2{font-size:1.1rem;font-weight:700;color:var(--navy);letter-spacing:-.01em}
+h3{font-size:.72rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin:1.25rem 0 .6rem}
+h3:first-child{margin-top:0}
+p{color:var(--text2);margin-bottom:.6rem;font-size:.88rem}
+p strong{color:var(--text);font-weight:600}
+a{color:var(--blue)}
+.alert{border-radius:var(--radius);padding:.85rem 1.1rem;margin-bottom:1rem;font-size:.83rem;display:flex;gap:.75rem;align-items:flex-start}
+.alert-icon{font-size:1rem;flex-shrink:0;margin-top:.05rem}
+.alert-body{flex:1}
+.alert-title{font-weight:700;margin-bottom:.2rem}
+.alert-new{background:#f5e8dc;border:1px solid #d4a890;border-left:3px solid #c2654a}
+.alert-new .alert-title{color:#a8533a}
+.alert-new .alert-body{color:#6a3520}
+.alert-tip{background:#ebe8d8;border:1px solid #a89878;border-left:3px solid #5a6b3a}
+.alert-tip .alert-title{color:#3d4a2a}
+.alert-tip .alert-body{color:#4a4a35}
+.alert-warn{background:#f0dcc8;border:1px solid #c9a48a;border-left:3px solid #a8533a}
+.alert-warn .alert-title{color:#7a2818}
+.alert-warn .alert-body{color:#5a1a10}
+.code-block{background:#2a3520;border-radius:var(--radius);margin:.6rem 0 1.25rem;box-shadow:var(--shadow);overflow:hidden}
+.code-header{background:rgba(255,255,255,.05);border-bottom:1px solid rgba(255,255,255,.08);padding:.5rem 1rem;display:flex;justify-content:space-between;align-items:center;gap:1rem}
+.code-title{font-family:var(--mono);font-size:.65rem;color:rgba(255,255,255,.45);letter-spacing:.06em}
+.copy-btn{font-family:var(--mono);font-size:.65rem;color:rgba(255,255,255,.45);background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:3px;padding:.2rem .65rem;cursor:pointer;transition:all .15s;flex-shrink:0}
+.copy-btn:hover{color:#fff;background:rgba(255,255,255,.15)}
+pre{padding:1rem 1.1rem;overflow-x:auto;font-family:var(--mono);font-size:.78rem;line-height:1.75;color:#e8dcc0}
+.c{color:#7a8568}.k{color:#e8c882}.s{color:#c8d4a8}.kw{color:#e8a878}.cm{color:#c8b8a0}
+.var-ref{color:#f0c4b0;font-weight:600;background:rgba(194,101,74,.18);border:1px solid rgba(194,101,74,.4);border-radius:2px;padding:0 4px}
+code .var-ref{color:inherit;background:transparent;border:0;padding:0}
+.var-hint .var-ref{color:#7a2818;background:transparent;border:0;padding:0;word-break:break-all}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
+@media(max-width:600px){.grid2{grid-template-columns:1fr}}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1.1rem;box-shadow:var(--shadow)}
+.card-title{font-weight:700;font-size:.85rem;color:var(--navy);margin-bottom:.4rem;display:flex;align-items:center;gap:.5rem}
+.card p{font-size:.82rem;margin:0;color:var(--text2)}
+.tbl-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin:.6rem 0 1.25rem;box-shadow:var(--shadow)}
+table{width:100%;border-collapse:collapse;font-size:.82rem}
+th{background:#3d4a2a;color:rgba(250,246,236,.9);text-align:left;font-family:var(--mono);font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;padding:.6rem .9rem;font-weight:500}
+td{padding:.6rem .9rem;border-bottom:1px solid var(--bg3);color:var(--text2);vertical-align:top}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--bg3)}
+td:first-child{font-family:var(--mono);font-size:.75rem;color:#a8533a;font-weight:600}
+.tag{display:inline-flex;align-items:center;padding:.15rem .55rem;border-radius:3px;font-family:var(--mono);font-size:.62rem;font-weight:600;letter-spacing:.04em}
+.tag-green{background:#e8d8b8;color:#5a4a2a;border:1px solid #c9b896}
+.tag-blue{background:#d8d4b8;color:#3d4a2a;border:1px solid #a89878}
+.tag-amber{background:#f0d8c4;color:#a8533a;border:1px solid #d4a890}
+.tag-navy{background:#d4cdb8;color:#3d4a2a;border:1px solid #a89878}
+.filetree{background:#2a3520;border-radius:var(--radius);padding:1rem 1.1rem;font-family:var(--mono);font-size:.78rem;line-height:2;color:#c8d8f8;box-shadow:var(--shadow)}
+.filetree .dir{color:#c8b8a0}
+.filetree .file{color:#e8dcc0}
+.filetree .note{color:#7a8568}
+.filetree .new{color:#f0c4b0}
+.checklist{list-style:none;display:flex;flex-direction:column;gap:.5rem}
+.checklist li{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:.75rem 1rem;display:flex;gap:.85rem;align-items:flex-start;box-shadow:var(--shadow);cursor:pointer;transition:border-color .15s}
+.checklist li:hover{border-color:#7a8a52}
+.checklist li.done{background:#ebe8d8;border-color:#c9b896;border-left:3px solid #6b7d4e}
+.check-box{width:20px;height:20px;border:2px solid var(--border2);border-radius:4px;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;transition:all .15s;font-size:.65rem}
+.checklist li.done .check-box{background:#6b7d4e;border-color:#6b7d4e;color:#faf6ec}
+.check-content strong{display:block;font-size:.88rem;color:var(--navy);margin-bottom:.15rem}
+.check-content .sub{font-size:.75rem;color:var(--text3);font-family:var(--mono)}
+code{background:#f0e4cc;border:1px solid #d4b896;border-radius:3px;padding:.1em .4em;font-family:var(--mono);font-size:.8em;color:#a8533a}
+footer{border-top:3px solid #2a3520;border-bottom:none;background:var(--bg2);box-shadow:inset 0 3px 0 #c2654a;background:var(--bg2);padding:1.25rem 2rem;text-align:center;font-family:var(--mono);font-size:.68rem;color:var(--text3)}
+footer a{color:var(--blue);text-decoration:none}
+footer a:hover{text-decoration:underline}
+/* INTRO */
+.intro{background:var(--bg2);border:1px solid var(--border);border-left:4px solid #6b7d4e;border-radius:var(--radius);padding:1.5rem 1.75rem;margin-bottom:2rem;box-shadow:var(--shadow)}
+.intro-eyebrow{font-family:var(--mono);font-size:.65rem;color:#a8533a;letter-spacing:.12em;text-transform:uppercase;margin-bottom:.5rem;font-weight:600}
+.intro h2{font-size:1.25rem;color:var(--navy);margin-bottom:.75rem;font-weight:700;letter-spacing:-.01em}
+.intro p{font-size:.92rem;color:var(--text2);margin-bottom:.65rem;line-height:1.65}
+.intro p:last-child{margin-bottom:0}
+.intro p strong{color:var(--text)}
+.intro-aim{background:#ebe8d8;border-left:3px solid #5a6b3a;padding:.75rem 1rem;margin-top:1rem;border-radius:3px;font-size:.85rem;color:#3d4a2a;font-style:italic}
+/* ACCORDION */
+.concepts{margin-bottom:2.5rem}
+.concept{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:.5rem;box-shadow:var(--shadow);overflow:hidden;transition:border-color .15s}
+.concept:hover{border-color:#7a8a52}
+.concept[open]{border-color:#6b7d4e;border-left:4px solid #c2654a}
+.concept summary{cursor:pointer;padding:.85rem 1.1rem;display:flex;align-items:center;gap:.85rem;font-weight:600;font-size:.92rem;color:var(--navy);list-style:none;user-select:none}
+.concept summary::-webkit-details-marker{display:none}
+.concept-icon{width:30px;height:30px;border-radius:6px;background:#3d4a2a;color:#faf6ec;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:.75rem;font-weight:700;flex-shrink:0}
+.concept-icon.tc{background:#c2654a}
+.concept-icon.sg{background:#6b7d4e}
+.concept-icon.ol{background:#5a6b3a}
+.concept-icon.br{background:#8a7a4e}
+.concept-icon.dk{background:#2a3520}
+.concept-title{flex:1}
+.concept-tag{font-family:var(--mono);font-size:.62rem;color:#a8533a;background:#f0e4cc;border:1px solid #d4b896;padding:.15rem .5rem;border-radius:3px;letter-spacing:.04em;text-transform:uppercase}
+.concept-arrow{font-size:.85rem;color:var(--text3);transition:transform .2s}
+.concept[open] .concept-arrow{transform:rotate(90deg)}
+.concept-body{padding:0 1.1rem 1.1rem 1.1rem;border-top:1px solid var(--bg3);margin-top:.25rem;padding-top:.85rem}
+.concept-body p{font-size:.85rem;color:var(--text2);margin-bottom:.6rem;line-height:1.65}
+.concept-body p:last-child{margin-bottom:0}
+.concept-body ul{margin:.5rem 0 .6rem 1.2rem;font-size:.85rem;color:var(--text2)}
+.concept-body ul li{margin-bottom:.25rem}
+.concept-body .relates{font-size:.75rem;color:var(--text3);font-style:italic;margin-top:.6rem;padding-top:.6rem;border-top:1px dashed var(--border)}
+.concept-body .relates strong{color:#a8533a;font-style:normal}
+.concept-body code{font-size:.78em}
+/* COMMAND TABLE */
+.cmd-table{background:#2a3520;border-radius:var(--radius);padding:1rem 1.25rem;box-shadow:var(--shadow);margin:.6rem 0 1.25rem;font-family:var(--mono);font-size:.78rem;line-height:1.9;color:#e8dcc0}
+.cmd-table .cmd-row{display:grid;grid-template-columns:160px 1fr;gap:1rem;padding:.2rem 0}
+.cmd-table .cmd-name{color:#f0c4b0;font-weight:600}
+.cmd-table .cmd-desc{color:#c8d4a8}
+.cmd-table .cmd-group{color:#7a8568;font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;margin:.75rem 0 .25rem;padding-top:.5rem;border-top:1px dashed #4a5535}
+.cmd-table .cmd-group:first-child{margin-top:0;padding-top:0;border-top:none}
+/* PHASE / CATEGORY */
+.cat-wrap{margin-left:auto;display:flex;gap:.4rem;flex-wrap:wrap}
+@media(max-width:600px){.cat-wrap{margin-left:0;width:100%}}
+.legend-grid{display:grid;grid-template-columns:1fr 1fr;gap:.85rem;margin-bottom:1rem}
+@media(max-width:600px){.legend-grid{grid-template-columns:1fr}}
+.legend-card{background:var(--bg2);border:1px solid var(--border);border-top:3px solid var(--border2);border-radius:var(--radius);padding:.9rem 1rem;box-shadow:var(--shadow)}
+.legend-card.c-once{border-top-color:#6b7d4e}
+.legend-card.c-proj{border-top-color:#c2654a}
+.legend-card.c-env{border-top-color:#8a7a4e}
+.legend-card.c-ref{border-top-color:#a89878}
+.legend-card h4{font-size:.78rem;color:var(--navy);margin-bottom:.5rem;display:flex;align-items:center;gap:.45rem;flex-wrap:wrap;font-weight:700}
+.legend-card ul{list-style:none;font-size:.77rem;color:var(--text2);line-height:1.6}
+.legend-card li{padding-left:.85rem;position:relative;margin-bottom:.12rem}
+.legend-card li::before{content:'\203A';position:absolute;left:0;color:var(--text4)}
+.legend-card .q{color:var(--text4);font-style:italic}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div>
+      <div class="header-logo">Internal Reference</div>
+      <h1>BC Developer Setup Guide
+        <span class="sub">Claude Code + Cursor + Official AL LSP &middot; Juni 2026</span>
+      </h1>
+      <div class="header-meta">
+        <span class="pill pill-green">&#10022; AL MCP Server &mdash; altool</span>
+        <span class="pill pill-teal">&#10022; BC MCP Server &mdash; BC 27.1+</span>
+        <span class="pill pill-blue">Agent Toolkit &mdash; BC 27.4+</span>
+        <span class="pill pill-amber">Windows On-prem &amp; Cloud</span>
+      </div>
+    </div>
+    <div class="header-right">
+      Opdateret: Juni 2026<br>
+      Stack: Claude Code + Cursor + AL<br>
+      Platform: Windows 11 / BC Cloud
+    </div>
+  </div>
+</header>
+
+<nav>
+  <div class="nav-wrap">
+    <div class="nav-fade-l" id="nav-fade-l"></div>
+    <button class="nav-arrow nav-arrow-l" id="nav-arrow-l" onclick="scrollNav(-200)" aria-label="Scroll venstre">&lsaquo;</button>
+    <div class="nav-inner" id="nav-inner">
+      <a href="#intro">Intro</a>
+      <a href="#phases">&#9633; Overblik</a>
+      <a href="#concepts">Begreber</a>
+      <a href="#vars">&#9881; Variabler</a>
+      <a href="#prereqs">1. Forudsætninger</a>
+      <a href="#al-lsp">2. AL Server</a>
+      <a href="#mcp">3. MCP</a>
+      <a href="#config">4. Config</a>
+      <a href="#skills">5. Skills</a>
+      <a href="#cursor">6. Cursor</a>
+      <a href="#commands">7. Commands</a>
+      <a href="#hooks">8. Hooks</a>
+      <a href="#oauth">9. OAuth</a>
+      <a href="#algo-ci">10. AL-Go CI</a>
+      <a href="#tokens">11. Tokens</a>
+      <a href="#checklist">&#10003; Checklist</a>
+    </div>
+    <div class="nav-fade-r" id="nav-fade-r"></div>
+    <button class="nav-arrow nav-arrow-r" id="nav-arrow-r" onclick="scrollNav(200)" aria-label="Scroll højre">&rsaquo;</button>
+  </div>
+</nav>
+
+<main>
+
+<section id="intro">
+  <div class="intro">
+    <div class="intro-eyebrow">Introduktion &middot; Læs først</div>
+    <h2>Formålet med denne guide</h2>
+    <p>Denne guide er en intern reference til at sætte et komplet, moderne Business Central udviklingsmiljø op fra bunden &mdash; med <strong>Claude Code</strong> og <strong>Cursor</strong> som primære værktøjer og de nye <strong>AL Development Tools</strong> (<code>altool</code>) som rygrad.</p>
+    <p>Guiden er målrettet en situation hvor maskinen er reset eller en ny BC-udvikler skal i gang: hvad skal installeres, i hvilken rækkefølge, hvor placeres konfigurationsfilerne, og hvordan kobler det hele sammen. Hver kodeblok kan kopieres direkte &mdash; udfyld dine egne værdier i <strong>Variabler</strong>-sektionen, så indsættes de automatisk i alle eksempler.</p>
+    <div class="intro-aim">Målet er en arbejdsstation hvor Claude Code har semantisk AL-forståelse, kan tale direkte med BC, kan committe til GitHub, og hvor Cursor er din editor med fuld AL-IntelliSense &mdash; alt sammen med konsistente projektregler og minimalt token-forbrug.</div>
+  </div>
+</section>
+
+<section id="phases">
+  <div class="section-head">
+    <div class="step-badge green">OVERBLIK</div>
+    <h2>Hvad gør du kun &eacute;n gang &mdash; og hvad gentages?</h2>
+  </div>
+  <p>Trinene falder i fire grupper. <strong>Engangs</strong>-trin sætter selve maskinen op og gælder alle projekter. <strong>Pr. projekt</strong>-trin gentager du for hvert nyt BC-repo. <strong>Pr. miljø</strong>-trin hører til en BC-tenant eller et environment. <strong>Reference</strong> er viden, ikke installation. Hver sektion herunder er mærket med sin gruppe.</p>
+  <div class="legend-grid">
+    <div class="legend-card c-once">
+      <h4><span class="tag tag-green">Engangs</span> Pr. maskine / bruger</h4>
+      <ul>
+        <li>Trin 1 &mdash; Node, Claude Code, altool i PATH</li>
+        <li>Trin 2 &mdash; AL server-bin&aelig;r (altool)</li>
+        <li>Trin 4 &mdash; <code>~/.claude.json</code> (user scope: github) + <code>settings.json</code></li>
+        <li>Trin 5 &mdash; Skills (genbruges p&aring; tv&aelig;rs)</li>
+        <li>Trin 6 &mdash; Cursor settings</li>
+        <li>Trin 8 &mdash; Hooks (globale)</li>
+      </ul>
+    </div>
+    <div class="legend-card c-proj">
+      <h4><span class="tag tag-amber">Pr. projekt</span> Hvert nyt repo</h4>
+      <ul>
+        <li>Trin 4 &mdash; CLAUDE.md + .cursorrules</li>
+        <li>Trin 4 &mdash; <code>.mcp.json</code> (project scope: al-mcp + bc-mcp)</li>
+        <li>Trin 10 &mdash; AL-Go workflows + repo-secrets</li>
+        <li><span class="q">git user.email pr. repo &mdash; kun ved multi-account</span></li>
+      </ul>
+    </div>
+    <div class="legend-card c-env">
+      <h4><span class="tag tag-navy">Pr. milj&oslash;</span> BC-tenant / environment</h4>
+      <ul>
+        <li>Trin 9 &mdash; Entra App Registration + consent <span class="q">(1&times; pr. tenant)</span></li>
+        <li>Trin 9 &mdash; .env: BC_TENANT / BC_ENVIRONMENT</li>
+        <li>Skift fx mellem Sandbox og Production</li>
+      </ul>
+    </div>
+    <div class="legend-card c-ref">
+      <h4><span class="tag tag-blue">Reference</span> Viden, ikke setup</h4>
+      <ul>
+        <li>Begreber</li>
+        <li>Trin 3 &mdash; MCP-oversigt</li>
+        <li>Trin 7 &mdash; Commands</li>
+        <li>Trin 11 &mdash; Token-optimering</li>
+      </ul>
+    </div>
+  </div>
+  <div class="alert alert-tip">
+    <div class="alert-icon">&#128161;</div>
+    <div class="alert-body">
+      <div class="alert-title">Uden multi-account er hele Trin 1 engangs</div>
+      Multi-account-delen (Trin 1D) er kun n&oslash;dvendig hvis du committer som flere git-identiteter. Bruger du kun &eacute;n konto, s&aelig;tter du <code>git config --global user.email "<span class="var-ref" data-var="GIT_EMAIL">peter@kretzmann.dk</span>"</code> &eacute;n gang &mdash; s&aring; er hele Trin 1 ren engangsops&aelig;tning, og du springer per-repo git-config over.
+    </div>
+  </div>
+</section>
+
+<section id="concepts" class="concepts">
+  <div class="section-head">
+    <div class="step-badge">BEGREBER</div>
+    <h2>Hvad er hvad? &mdash; klik for at folde ud</h2>
+    <span class="cat-wrap"><span class="tag tag-blue">Reference</span></span>
+  </div>
+
+  <details class="concept">
+    <summary>
+      <div class="concept-icon ol">LSP</div>
+      <div class="concept-title">AL LSP Server</div>
+      <span class="concept-tag">Sprogintelligenens</span>
+      <span class="concept-arrow">&rsaquo;</span>
+    </summary>
+    <div class="concept-body">
+      <p>LSP står for <strong>Language Server Protocol</strong> &mdash; en standard som Microsoft skabte, hvor en editor kommunikerer med en separat &quot;sprogserver&quot; for at få funktioner som go-to-definition, find-references, rename, completions og fejlmarkering. Selve sprogforståelsen bor i serveren, ikke i editoren.</p>
+      <p>AL LSP Server er motoren bag den intelligens der driver IntelliSense i VS Code's AL-extension. Den taler <strong>LSP</strong> over stdio (JSON-RPC) og giver fuld navigation: go-to-definition, find-references på tværs af projekter (resolver <code>internalsVisibleTo</code>/<code>propagateDependencies</code>), rename, completions og type hierarchy. Den kører som editorens sprog-host og er beregnet til editorer og LSP-kompatible agenter.</p>
+      <p>Claude Code arbejder over <strong>MCP</strong>. Via søster-serveren <code>altool launchmcpserver</code> (begrebet <strong>AL MCP</strong> nedenfor) får Claude Code <em>opgave-værktøjer</em> &mdash; <code>al_build</code>, <code>al_compile</code>, <code>al_publish</code>, <code>al_symbolsearch</code> og <code>al_getdiagnostics</code>. Det er stærkere end grep til symbol-søgning og fejl-tjek. Den fulde find-references/rename bor i LSP-serveren og kan kobles på Claude Code via en LSP-bro.</p>
+      <div class="relates"><strong>Relateret:</strong> <code>launchmcpserver</code> registreres i <code>.claude.json</code> til Claude Code &mdash; se sektion 2 og 4.</div>
+    </div>
+  </details>
+
+  <details class="concept">
+    <summary>
+      <div class="concept-icon tc">MCP</div>
+      <div class="concept-title">MCP Server (Model Context Protocol)</div>
+      <span class="concept-tag">Bro til systemer</span>
+      <span class="concept-arrow">&rsaquo;</span>
+    </summary>
+    <div class="concept-body">
+      <p>MCP er en åben protokol som Anthropic publicerede i slutningen af 2024, der lader AI-assistenter (som Claude) tale med eksterne systemer via en standardiseret JSON-RPC interface over stdio eller HTTP. Tænk på det som &quot;USB-porten for AI-værktøjer&quot;.</p>
+      <p>En MCP server <strong>eksponerer værktøjer og data</strong> som Claude kan kalde. F.eks.:</p>
+      <ul>
+        <li><strong>AL LSP MCP</strong> &rarr; AL kode-intelligenens</li>
+        <li><strong>BC MCP Server</strong> &rarr; direkte adgang til BC's API og data (BC 27.1+, public preview)</li>
+        <li><strong>GitHub MCP</strong> &rarr; repo management, PR reviews, AL-Go pipelines</li>
+        <li><strong>Filesystem MCP</strong> &rarr; lokale filer uden for projektmappen</li>
+      </ul>
+      <p>Du registrerer hvilke MCP-servers Claude må bruge i &eacute;t af tre <strong>scopes</strong>: <em>user</em> (<code>~/.claude.json</code>, alle projekter), <em>project</em> (<code>.mcp.json</code> i projektroden, kan checkes ind) eller <em>local</em> (privat pr. projekt). Herefter kan Claude kalde dem automatisk når en opgave kræver det &mdash; se Trin 4 for den konkrete opdeling.</p>
+      <div class="relates"><strong>Relateret:</strong> Se sektion 3 for prioriteret liste af MCP servers og sektion 4 for konkret JSON-konfiguration.</div>
+    </div>
+  </details>
+
+  <details class="concept">
+    <summary>
+      <div class="concept-icon sg">SKL</div>
+      <div class="concept-title">Skill</div>
+      <span class="concept-tag">Pakket ekspertise</span>
+      <span class="concept-arrow">&rsaquo;</span>
+    </summary>
+    <div class="concept-body">
+      <p>En <strong>Skill</strong> er en mappe med en <code>SKILL.md</code> fil plus eventuelle scripts og reference-data. Mappen pakker en specifik ekspertise &mdash; f.eks. &quot;AL-kodestil&quot;, &quot;vendor-matching&quot; eller &quot;OIOUBL schematron-regler&quot; &mdash; så Claude kan loade præcis den viden når opgaven kræver det.</p>
+      <p>Det smarte: Claude loader <strong>kun de filer der er relevante</strong> for den aktuelle opgave. Du kan have et dusin reference-filer i en skill, men hvis opgaven kun kræver vendor-schemaet, læser Claude bare den ene fil. Det holder token-forbruget nede.</p>
+      <p>SKILL.md har frontmatter med <code>name</code> og <code>description</code> &mdash; det er beskrivelsen Claude bruger til at vurdere om skill'en er relevant for en given prompt.</p>
+      <div class="relates"><strong>Relateret:</strong> Skills bor i <code>~/.claude/skills/</code> &mdash; se sektion 5 for struktur og eksempel.</div>
+    </div>
+  </details>
+
+  <details class="concept">
+    <summary>
+      <div class="concept-icon br">SUB</div>
+      <div class="concept-title">Subagent</div>
+      <span class="concept-tag">Isoleret kontekst</span>
+      <span class="concept-arrow">&rsaquo;</span>
+    </summary>
+    <div class="concept-body">
+      <p>En <strong>Subagent</strong> er en Claude-instans der kører i sin egen isolerede kontekst. Den modtager en specifik opgave fra hovedagenten, løser den, og returnerer kun resultatet &mdash; ikke al sin tankegang og mellemregninger.</p>
+      <p>Det er værdifuldt fordi det <strong>holder hovedkonteksten ren</strong>. Hvis hovedagenten f.eks. arbejder på AL-kode og du beder den parse 50 OCR-fakturaer, ville al den OCR-data forurene konteksten. En subagent kan klare OCR-parsingen og kun rapportere &quot;50 fakturaer behandlet, 47 matched, 3 kræver manuel review&quot; tilbage.</p>
+      <p>I praksis: i <code>~/.claude.json</code> kan du sætte <code>CLAUDE_CODE_SUBAGENT_MODEL</code> til <code>haiku</code> &mdash; så kører subagenter på en billig, hurtig model mens hovedagenten bliver på Opus/Sonnet. Det passer til subagenternes grovarbejde (søg, parse, opsummér) og holder token-forbruget nede. <strong>Bemærk:</strong> denne env-variabel har højeste prioritet og tvinger <em>alle</em> subagenter over på den model &mdash; vil du have finkornet styring (fx en review-agent på Opus), så lad den være usat og sæt i stedet <code>model:</code> pr. agent.</p>
+      <div class="relates"><strong>Relateret:</strong> Bruges automatisk af Claude Code når den opdager parallelle eller isolerbare opgaver.</div>
+    </div>
+  </details>
+
+  <details class="concept">
+    <summary>
+      <div class="concept-icon dk">.md</div>
+      <div class="concept-title">CLAUDE.md &amp; .cursorrules</div>
+      <span class="concept-tag">Projektregler</span>
+      <span class="concept-arrow">&rsaquo;</span>
+    </summary>
+    <div class="concept-body">
+      <p><strong>CLAUDE.md</strong> er en markdown-fil Claude Code automatisk læser ved start af en session i et projekt. Den indeholder projektets &quot;husregler&quot;: kodestil, navngivningskonventioner, kendte afhængigheder, foretrukne mønstre. Den bor i <code>{PROJEKT}/.claude/CLAUDE.md</code>.</p>
+      <p><strong>.cursorrules</strong> er det tilsvarende for Cursor's Composer og Chat &mdash; samme idé, anden fil. Den bor i projektets rod.</p>
+      <p>De to filer kan have meget af det samme indhold, men det er smartest at holde dem som <strong>kilden til sandheden for hver editor</strong>. Skal du sikre konsistens på tværs, kan du symlinke dem eller have en master <code>RULES.md</code> begge læser fra.</p>
+      <div class="relates"><strong>Relateret:</strong> Se eksempler i sektion 4.</div>
+    </div>
+  </details>
+
+  <details class="concept">
+    <summary>
+      <div class="concept-icon ol">BCA</div>
+      <div class="concept-title">BC Agent &amp; AI Development Toolkit</div>
+      <span class="concept-tag">BC 27.4+</span>
+      <span class="concept-arrow">&rsaquo;</span>
+    </summary>
+    <div class="concept-body">
+      <p>I februar 2026 åbnede Microsoft en ny vej til at bygge AI-agenter direkte i Business Central: <strong>AI Development Toolkit</strong>. Du kan designe en agent i BC's sandbox-UI uden at skrive AL &mdash; teste prompts mod live data, validere adfærd, og når du er klar, eksportere til en AL-implementation.</p>
+      <p>Det er <em>en anden ting</em> end Claude Code's subagents &mdash; BC-agenten kører <strong>inde i BC</strong> og bruger Microsoft's egne AI-modeller (GPT-5.3-chat fra maj 2026). Den er relevant for end-user-features som &quot;Payables Agent&quot; eller en custom vendor-/faktura-agent.</p>
+      <p>Claude Code er din udviklerassistant <em>uden for</em> BC &mdash; BC Agent er en feature du <em>bygger ind i</em> BC til slutbrugerne.</p>
+      <div class="relates"><strong>Relateret:</strong> Se sektion 5, walkthrough-videoer på <a href="https://aka.ms/BCDesignAgents">aka.ms/BCDesignAgents</a>.</div>
+    </div>
+  </details>
+
+  <details class="concept">
+    <summary>
+      <div class="concept-icon tc">PC</div>
+      <div class="concept-title">Prompt Caching</div>
+      <span class="concept-tag">Token-besparelse</span>
+      <span class="concept-arrow">&rsaquo;</span>
+    </summary>
+    <div class="concept-body">
+      <p>Når du sender en stor blok statisk kontekst til Claude (f.eks. en vendor-liste på 5000 linjer, et AL-schema, eller et OCR-faktura-JSON-spec), kan du markere den med <code>cache_control: ephemeral</code>. Anthropic gemmer da en intern repræsentation af blokken i 5 minutter.</p>
+      <p>Næste gang du sender en prompt med samme cache-markerede blok, bruger Claude den cachede version &mdash; det <strong>koster ~10% af normal pris</strong> for den del af konteksten. På gentagne kald med store statiske blokke kan du spare op til 82%.</p>
+      <p>Praktisk eksempel: din vendor-agent loader 5000 kreditorer hver gang den behandler en faktura. Cache den &mdash; så koster faktura nr. 2 til 100 næsten ingenting på vendor-list-konteksten.</p>
+      <div class="relates"><strong>Relateret:</strong> Se sektion 8 for konkrete optimerings-mønstre.</div>
+    </div>
+  </details>
+
+  <details class="concept">
+    <summary>
+      <div class="concept-icon sg">HK</div>
+      <div class="concept-title">Hooks</div>
+      <span class="concept-tag">Automatisering</span>
+      <span class="concept-arrow">&rsaquo;</span>
+    </summary>
+    <div class="concept-body">
+      <p>Hooks er <strong>shell-kommandoer der k&oslash;rer automatisk</strong> p&aring; bestemte events i Claude Code &mdash; f&oslash;r en tool-call, efter en fil-redigering, ved session-start. Det giver dig kontrol over kvalitet og sikkerhed uden at stole p&aring; at Claude husker det selv.</p>
+      <p>Eksempler: auto-format AL-filer efter hver redigering, bloker farlige kommandoer som <code>Uninstall-NAVApp</code> p&aring; produktion, log token-spend efter hver session, eller cache vendor-liste ved session-start.</p>
+      <p>Hooks konfigureres i <code>~/.claude/settings.json</code> under en <code>hooks</code> n&oslash;gle med event-typer som <code>PreToolUse</code>, <code>PostToolUse</code>, <code>SessionStart</code> og <code>Stop</code>.</p>
+      <div class="relates"><strong>Relateret:</strong> Se sektion 8 for konfiguration og BC-specifikke eksempler.</div>
+    </div>
+  </details>
+
+  <details class="concept">
+    <summary>
+      <div class="concept-icon ol">OAU</div>
+      <div class="concept-title">BC OAuth &amp; Entra App Registration</div>
+      <span class="concept-tag">Authentication</span>
+      <span class="concept-arrow">&rsaquo;</span>
+    </summary>
+    <div class="concept-body">
+      <p>BC's API'er (og dermed BC MCP Server) bruger <strong>OAuth 2.0 mod Microsoft Entra</strong> &mdash; samme model som AL-Go for GitHub og BC Cloud API'er. Det betyder en engangs-opsetning men nogle gotchas omkring token-refresh.</p>
+      <p>De to flows du vil m&oslash;de:</p>
+      <ul>
+        <li><strong>Client Credentials</strong> &mdash; server-to-server, refresh via secret. Anbefales til BCMCPProxy.</li>
+        <li><strong>Authorization Code</strong> &mdash; interaktiv brugerlogin, refresh token holder 90 dage.</li>
+      </ul>
+      <p>Access tokens udl&oslash;ber efter 1 time &mdash; BCMCPProxy h&aring;ndterer refresh automatisk hvis konfigureret korrekt. N&aring;r du ser <code>401 efter 1 time</code> er det altid en refresh-fejl.</p>
+      <div class="relates"><strong>Relateret:</strong> Sektion 9 har step-by-step setup og fejlfindings-tabel for almindelige AADSTS-fejlkoder.</div>
+    </div>
+  </details>
+
+  <details class="concept">
+    <summary>
+      <div class="concept-icon br">CI</div>
+      <div class="concept-title">Claude i AL-Go pipelines</div>
+      <span class="concept-tag">CI/CD</span>
+      <span class="concept-arrow">&rsaquo;</span>
+    </summary>
+    <div class="concept-body">
+      <p><code>claude --print</code> (eller <code>-p</code>) g&oslash;r at Claude kan k&oslash;re non-interaktivt i CI/CD. Du sender en prompt, Claude udf&oslash;rer opgaven, skriver til stdout, og afslutter &mdash; ingen interaktivitet, ingen permission-prompts.</p>
+      <p>Det &aring;bner for AI-augmenterede AL-Go workflows: automatiske code reviews p&aring; PR'er, oversaettelse af nye xlf-labels, breaking-change analyse n&aring;r BC major-versioner skifter, og auto-genererede release notes baseret p&aring; commits.</p>
+      <p>Omkostninger styres ved model-routing: Haiku til oversaettelse, Sonnet til reviews, Opus kun til kritisk analyse. Et typisk PR-review ligger p&aring; 2-15 cents.</p>
+      <div class="relates"><strong>Relateret:</strong> Sektion 10 har tre f&aelig;rdige workflow-eksempler du kan kopiere direkte.</div>
+    </div>
+  </details>
+</section>
+
+<section id="vars">
+  <div class="vars-panel" id="vars-panel">
+    <div class="vars-header" onclick="toggleVars(event)">
+      <div>
+        <div class="vars-header-title"><span class="vars-chevron">&#9662;</span>&#9998; Konfigurationsvariabler</div>
+        <div class="vars-header-sub">Udfyld dine værdier &mdash; alle kodeeksempler opdateres automatisk</div>
+      </div>
+      <button class="vars-save-btn" id="save-btn" onclick="saveVars()">Gem &amp; Anvend</button>
+    </div>
+    <div class="vars-grid">
+      <div class="var-row">
+        <div class="var-label">Projekt-sti <span class="var-key">PROJECT_PATH</span></div>
+        <input class="var-input" id="v-projpath" type="text" placeholder="C:\AL\MyProject" value="C:\AL\MyProject">
+        <div class="var-hint">Rodmappen til dit BC AL-projekt</div>
+      </div>
+      <div class="var-row">
+        <div class="var-label">AL extension version <span class="var-key">AL_VERSION</span></div>
+        <input class="var-input" id="v-alver" type="text" placeholder="18.0.2293710" value="18.0.2293710">
+        <div class="var-hint">Get-ChildItem ~\.vscode\extensions\ms-dynamics-smb.al-*</div>
+      </div>
+      <div class="var-row">
+        <div class="var-label">BC Base URL <span class="var-key">BC_BASE_URL</span></div>
+        <input class="var-input" id="v-bcbase" type="text" placeholder="https://businesscentral.dynamics.com" value="https://businesscentral.dynamics.com">
+        <div class="var-hint">Fast for BC Cloud &mdash; Microsoft-login afgør tenant</div>
+      </div>
+      <div class="var-row">
+        <div class="var-label">BC Tenant <span class="var-key">BC_TENANT</span></div>
+        <input class="var-input" id="v-bctenant" type="text" placeholder="kretzmann.dk" value="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx">
+        <div class="var-hint">Domæne (kretzmann.dk) eller tenant-id (GUID)</div>
+      </div>
+      <div class="var-row">
+        <div class="var-label">BC Environment <span class="var-key">BC_ENVIRONMENT</span></div>
+        <input class="var-input" id="v-bcenv" type="text" placeholder="Sandbox" value="Sandbox">
+        <div class="var-hint">F.eks. Sandbox eller Production &mdash; fuld URL: <span class="var-ref" data-var="BC_URL">https://businesscentral.dynamics.com/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/Sandbox</span></div>
+      </div>
+      <div class="var-row">
+        <div class="var-label">BC firmanavn <span class="var-key">BC_COMPANY</span></div>
+        <input class="var-input" id="v-bccompany" type="text" placeholder="CRONUS Danmark A/S" value="">
+        <div class="var-hint">Firmanavn i BC &mdash; vises under Virksomhedsoplysninger i BC</div>
+      </div>
+      <div class="var-row">
+        <div class="var-label">BC Firma-ID <span class="var-key">BC_COMPANY_ID</span></div>
+        <input class="var-input" id="v-bccompanyid" type="text" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" value="">
+        <div class="var-hint">GUID frem for firmanavn &mdash; undg&aring;r problemer med / og andre specialtegn. Find det: <em>Brug bc-mcp til at liste alle virksomheder og vis id og navn</em></div>
+      </div>
+      <div class="var-row">
+        <div class="var-label">Entra App Client ID <span class="var-key">CLIENT_ID</span></div>
+        <input class="var-input" id="v-clientid" type="text" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" value="">
+        <div class="var-hint">Azure App Registration til BC MCP OAuth</div>
+      </div>
+      <div class="var-row">
+        <div class="var-label">GitHub PAT <span class="var-key">GITHUB_PAT</span></div>
+        <input class="var-input" id="v-ghpat" type="text" placeholder="ghp_xxxxxxxxxxxx" value="">
+        <div class="var-hint">repo + workflow scopes &mdash; s&aelig;ttes som OS-milj&oslash;variabel, ikke i config (Trin 4)</div>
+      </div>
+      <div class="var-row">
+        <div class="var-label">Git bruger-email <span class="var-key">GIT_EMAIL</span></div>
+        <input class="var-input" id="v-gitemail" type="text" placeholder="peter@kretzmann.dk" value="peter@kretzmann.dk">
+        <div class="var-hint">Bruges i git config pr. repo</div>
+      </div>
+      <div class="var-row">
+        <div class="var-label">MCP Configuration-navn <span class="var-key">BC_MCP_CONFIG</span></div>
+        <input class="var-input" id="v-bcmcpconfig" type="text" placeholder="MCP Demo" value="">
+        <div class="var-hint">Navn p&aring; den aktive MCP Configuration i BC &mdash; se Trin 3c</div>
+      </div>
+      <div class="var-row">
+        <div class="var-label">Anthropic API Key <span class="var-key">ANTHROPIC_KEY</span></div>
+        <input class="var-input" id="v-apikey" type="password" placeholder="sk-ant-api03-..." value="">
+        <div class="var-hint">Fra console.anthropic.com &rarr; API Keys &mdash; s&aelig;ttes som OS-milj&oslash;variabel, ikke i config (Trin 4)</div>
+      </div>
+    </div>
+    <div class="vars-banner" id="vars-banner">&#10003; Variabler anvendt &mdash; alle kodeeksempler er opdateret</div>
+  </div>
+</section>
+
+<section id="prereqs">
+  <div class="section-head">
+    <div class="step-badge">TRIN 01</div>
+    <h2>Forudsætninger</h2>
+    <span class="cat-wrap"><span class="tag tag-green">Engangs &middot; maskine</span></span>
+  </div>
+  <div class="alert alert-warn">
+    <div class="alert-icon">&#9888;</div>
+    <div class="alert-body">
+      <div class="alert-title">Installer i denne rækkefølge</div>
+      Node.js skal installeres <strong>før</strong> Claude Code, da Claude Code er en npm-pakke. Verificer <code>node --version</code> viser 20+ inden du fortsætter.
+    </div>
+  </div>
+  <h3>A &middot; Node.js 20+ via nvm-windows</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="code-title">PowerShell &mdash; nvm-windows</span><button class="copy-btn" onclick="copyCode(this)">Kopi&eacute;r</button></div>
+    <pre><span class="c"># Download nvm-windows: https://github.com/coreybutler/nvm-windows/releases</span>
+<span class="c"># Installer nvm-setup.exe, luk og genåbn PowerShell:</span>
+<span class="cm">nvm</span> install 20
+<span class="cm">nvm</span> use 20
+<span class="cm">node</span> --version    <span class="c"># skal vise v20.x.x</span></pre>
+  </div>
+  <h3>B &middot; Claude Code</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="code-title">PowerShell</span><button class="copy-btn" onclick="copyCode(this)">Kopi&eacute;r</button></div>
+    <pre><span class="cm">npm</span> install -g @anthropic-ai/claude-code
+<span class="c"># Kør én gang for at acceptere permissions</span>
+<span class="cm">claude</span> --dangerously-skip-permissions</pre>
+  </div>
+  <h3>C &middot; AL extension &rarr; find altool.exe stien</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="code-title">PowerShell &mdash; find sti og tilføj til PATH</span><button class="copy-btn" onclick="copyCode(this)">Kopi&eacute;r</button></div>
+    <pre><span class="c"># Tjek begge mapper (Cursor og VS Code deler IKKE altid extensions)</span>
+<span class="c"># Din installerede version er fx: ms-dynamics-smb.al-<span class="var-ref" data-var="AL_VERSION">18.0.2293710</span></span>
+<span class="cm">Get-ChildItem</span> "$env:USERPROFILE\.vscode\extensions" -Filter "ms-dynamics-smb.al-*" | Select-Object Name
+<span class="cm">Get-ChildItem</span> "$env:USERPROFILE\.cursor\extensions" -Filter "ms-dynamics-smb.al-*" | Select-Object Name
+
+<span class="c"># Find altool.exe automatisk &mdash; AL-kommandolinjeværktøjet i extensionen</span>
+$alExe = <span class="cm">Get-ChildItem</span> "$env:USERPROFILE\.vscode\extensions\ms-dynamics-smb.al-*" -Recurse -Filter altool.exe -ErrorAction SilentlyContinue | <span class="cm">Select-Object</span> -First 1
+$alPath = <span class="cm">Split-Path</span> $alExe.FullName
+$alPath    <span class="c"># bekr&aelig;ft stien (...\ms-dynamics-smb.al-<span class="var-ref" data-var="AL_VERSION">18.0.2293710</span>\bin\win32)</span>
+
+<span class="c"># Tilf&oslash;j til User PATH &mdash; l&aelig;s User-scope (IKKE $env:PATH, der ogs&aring; rummer system-stier)</span>
+$userPath = [Environment]::GetEnvironmentVariable(<span class="s">"PATH"</span>, <span class="s">"User"</span>)
+[Environment]::SetEnvironmentVariable(<span class="s">"PATH"</span>, $userPath + <span class="s">";$alPath"</span>, <span class="s">"User"</span>)
+$env:PATH += <span class="s">";$alPath"</span>    <span class="c"># opdat&eacute;r ogs&aring; den nuv&aelig;rende session &mdash; undg&aring; genstart</span>
+
+<span class="c"># Verificer at altool svarer:</span>
+<span class="cm">altool</span> launchmcpserver --help</pre>
+  </div>
+  <h3>D &middot; Git multi-account</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="code-title">PowerShell</span><button class="copy-btn" onclick="copyCode(this)">Kopi&eacute;r</button></div>
+    <pre><span class="cm">git</span> config --global credential.useHttpPath true
+<span class="cm">git</span> config --global credential.helper manager
+<span class="c"># Kør pr. repo efter clone:</span>
+<span class="cm">cd</span> "<span class="var-ref" data-var="PROJECT_PATH">C:\AL\MyProject</span>"
+<span class="cm">git</span> config user.email "<span class="var-ref" data-var="GIT_EMAIL">peter@kretzmann.dk</span>"
+<span class="cm">git</span> config user.name "Peter Kretzmann"</pre>
+  </div>
+</section>
+
+<section id="al-lsp">
+  <div class="section-head">
+    <div class="step-badge blue">TRIN 02</div>
+    <h2>AL MCP Server &mdash; <code>altool launchmcpserver</code></h2>
+    <span class="cat-wrap"><span class="tag tag-green">Engangs</span><span class="tag tag-amber">Pr. projekt</span></span>
+  </div>
+  <div class="alert alert-new">
+    <div class="alert-icon">&#10022;</div>
+    <div class="alert-body">
+      <div class="alert-title">AL Development Tools (AL-extension 17+)</div>
+      AL-extensionen leverer AL-værktøjer på kommandolinjen via <code>altool.exe</code> (i <code>bin\win32</code>) &mdash; uden VS Code. Kommandoen <code>altool launchmcpserver</code> starter en <strong>MCP</strong>-server der eksponerer AL-værktøjer (<code>al_build</code>, <code>al_symbolsearch</code>, <code>al_getdiagnostics</code>, <code>al_publish</code> m.fl.) til AI-agenter &mdash; Claude Code er nævnt eksplicit som klient. Det er denne du registrerer i projektets <code>.mcp.json</code> (se Trin 4).
+    </div>
+  </div>
+  <div class="alert alert-tip">
+    <div class="alert-icon">&#128161;</div>
+    <div class="alert-body">
+      <div class="alert-title"><code>altool</code> &mdash; AL-kommandolinjeværktøjet</div>
+      Kommandolinjeværktøjet hedder <code>altool</code> og ligger i AL-extensionens <code>bin\win32</code>. Installerer du NuGet-pakken <em>AL Development Tools</em> separat, kan du kalde det med det korte alias <code>al</code> &mdash; det er samme værktøj. Microsofts egne eksempler bruger ofte <code>al</code>.
+    </div>
+  </div>
+  <h3>Hvad du gør i dette trin</h3>
+  <ol style="margin:.4rem 0 1.25rem 1.4rem;font-size:.88rem;color:var(--text2);line-height:1.8">
+    <li>Bekræft at <code>altool</code> kan k&oslash;res (PATH blev sat i Trin 1C).</li>
+    <li>Test at MCP-serveren svarer &mdash; se <em>Test manuelt</em> nedenfor.</li>
+    <li>Kopi&eacute;r <code>al-mcp</code>-entryen og hav den klar. Den inds&aelig;ttes i projektets <code>.mcp.json</code> i <strong>Trin 4</strong> sammen med <code>bc-mcp</code>.</li>
+  </ol>
+  <h3>Test manuelt</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="code-title">PowerShell &mdash; verificer at altool og serverne svarer</span><button class="copy-btn" onclick="copyCode(this)">Kopi&eacute;r</button></div>
+    <pre><span class="cm">altool</span> --help                   <span class="c"># alle kommandoer</span>
+<span class="cm">altool</span> launchmcpserver --help   <span class="c"># MCP-serveren og dens options</span>
+
+<span class="c"># Start MCP-serveren manuelt (Ctrl+C for at stoppe &mdash; den venter p&aring; JSON-RPC p&aring; stdin):</span>
+<span class="cm">altool</span> launchmcpserver --transport stdio</pre>
+  </div>
+  <h3>MCP-konfiguration &mdash; <code>al-mcp</code> entryen</h3>
+  <p>Denne <code>al-mcp</code>-entry h&oslash;rer til projektets <code>.mcp.json</code> (project scope &mdash; samlet med <code>bc-mcp</code> i Trin 4). V&aelig;lg &eacute;n af de to former:</p>
+  <div class="code-block">
+    <div class="code-header"><span class="code-title">JSON &mdash; A: minimal (agenten loader projektet undervejs)</span><button class="copy-btn" onclick="copyCode(this)">Kopi&eacute;r</button></div>
+    <pre>{
+  <span class="k">"al-mcp"</span>: {
+    <span class="k">"command"</span>: <span class="s">"altool"</span>,
+    <span class="k">"args"</span>: [<span class="s">"launchmcpserver"</span>, <span class="s">"--transport"</span>, <span class="s">"stdio"</span>]
+  }
+}</pre>
+  </div>
+  <div class="code-block">
+    <div class="code-header"><span class="code-title">JSON &mdash; B: loader projektet og symbolerne med det samme</span><button class="copy-btn" onclick="copyCode(this)">Kopi&eacute;r</button></div>
+    <pre>{
+  <span class="k">"al-mcp"</span>: {
+    <span class="k">"command"</span>: <span class="s">"altool"</span>,
+    <span class="k">"args"</span>: [
+      <span class="s">"launchmcpserver"</span>, <span class="s">"--transport"</span>, <span class="s">"stdio"</span>,
+      <span class="s">"<span class="var-ref" data-var="PROJECT_PATH_JSON">C:\\AL\\MyProject</span>"</span>,
+      <span class="s">"--packagecachepath"</span>, <span class="s">"<span class="var-ref" data-var="PROJECT_PATH_JSON">C:\\AL\\MyProject</span>\\.alpackages"</span>
+    ]
+  }
+}</pre>
+  </div>
+  <div class="alert alert-tip">
+    <div class="alert-icon">&#128161;</div>
+    <div class="alert-body">
+      <div class="alert-title">A eller B?</div>
+      Begge virker. <strong>B</strong> peger serveren direkte på dit projekt og din symbol-cache (<code>.alpackages</code>), så v&aelig;rkt&oslash;jer som <code>al_symbolsearch</code> og <code>al_compile</code> kan svare fra start. <strong>A</strong> er kortere &mdash; her tilf&oslash;jer agenten projektet undervejs med <code>al_addproject</code>. Begge stier og <code>--packagecachepath</code> er valgfri ifølge <code>altool launchmcpserver --help</code>. (Windows-stier i JSON skrives med dobbelt backslash &mdash; det g&oslash;r variablen automatisk.)
+    </div>
+  </div>
+  <div class="alert alert-tip">
+    <div class="alert-icon">&#128161;</div>
+    <div class="alert-body">
+      <div class="alert-title">MCP og LSP &mdash; hvad hver giver</div>
+      <strong>MCP-serveren</strong> (<code>launchmcpserver</code>) er den du registrerer i projektets <code>.mcp.json</code>. Den giver Claude Code <strong>opgave-værktøjer</strong>: <code>al_build</code>, <code>al_compile</code>, <code>al_publish</code>, <code>al_downloadsymbols</code>, <code>al_symbolsearch</code> og <code>al_getdiagnostics</code>.<br>
+      <strong>LSP-serveren</strong> er motoren bag kode-navigation i VS Code/Cursor: go-to-definition, find-references på tværs af projekter (resolver <code>internalsVisibleTo</code>/<code>propagateDependencies</code>), rename, completions og type hierarchy. Den kører som editorens sprog-host (<code>Microsoft.Dynamics.Nav.EditorServices.Host.exe</code>). Enkelte AL-builds eksponerer den også standalone som <code>launchlspserver</code>, der kan kobles på Claude Code via en LSP-bro.
+    </div>
+  </div>
+</section>
+
+<section id="mcp">
+  <div class="section-head">
+    <div class="step-badge teal">TRIN 03</div>
+    <h2>MCP Servers &mdash; oversigt og prioritering</h2>
+    <span class="cat-wrap"><span class="tag tag-blue">Reference</span></span>
+  </div>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Server</th><th>Form&aring;l</th><th>Prioritet</th><th>Kr&aelig;ver</th></tr></thead>
+      <tbody>
+        <tr><td>al-mcp</td><td>AL-v&aelig;rkt&oslash;jer via MCP &mdash; build, symbol-s&oslash;gning, diagnostics, publish</td><td><span class="tag tag-green">Essentiel</span></td><td>altool i PATH</td></tr>
+        <tr><td>bc-mcp</td><td>Direkte adgang til BC data og API via MCP (BC 27.1+)</td><td><span class="tag tag-green">Essentiel</span></td><td>BC 27.1+, Entra App</td></tr>
+        <tr><td>github</td><td>Repo management, AL-Go pipeline, PR reviews</td><td><span class="tag tag-green">Essentiel</span></td><td>GitHub PAT</td></tr>
+        <tr><td>brave-search</td><td>S&oslash;g i BC docs direkte under kodning</td><td><span class="tag tag-blue">Anbefalet</span></td><td>Brave API key (gratis)</td></tr>
+        <tr><td>filesystem</td><td>Adgang til lokale AL-filer uden for projektmappen</td><td><span class="tag tag-blue">Anbefalet</span></td><td>Intet</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="alert alert-new">
+    <div class="alert-icon">&#10022;</div>
+    <div class="alert-body">
+      <div class="alert-title">Hvad er BcMCPProxy og hvorfor skal jeg bruge det?</div>
+      BC understøtter MCP, men kun mod Copilot Studio &mdash; ikke mod Claude Code. <strong>BcMCPProxy</strong> er et lille lokalt Node.js-program der l&oslash;ser det: det k&oslash;rer p&aring; din maskine, modtager MCP-kald fra Claude Code, og videresender dem til BC's API via OAuth.<br><br>
+      Din <strong>Entra App Registration</strong> er credentials (Client ID + Secret) som BcMCPProxy bruger til at m&aring; tale med BC. De to h&oslash;rer sammen: app registration = adgangskort, BcMCPProxy = d&oslash;ren der bruger kortet.<br><br>
+      Docs: <a href="https://learn.microsoft.com/dynamics365/business-central/dev-itpro/ai/configure-mcp-server">configure-mcp-server</a> &middot;
+      Kildekode: <a href="https://github.com/microsoft/BCTech/tree/master/samples/BcMCPProxy">BCTech/BcMCPProxy</a>
+    </div>
+  </div>
+</section>
+
+<section id="config">
+  <div class="section-head">
+    <div class="step-badge">TRIN 04</div>
+    <h2>Konfigurationsfiler &mdash; placering og indhold</h2>
+    <span class="cat-wrap"><span class="tag tag-green">Engangs</span><span class="tag tag-amber">Pr. projekt</span></span>
+  </div>
+  <h3>Fil-oversigt</h3>
+  <div class="filetree">
+    <div>%USERPROFILE%\</div>
+    <div>&nbsp;&nbsp;&#9500;&#9472;&#9472; <span class="dir new">.claude.json</span> <span class="note">&larr; User scope: github MCP + globale env</span></div>
+    <div>&nbsp;&nbsp;&#9500;&#9472;&#9472; <span class="dir">.claude\</span></div>
+    <div>&nbsp;&nbsp;&#9474;&nbsp;&nbsp; &#9500;&#9472;&#9472; <span class="new">settings.json</span> <span class="note">&larr; Model, API key, token budget</span></div>
+    <div>&nbsp;&nbsp;&#9474;&nbsp;&nbsp; &#9492;&#9472;&#9472; <span class="dir new">skills\</span> <span class="note">&larr; Reusable skills (sektion 5)</span></div>
+    <br>
+    <div><span class="var-ref" data-var="PROJECT_PATH">C:\AL\MyProject</span>\</div>
+    <div>&nbsp;&nbsp;&#9500;&#9472;&#9472; <span class="new">.mcp.json</span> <span class="note">&larr; Project scope: al-mcp + bc-mcp (checkes ind)</span></div>
+    <div>&nbsp;&nbsp;&#9500;&#9472;&#9472; <span class="dir new">.claude\</span></div>
+    <div>&nbsp;&nbsp;&#9474;&nbsp;&nbsp; &#9492;&#9472;&#9472; <span class="new">CLAUDE.md</span> <span class="note">&larr; Projekt-specifikke AL-regler for Claude Code</span></div>
+    <div>&nbsp;&nbsp;&#9500;&#9472;&#9472; <span class="new">.cursorrules</span> <span class="note">&larr; Cursor Composer system-kontekst</span></div>
+    <div>&nbsp;&nbsp;&#9500;&#9472;&#9472; <span class="file">.alpackages\</span> <span class="note">&larr; AL symbol-filer (auto-genereret)</span></div>
+    <div>&nbsp;&nbsp;&#9492;&#9472;&#9472; <span class="file">MyProject.code-workspace</span> <span class="note">&larr; Multi-projekt AL LSP workspace</span></div>
+  </div>
+  <div class="alert alert-tip">
+    <div class="alert-icon">&#128161;</div>
+    <div class="alert-body">
+      <div class="alert-title">To scopes: global (user) og projekt</div>
+      Claude Code har tre MCP-scopes; her bruger vi to. <strong>User</strong> gemmes i <code>~/.claude.json</code> og loader i alle projekter &mdash; her lægger vi <code>github</code> (selve tokenet kommer fra en OS-milj&oslash;variabel, så det aldrig st&aring;r i en fil). <strong>Project</strong> gemmes i <code>.mcp.json</code> i projektroden, loader kun det projekt og kan checkes ind &mdash; her lægger vi <code>al-mcp</code> og <code>bc-mcp</code> (ingen hemmeligheder; BCMCPProxy's secret bor i dens egen <code>.env</code>, se Trin 9). User &harr; <span class="tag tag-green">Engangs</span>, project &harr; <span class="tag tag-amber">Pr. projekt</span>.
+    </div>
+  </div>
+  <h3>~\.claude.json &mdash; global (user scope)</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="code-title">%USERPROFILE%\.claude.json</span><button class="copy-btn" onclick="copyCode(this)">Kopi&eacute;r</button></div>
+    <pre>{
+  <span class="k">"env"</span>: {
+    <span class="c">// Subagenter (s&oslash;g, parse, opsummering) p&aring; billig+hurtig model &mdash; hovedagenten forbliver p&aring; Opus/Sonnet</span>
+    <span class="k">"CLAUDE_CODE_SUBAGENT_MODEL"</span>: <span class="s">"haiku"</span>,
+    <span class="k">"MAX_THINKING_TOKENS"</span>: <span class="s">"8000"</span>,
+    <span class="k">"CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS"</span>: <span class="s">"1"</span>
+  },
+  <span class="c">// User scope &mdash; loader i alle projekter</span>
+  <span class="k">"mcpServers"</span>: {
+    <span class="k">"github"</span>: {
+      <span class="k">"command"</span>: <span class="s">"npx"</span>,
+      <span class="k">"args"</span>: [<span class="s">"-y"</span>, <span class="s">"@modelcontextprotocol/server-github"</span>]
+      <span class="c">// tokenet arves fra OS-milj&oslash;variablen GITHUB_PERSONAL_ACCESS_TOKEN (s&aelig;ttes nedenfor) &mdash; st&aring;r aldrig i en fil</span>
+    }
+  }
+}</pre>
+  </div>
+  <div class="alert alert-tip">
+    <div class="alert-icon">&#128274;</div>
+    <div class="alert-body">
+      <div class="alert-title">GitHub-token som milj&oslash;variabel &mdash; ikke i config</div>
+      GitHub-MCP-serveren l&aelig;ser <code>GITHUB_PERSONAL_ACCESS_TOKEN</code> fra sit process-milj&oslash; og arver din bruger-milj&oslash;variabel. S&aelig;t den &eacute;n gang, s&aring; ligger tokenet aldrig i en config-fil og er nemt at rotere.
+    </div>
+  </div>
+  <div class="code-block">
+    <div class="code-header"><span class="code-title">PowerShell &mdash; s&aelig;t GitHub-token som User-milj&oslash;variabel</span><button class="copy-btn" onclick="copyCode(this)">Kopi&eacute;r</button></div>
+    <pre>[Environment]::SetEnvironmentVariable(<span class="s">"GITHUB_PERSONAL_ACCESS_TOKEN"</span>, <span class="s">"<span class="var-ref" data-var="GITHUB_PAT">ghp_xxxxxxxxxxxx</span>"</span>, <span class="s">"User"</span>)
+<span class="c"># Genstart terminal + Claude Code &mdash; User-scope milj&oslash;variabler sl&aring;r kun igennem i nye processer</span>
+
+<span class="c"># Test i et NYT vindue at den er sat (viser tokenet):</span>
+$env:GITHUB_PERSONAL_ACCESS_TOKEN</pre>
+  </div>
+  <h3>{PROJECT}\.mcp.json &mdash; projekt (project scope)</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="code-title">{PROJECT}\.mcp.json &mdash; kan checkes ind i repo</span><button class="copy-btn" onclick="copyCode(this)">Kopi&eacute;r</button></div>
+    <pre>{
+  <span class="k">"mcpServers"</span>: {
+    <span class="c">// AL MCP Server (altool) &mdash; AL-v&aelig;rkt&oslash;jer til Claude Code</span>
+    <span class="k">"al-mcp"</span>: {
+      <span class="k">"command"</span>: <span class="s">"altool"</span>,
+      <span class="k">"args"</span>: [<span class="s">"launchmcpserver"</span>, <span class="s">"--transport"</span>, <span class="s">"stdio"</span>,
+               <span class="s">"<span class="var-ref" data-var="PROJECT_PATH_JSON">C:\\AL\\MyProject</span>"</span>,
+               <span class="s">"--packagecachepath"</span>, <span class="s">"<span class="var-ref" data-var="PROJECT_PATH_JSON">C:\\AL\\MyProject</span>\\.alpackages"</span>]
+    },
+    <span class="c">// BC MCP Proxy (pr. milj&oslash; &mdash; tenant/environment)</span>
+    <span class="k">"bc-mcp"</span>: {
+      <span class="k">"command"</span>: <span class="s">"C:\\AL\\BcMCPProxy\\bin\\publish\\BcMCPProxy.exe"</span>,
+      <span class="k">"args"</span>: [
+        <span class="s">"--TenantId"</span>,           <span class="s">"<span class="var-ref" data-var="BC_TENANT">xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx</span>"</span>,
+        <span class="s">"--ClientId"</span>,           <span class="s">"<span class="var-ref" data-var="CLIENT_ID">xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx</span>"</span>,
+        <span class="s">"--Environment"</span>,        <span class="s">"<span class="var-ref" data-var="BC_ENVIRONMENT">Sandbox</span>"</span>,
+        <span class="s">"--Company"</span>,            <span class="s">"<span class="var-ref" data-var="BC_COMPANY_ID">xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx</span>"</span>,
+        <span class="s">"--ConfigurationName"</span>,  <span class="s">"<span class="var-ref" data-var="BC_MCP_CONFIG">MCP Demo</span>"</span>
+      ]
+    }
+  }
+}</pre>
+  </div>
+  <div class="alert alert-tip">
+    <div class="alert-icon">&#128161;</div>
+    <div class="alert-body">
+      <div class="alert-title">Portabel variant &mdash; <code>${CLAUDE_PROJECT_DIR}</code></div>
+      Skal samme <code>.mcp.json</code> virke i ethvert AL-projekt (og checkes ind uden fast sti), kan <code>al-mcp</code> bruge Claude Codes egen projekt-variabel i stedet for en hardkodet sti:
+      <div class="code-block" style="margin-top:.6rem">
+        <div class="code-header"><span class="code-title">.mcp.json &mdash; al-mcp args (portabel)</span><button class="copy-btn" onclick="copyCode(this)">Kopi&eacute;r</button></div>
+        <pre><span class="k">"args"</span>: [<span class="s">"launchmcpserver"</span>, <span class="s">"--transport"</span>, <span class="s">"stdio"</span>,
+         <span class="s">"${CLAUDE_PROJECT_DIR}"</span>,
+         <span class="s">"--packagecachepath"</span>, <span class="s">"${CLAUDE_PROJECT_DIR}/.alpackages"</span>]</pre>
+      </div>
+      Claude Code ekspanderer <code>${CLAUDE_PROJECT_DIR}</code> til projektmappen. Skr&aring;streger holder JSON'en gyldig uden escaping.
+    </div>
+  </div>
+  <h3>~\.claude\settings.json</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="code-title">%USERPROFILE%\.claude\settings.json</span><button class="copy-btn" onclick="copyCode(this)">Kopi&eacute;r</button></div>
+    <pre>{
+  <span class="k">"model"</span>: <span class="s">"claude-sonnet-4-6"</span>,
+  <span class="k">"maxTokens"</span>: 8192,
+  <span class="c">// ANTHROPIC_API_KEY l&aelig;ses automatisk fra OS-milj&oslash;variablen (s&aelig;ttes nedenfor) &mdash; st&aring;r aldrig i en fil</span>
+  <span class="k">"tokenBudget"</span>: { <span class="k">"warnAt"</span>: 50000, <span class="k">"compactAt"</span>: 80000 }
+}</pre>
+  </div>
+  <div class="alert alert-tip">
+    <div class="alert-icon">&#128274;</div>
+    <div class="alert-body">
+      <div class="alert-title">API-n&oslash;gle som milj&oslash;variabel &mdash; ikke i config</div>
+      Claude Code l&aelig;ser <code>ANTHROPIC_API_KEY</code> automatisk fra OS-milj&oslash;et, s&aring; n&oslash;glen beh&oslash;ver ikke st&aring; i <code>settings.json</code> (hvor den ellers ville ligge i klartekst). Logger du i stedet ind med <code>claude login</code> (Console/abonnement), beh&oslash;ver du slet ingen n&oslash;gle. Til roterende n&oslash;gler bruger du <code>apiKeyHelper</code> i settings.json &mdash; et script der genererer n&oslash;glen ved opstart.
+    </div>
+  </div>
+  <div class="code-block">
+    <div class="code-header"><span class="code-title">PowerShell &mdash; s&aelig;t API-n&oslash;glen som User-milj&oslash;variabel</span><button class="copy-btn" onclick="copyCode(this)">Kopi&eacute;r</button></div>
+    <pre>[Environment]::SetEnvironmentVariable(<span class="s">"ANTHROPIC_API_KEY"</span>, <span class="s">"<span class="var-ref" data-var="ANTHROPIC_KEY">sk-ant-api03-...</span>"</span>, <span class="s">"User"</span>)
+<span class="c"># Genstart terminal + Claude Code &mdash; User-scope milj&oslash;variabler sl&aring;r kun igennem i nye processer</span>
+
+<span class="c"># Test i et NYT vindue at den er sat:</span>
+$env:ANTHROPIC_API_KEY</pre>
+  </div>
+  <h3>CLAUDE.md &mdash; projekt-regler</h3>
+  <div class="alert alert-tip">
+    <div class="alert-icon">&#128161;</div>
+    <div class="alert-body">
+      Dette er et simpelt eksempel p&aring; en CLAUDE.md-fil &mdash; udfyld felterne med dine egne projektv&aelig;rdier. Se <a href="#concepts">Begreber</a> for en forklaring af hvad CLAUDE.md er og hvordan Claude Code bruger den.
+    </div>
+  </div>
+  <div class="code-block">
+    <div class="code-header"><span class="code-title"><span class="var-ref" data-var="PROJECT_PATH">C:\AL\MyProject</span>\.claude\CLAUDE.md</span><button class="copy-btn" onclick="copyCode(this)">Kopi&eacute;r</button></div>
+    <pre># Business Central &mdash; Claude Code projektregler
+
+## AL Kodestil
+- PascalCase p&aring; alle AL-objekter, felter og procedurer
+- Altid ToolTip p&aring; felter &mdash; altid p&aring; engelsk
+- Feltnavn skal altid v&aelig;re p&aring; engelsk
+- Caption skal altid v&aelig;re p&aring; engelsk
+- ErrorBehavior::Collect p&aring; batch-operationer
+- danske tekster via xliff filer
+
+## Projekt-kontekst
+- App ID range:
+- Target: BC Cloud
+- Afh&aelig;nger af: Base App, System App
+- Projekt-sti:
+
+## Navngivning
+- Tabeller:
+- Codeunits:
+- Pages:
+
+## Workflow
+- Tjek altid dependencies via al-mcp (al_symbolsearch) f&oslash;r rename
+- Commit-besked: "Kort beskrivelse" - det er kun en r&aring; skitse og jeg laver senere en som er bedre.</pre>
+  </div>
+  <h3>.cursorrules</h3>
+  <div class="alert alert-tip">
+    <div class="alert-icon">&#128161;</div>
+    <div class="alert-body">
+      Dette er et simpelt eksempel p&aring; en .cursorrules-fil &mdash; tilpas til dit projekt. Se <a href="#concepts">Begreber</a> for en forklaring af hvad .cursorrules er og hvordan Cursor bruger den.
+    </div>
+  </div>
+  <div class="code-block">
+    <div class="code-header"><span class="code-title"><span class="var-ref" data-var="PROJECT_PATH">C:\AL\MyProject</span>\.cursorrules</span><button class="copy-btn" onclick="copyCode(this)">Kopi&eacute;r</button></div>
+    <pre>Du er en erfaren Business Central AL-udvikler.
+
+Koderegler:
+- BC version: BC Cloud
+- PascalCase p&aring; alt. ToolTip og Caption p&aring; alle UI-elementer (dansk)
+- ErrorBehavior::Collect p&aring; batch-operationer
+- Afh&aelig;nger af: Base App
+
+Svar altid p&aring; samme sprog som der sp&oslash;rges p&aring;.</pre>
+  </div>
+</section>
+
+<section id="skills">
+  <div class="section-head">
+    <div class="step-badge teal">TRIN 05</div>
+    <h2>Skills &amp; Agents</h2>
+    <span class="cat-wrap"><span class="tag tag-green">Engangs &middot; global</span></span>
+  </div>
+  <div class="grid2">
+    <div class="card"><div class="card-title"><span class="tag tag-green">Skill</span></div><p>Reusable ekspertise der loades on-demand. AL-templates, vendor-matching, OIOUBL-regler. Tokens bruges kun n&aring;r skill er aktiv.</p></div>
+    <div class="card"><div class="card-title"><span class="tag tag-blue">Subagent</span></div><p>Isoleret context til komplekse workflows. Brug til OCR-parsing parallelt med AL-kodning &mdash; cleaner context giver f&aelig;rre fejl.</p></div>
+    <div class="card"><div class="card-title"><span class="tag tag-navy">MCP Server</span></div><p>Ekstern systemadgang: BC data, eksterne API'er, GitHub. MCP er broer til data &mdash; skills er broer til viden.</p></div>
+    <div class="card"><div class="card-title"><span class="tag tag-amber">BC Agent 27.4+</span></div><p>Prototype direkte i BC UI via AI Development Toolkit. Ingen AL kr&aelig;vet &mdash; eksporter til AL n&aring;r du er klar.</p></div>
+  </div>
+  <h3>Skills-mappestruktur</h3>
+  <div class="filetree">
+    <div>%USERPROFILE%\.claude\skills\</div>
+    <div>&nbsp;&nbsp;&#9500;&#9472;&#9472; <span class="dir new">bc-al-patterns\</span></div>
+    <div>&nbsp;&nbsp;&#9474;&nbsp;&nbsp; &#9500;&#9472;&#9472; <span class="new">SKILL.md</span> <span class="note">&larr; AL kodestil, patterns, anti-patterns</span></div>
+    <div>&nbsp;&nbsp;&#9474;&nbsp;&nbsp; &#9492;&#9472;&#9472; <span class="file">scripts\lint-al.ps1</span></div>
+    <div>&nbsp;&nbsp;&#9500;&#9472;&#9472; <span class="dir new">bc-vendor-match\</span></div>
+    <div>&nbsp;&nbsp;&#9474;&nbsp;&nbsp; &#9500;&#9472;&#9472; <span class="new">SKILL.md</span></div>
+    <div>&nbsp;&nbsp;&#9474;&nbsp;&nbsp; &#9500;&#9472;&#9472; <span class="file">reference\vendor-schema.json</span></div>
+    <div>&nbsp;&nbsp;&#9474;&nbsp;&nbsp; &#9492;&#9472;&#9472; <span class="file">scripts\match-vendor.js</span></div>
+    <div>&nbsp;&nbsp;&#9492;&#9472;&#9472; <span class="dir new">bc-oioubl\</span></div>
+    <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &#9500;&#9472;&#9472; <span class="new">SKILL.md</span></div>
+    <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &#9492;&#9472;&#9472; <span class="file">reference\schematron-rules.xml</span></div>
+  </div>
+  <div class="alert alert-new" style="margin-top:1rem">
+    <div class="alert-icon">&#10022;</div>
+    <div class="alert-body">
+      <div class="alert-title">AI Development Toolkit &mdash; BC 27.4+ (feb 2026)</div>
+      Prototype agenter direkte i BC sandbox uden AL-kode. Design prompts, test mod live data &mdash; konverter til AL-implementation n&aring;r du er klar.
+      Se walkthrough-videoer: <a href="https://aka.ms/BCDesignAgents">aka.ms/BCDesignAgents</a>
+    </div>
+  </div>
+</section>
+
+<section id="cursor">
+  <div class="section-head">
+    <div class="step-badge blue">TRIN 06</div>
+    <h2>Cursor &mdash; opsætning specifikt til BC</h2>
+    <span class="cat-wrap"><span class="tag tag-green">Engangs &middot; maskine</span></span>
+  </div>
+  <div class="alert alert-tip">
+    <div class="alert-icon">&#128161;</div>
+    <div class="alert-body">
+      <div class="alert-title">Cursors egen AI bruges ikke</div>
+      I denne ops&aelig;tning er Cursor kun editoren &mdash; Composer, Chat og Cursors &oslash;vrige AI bruges ikke. Al AI-assistance kommer fra <strong>Claude Code</strong> i Cursors integrerede terminal. Derfor s&aelig;ttes ingen Anthropic-n&oslash;gle i Cursor; Claude Code bruger <code>ANTHROPIC_API_KEY</code>-milj&oslash;variablen fra Trin 4.
+    </div>
+  </div>
+  <h3>Cursor settings.json</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="code-title">%APPDATA%\Cursor\User\settings.json</span><button class="copy-btn" onclick="copyCode(this)">Kopi&eacute;r</button></div>
+    <pre>{
+  <span class="c">// Ingen Anthropic-n&oslash;gle her &mdash; Cursors AI bruges ikke (se note ovenfor)</span>
+  <span class="k">"al.enableCodeAnalysis"</span>: <span class="kw">true</span>,
+  <span class="k">"al.packageCachePath"</span>: <span class="s">".alpackages"</span>,
+  <span class="k">"al.compilationOptions"</span>: { <span class="k">"parallel"</span>: <span class="kw">true</span> },
+  <span class="k">"git.useCredentialManager"</span>: <span class="kw">true</span>,
+  <span class="k">"[al]"</span>: {
+    <span class="k">"editor.tabSize"</span>: 4,
+    <span class="k">"editor.formatOnSave"</span>: <span class="kw">true</span>,
+    <span class="k">"editor.defaultFormatter"</span>: <span class="s">"ms-dynamics-smb.al"</span>
+  }
+}</pre>
+  </div>
+</section>
+
+<section id="commands">
+  <div class="section-head">
+    <div class="step-badge teal">TRIN 07</div>
+    <h2>Claude Code Commands &mdash; reference</h2>
+    <span class="cat-wrap"><span class="tag tag-blue">Reference</span></span>
+  </div>
+
+  <div class="alert alert-tip">
+    <div class="alert-icon">&#128161;</div>
+    <div class="alert-body">
+      <div class="alert-title">To slags commands</div>
+      <strong>Slash-commands</strong> (f.eks. <code>/compact</code>) styrer selve Claude Code sessionen lokalt &mdash; de er ikke prompts til modellen. <strong>CLI-flags</strong> (f.eks. <code>--model</code>) bruges når du starter <code>claude</code> fra terminalen. Begge er værd at lære udenad.
+    </div>
+  </div>
+
+  <h3>Slash-commands i en aktiv session</h3>
+  <div class="cmd-table">
+    <div class="cmd-group">Session-styring</div>
+    <div class="cmd-row"><span class="cmd-name">/clear</span><span class="cmd-desc">Start en helt ny session &mdash; rydder al historik. Brug ved skift til urelateret task.</span></div>
+    <div class="cmd-row"><span class="cmd-name">/compact</span><span class="cmd-desc">Komprimer historikken til et resum&eacute;. God ved logiske brud n&aring;r du ikke vil miste konteksten helt.</span></div>
+    <div class="cmd-row"><span class="cmd-name">/cost</span><span class="cmd-desc">Vis token-forbrug og estimeret kost for denne session.</span></div>
+    <div class="cmd-row"><span class="cmd-name">/exit</span><span class="cmd-desc">Afslut Claude Code rent.</span></div>
+
+    <div class="cmd-group">Model &amp; konfiguration</div>
+    <div class="cmd-row"><span class="cmd-name">/model sonnet</span><span class="cmd-desc">Skift til Sonnet (standard AL-arbejde).</span></div>
+    <div class="cmd-row"><span class="cmd-name">/model haiku</span><span class="cmd-desc">Skift til Haiku (simpel formatering, OCR-parsing).</span></div>
+    <div class="cmd-row"><span class="cmd-name">/model opus</span><span class="cmd-desc">Skift til Opus (kompleks arkitektur-reasoning).</span></div>
+    <div class="cmd-row"><span class="cmd-name">/config</span><span class="cmd-desc">&Aring;bn konfigurations-menu.</span></div>
+
+    <div class="cmd-group">Projekt &amp; filer</div>
+    <div class="cmd-row"><span class="cmd-name">/init</span><span class="cmd-desc">Generer en CLAUDE.md i nuv&aelig;rende projekt baseret p&aring; codebase-analyse.</span></div>
+    <div class="cmd-row"><span class="cmd-name">/add-dir &lt;sti&gt;</span><span class="cmd-desc">Tilf&oslash;j en mappe til Claude's tilg&aelig;ngelige scope i denne session.</span></div>
+    <div class="cmd-row"><span class="cmd-name">/review</span><span class="cmd-desc">Bed Claude lave code review p&aring; seneste &aelig;ndringer.</span></div>
+
+    <div class="cmd-group">MCP &amp; verkt&oslash;jer</div>
+    <div class="cmd-row"><span class="cmd-name">/mcp</span><span class="cmd-desc">List aktive MCP servers og deres status.</span></div>
+    <div class="cmd-row"><span class="cmd-name">/permissions</span><span class="cmd-desc">Se og &aelig;ndr tilladelser for filsystem og v&aelig;rkt&oslash;jer.</span></div>
+
+    <div class="cmd-group">Hj&aelig;lp</div>
+    <div class="cmd-row"><span class="cmd-name">/help</span><span class="cmd-desc">Vis alle tilg&aelig;ngelige commands.</span></div>
+    <div class="cmd-row"><span class="cmd-name">/bug</span><span class="cmd-desc">Rapporter bug til Anthropic med session-kontekst.</span></div>
+  </div>
+
+  <h3>CLI-flags ved start</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="code-title">PowerShell &mdash; claude CLI</span><button class="copy-btn" onclick="copyCode(this)">Kopi&eacute;r</button></div>
+    <pre><span class="c"># Start med specifik model</span>
+<span class="cm">claude</span> --model sonnet
+
+<span class="c"># Start uden permissions-prompt (efter f&oslash;rste accept)</span>
+<span class="cm">claude</span> --dangerously-skip-permissions
+
+<span class="c"># Print svar uden interaktiv loop (godt til scripts)</span>
+<span class="cm">claude</span> --print "Beskriv strukturen af denne AL fil" &lt; MyTable.al
+
+<span class="c"># K&oslash;r en bestemt opgave non-interaktivt</span>
+<span class="cm">claude</span> -p "Generer en test for codeunit Vendor Mgt"
+
+<span class="c"># Continue seneste session</span>
+<span class="cm">claude</span> --continue
+
+<span class="c"># Resume en specifik session</span>
+<span class="cm">claude</span> --resume &lt;session-id&gt;
+
+<span class="c"># Hj&aelig;lp og version</span>
+<span class="cm">claude</span> --help
+<span class="cm">claude</span> --version</pre>
+  </div>
+
+  <h3>Custom slash-commands</h3>
+  <p>Opret dine egne genveje ved at placere markdown-filer i <code>~/.claude/commands/</code> eller <code>{PROJEKT}/.claude/commands/</code>. Filnavnet bliver til kommandoen.</p>
+  <div class="code-block">
+    <div class="code-header"><span class="code-title"><span class="var-ref" data-var="PROJECT_PATH">C:\AL\MyProject</span>\.claude\commands\review-al.md</span><button class="copy-btn" onclick="copyCode(this)">Kopi&eacute;r</button></div>
+    <pre><span class="c"># Review AL Code</span>
+
+Lav code review p&aring; AL-filerne der er &aelig;ndret siden sidste commit.
+
+Tjek specifikt for:
+- PascalCase navngivning
+- ToolTip og Caption p&aring; alle UI-elementer
+- Korrekt brug af ErrorBehavior::Collect i batch-operationer
+
+Giv et kort resum&eacute; pr. fil og fremh&aelig;v overtr&aelig;delser med linje-numre.</pre>
+  </div>
+  <p style="margin-top:.5rem">Nu kan du skrive <code>/review-al</code> i sessionen, og Claude udf&oslash;rer den definerede prompt.</p>
+
+  <h3>Custom slash-commands &mdash; nyttige forslag</h3>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Command</th><th>Form&aring;l</th></tr></thead>
+      <tbody>
+        <tr><td>/al-lint</td><td>K&oslash;r LinterCop p&aring; alle &aelig;ndrede AL-filer og rapporter overtr&aelig;delser</td></tr>
+        <tr><td>/al-test</td><td>Generer test-codeunits baseret p&aring; nuv&aelig;rende objekt</td></tr>
+        <tr><td>/al-docs</td><td>Skriv XML-doc kommentarer p&aring; alle public procedures</td></tr>
+        <tr><td>/bc-deploy</td><td>K&oslash;r AL-Go deployment workflow med pre-checks</td></tr>
+        <tr><td>/vendor-match</td><td>Parse OCR-faktura-JSON og matchforesl&aring; mod BC vendors</td></tr>
+        <tr><td>/translate-da</td><td>Opdater xlf-fil med danske oversaettelser for nye labels</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="hooks">
+  <div class="section-head">
+    <div class="step-badge blue">TRIN 08</div>
+    <h2>Hooks &mdash; automatiser hvad der sker omkring Claude Code</h2>
+    <span class="cat-wrap"><span class="tag tag-green">Engangs &middot; global</span></span>
+  </div>
+
+  <div class="alert alert-tip">
+    <div class="alert-icon">&#128161;</div>
+    <div class="alert-body">
+      <div class="alert-title">Hvad er hooks?</div>
+      Hooks er <strong>shell-kommandoer Claude Code k&oslash;rer automatisk</strong> p&aring; bestemte tidspunkter &mdash; f&oslash;r en tool-call, efter en fil-redigering, ved session-start. Det giver dig kontrol over kvalitet og sikkerhed uden at stole p&aring; at Claude husker det selv. Tænk p&aring; dem som Git hooks, men for AI-agenter.
+    </div>
+  </div>
+
+  <h3>Hook events &mdash; hvorn&aring;r de fyrer</h3>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Event</th><th>N&aring;r det fyrer</th><th>Typisk brug</th></tr></thead>
+      <tbody>
+        <tr><td>SessionStart</td><td>Ved opstart af Claude Code i et projekt</td><td>Load vendor-liste, tjek branch, varm cache</td></tr>
+        <tr><td>UserPromptSubmit</td><td>F&oslash;r din prompt sendes til modellen</td><td>Tilf&oslash;j ekstra kontekst, log prompts</td></tr>
+        <tr><td>PreToolUse</td><td>F&oslash;r Claude k&oslash;rer et v&aelig;rkt&oslash;j</td><td>Bloker farlige kommandoer, kr&aelig;v bekr&aelig;ftelse</td></tr>
+        <tr><td>PostToolUse</td><td>Efter Claude har k&oslash;rt et v&aelig;rkt&oslash;j</td><td>Auto-format, lint, validate</td></tr>
+        <tr><td>Stop</td><td>N&aring;r Claude afslutter et svar</td><td>Send notifikation, log spend</td></tr>
+        <tr><td>SubagentStop</td><td>N&aring;r en subagent afslutter</td><td>Log subagent-resultater</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Konfigurer hooks i settings.json</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="code-title">%USERPROFILE%\.claude\settings.json &mdash; udvidet med hooks</span><button class="copy-btn" onclick="copyCode(this)">Kopi&eacute;r</button></div>
+    <pre>{
+  <span class="k">"model"</span>: <span class="s">"claude-sonnet-4-6"</span>,
+  <span class="k">"hooks"</span>: {
+    <span class="c">// Auto-format AL filer efter Claude har redigeret dem</span>
+    <span class="k">"PostToolUse"</span>: [
+      {
+        <span class="k">"matcher"</span>: <span class="s">"Edit|Write"</span>,
+        <span class="k">"hooks"</span>: [{
+          <span class="k">"type"</span>: <span class="s">"command"</span>,
+          <span class="k">"command"</span>: <span class="s">"powershell -Command \"if ($env:CLAUDE_FILE_PATH -match '\\.al$') { al format $env:CLAUDE_FILE_PATH }\""</span>
+        }]
+      }
+    ],
+    <span class="c">// Bloker farlige PowerShell-kommandoer</span>
+    <span class="k">"PreToolUse"</span>: [
+      {
+        <span class="k">"matcher"</span>: <span class="s">"Bash"</span>,
+        <span class="k">"hooks"</span>: [{
+          <span class="k">"type"</span>: <span class="s">"command"</span>,
+          <span class="k">"command"</span>: <span class="s">"powershell -File <span class="var-ref" data-var="PROJECT_PATH">C:\\AL\\MyProject</span>\\.claude\\hooks\\check-dangerous.ps1"</span>
+        }]
+      }
+    ],
+    <span class="c">// Log token-forbrug efter hver session</span>
+    <span class="k">"Stop"</span>: [{
+      <span class="k">"hooks"</span>: [{
+        <span class="k">"type"</span>: <span class="s">"command"</span>,
+        <span class="k">"command"</span>: <span class="s">"claude /cost --json &gt;&gt; $env:USERPROFILE\\.claude\\spend.log"</span>
+      }]
+    }]
+  }
+}</pre>
+  </div>
+
+  <h3>Eksempel: PreToolUse hook der blokerer farlige operationer</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="code-title"><span class="var-ref" data-var="PROJECT_PATH">C:\AL\MyProject</span>\.claude\hooks\check-dangerous.ps1</span><button class="copy-btn" onclick="copyCode(this)">Kopi&eacute;r</button></div>
+    <pre><span class="c"># L&aelig;s tool input fra stdin (JSON)</span>
+$input = $input | ConvertFrom-Json
+$cmd = $input.tool_input.command
+
+<span class="c"># Bloker farlige patterns</span>
+$dangerous = @(
+  <span class="s">'Remove-Item.*-Recurse.*-Force'</span>,
+  <span class="s">'rm -rf'</span>,
+  <span class="s">'DROP TABLE'</span>,
+  <span class="s">'DROP DATABASE'</span>,
+  <span class="s">'git push --force'</span>,
+  <span class="s">'Uninstall-NAVApp'</span>      <span class="c"># BC-specifik: uninstall apps</span>
+)
+
+foreach ($pattern in $dangerous) {
+  if ($cmd -match $pattern) {
+    Write-Host <span class="s">"BLOKERET: Kommandoen indeholder farligt pattern: $pattern"</span>
+    exit 2  <span class="c"># Exit code 2 = bloker tool-kald</span>
+  }
+}
+exit 0  <span class="c"># Exit code 0 = till&aring;d</span></pre>
+  </div>
+
+  <div class="alert alert-warn">
+    <div class="alert-icon">&#9888;</div>
+    <div class="alert-body">
+      <div class="alert-title">Pas p&aring; med hooks</div>
+      Hooks k&oslash;rer som dig &mdash; med dine fulde rettigheder. Test scripts grundigt f&oslash;r du tilf&oslash;jer dem. En d&aring;rligt skrevet PostToolUse hook der kalder <code>al build</code> p&aring; hvert eneste Edit kan g&oslash;re Claude Code uudholdeligt langsom.
+    </div>
+  </div>
+
+  <h3>Nyttige hooks for BC AL-udvikling</h3>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Hook</th><th>Form&aring;l</th><th>Event</th></tr></thead>
+      <tbody>
+        <tr><td>al-format</td><td>K&oslash;r AL formatter efter hver Edit/Write af *.al filer</td><td>PostToolUse</td></tr>
+        <tr><td>linter-cop</td><td>K&oslash;r LinterCop og blok hvis warnings &gt; threshold</td><td>PostToolUse</td></tr>
+        <tr><td>load-vendors</td><td>Cache aktiv vendor-liste fra BC ved session-start</td><td>SessionStart</td></tr>
+        <tr><td>git-branch-check</td><td>Advar hvis du arbejder p&aring; main/master</td><td>SessionStart</td></tr>
+        <tr><td>block-prod</td><td>Bloker enhver BC API call mod produktion</td><td>PreToolUse</td></tr>
+        <tr><td>spend-warn</td><td>Send notifikation hvis token-spend overstiger budget</td><td>Stop</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="oauth">
+  <div class="section-head">
+    <div class="step-badge teal">TRIN 09</div>
+    <h2>BC MCP OAuth &mdash; setup, refresh, og fejlfinding</h2>
+    <span class="cat-wrap"><span class="tag tag-navy">Pr. milj&oslash; / tenant</span></span>
+  </div>
+
+  <p>BC MCP Server (BC 27.1+) bruger <strong>OAuth 2.0 mod Microsoft Entra</strong> til authentication. Det er den samme model som AL-Go for GitHub, BC Cloud APIs og Power Platform connectors. Setuppet er en engangs-job, men der er fald-gruber n&aring;r tokens udl&oslash;ber.</p>
+
+  <h3>Trin 1: Opret Entra App Registration</h3>
+  <div class="alert alert-warn">
+    <div class="alert-icon">&#9888;</div>
+    <div class="alert-body">
+      <div class="alert-title">Azure CLI skal installeres f&oslash;rst</div>
+      <code>az</code> er Azure CLI &mdash; ikke en del af PowerShell. Installer med <code>winget install Microsoft.AzureCLI</code> og genstart terminalen f&oslash;r du k&oslash;rer kommandoerne herunder.
+    </div>
+  </div>
+  <div class="code-block">
+    <div class="code-header"><span class="code-title">PowerShell &mdash; via Az CLI</span><button class="copy-btn" onclick="copyCode(this)">Kopi&eacute;r</button></div>
+    <pre><span class="c"># Log ind p&aring; Entra tenant</span>
+<span class="cm">az</span> login
+
+<span class="c"># Opret app registration</span>
+<span class="cm">az</span> ad app create `
+  --display-name <span class="s">"BC MCP Proxy"</span> `
+  --sign-in-audience AzureADMyOrg `
+  --required-resource-accesses <span class="s">'@bc-permissions.json'</span>
+
+<span class="c"># Generer client secret (gemmes &eacute;n gang &mdash; kopier straks!)</span>
+<span class="cm">az</span> ad app credential reset --id <span class="var-ref" data-var="CLIENT_ID">xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx</span> --years 2
+
+<span class="c"># Output:
+# {
+#   "appId": "<span class="var-ref" data-var="CLIENT_ID">xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx</span>",
+#   "password": "din-secret-her",   &larr; GEM I LASTPASS / KEEPER
+#   "tenant": "your-tenant-id"
+# }</span></pre>
+  </div>
+
+  <h3>Trin 2: bc-permissions.json</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="code-title">bc-permissions.json &mdash; required API permissions</span><button class="copy-btn" onclick="copyCode(this)">Kopi&eacute;r</button></div>
+    <pre>[
+  {
+    <span class="k">"resourceAppId"</span>: <span class="s">"996def3d-b36c-4153-8607-a6fd3c01b89f"</span>,  <span class="c">// BC API</span>
+    <span class="k">"resourceAccess"</span>: [
+      { <span class="k">"id"</span>: <span class="s">"a8ead177-1889-4546-9387-f25e658e2a79"</span>, <span class="k">"type"</span>: <span class="s">"Scope"</span> }  <span class="c">// Financials.ReadWrite.All</span>
+    ]
+  }
+]</pre>
+  </div>
+
+  <h3>Trin 3: Admin consent (kr&aelig;ver Global Admin)</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="code-title">PowerShell</span><button class="copy-btn" onclick="copyCode(this)">Kopi&eacute;r</button></div>
+    <pre><span class="cm">az</span> ad app permission admin-consent --id <span class="var-ref" data-var="CLIENT_ID">xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx</span>
+
+<span class="c"># Eller manuelt: portal.azure.com &rarr; Entra ID &rarr; App registrations &rarr; BC MCP Proxy</span>
+<span class="c"># &rarr; API permissions &rarr; "Grant admin consent for [tenant]"</span></pre>
+  </div>
+
+  <h3>Trin 3b: Tilf&oslash;j Redirect URI (kr&aelig;ves af BcMCPProxy)</h3>
+  <div class="alert alert-warn">
+    <div class="alert-icon">&#9888;</div>
+    <div class="alert-body">
+      <div class="alert-title">Manglende Redirect URI giver WAM_provider_error ved opstart</div>
+      BcMCPProxy bruger Windows Authentication Manager (WAM) til interaktivt login. App registreringen skal have f&oslash;lgende URI under <strong>Authentication &rarr; Mobile and desktop applications</strong>:
+      <br><br>
+      <code>ms-appx-web://microsoft.aad.brokerplugin/<span class="var-ref" data-var="CLIENT_ID">xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx</span></code>
+      <br><br>
+      portal.azure.com &rarr; Entra ID &rarr; App registrations &rarr; din app &rarr; Authentication &rarr; Add a platform &rarr; Mobile and desktop applications &rarr; inds&aelig;t URI ovenfor &rarr; Gem.
+    </div>
+  </div>
+
+  <h3>Trin 3c: Opret MCP Configuration i BC</h3>
+  <div class="alert alert-warn">
+    <div class="alert-icon">&#9888;</div>
+    <div class="alert-body">
+      <div class="alert-title">BC kr&aelig;ver en aktiv MCP Configuration &mdash; ellers fejler proxyen med 400</div>
+      BC's MCP server er ikke automatisk aktiv &mdash; du skal oprette og aktivere en konfiguration i BC f&oslash;r BcMCPProxy kan forbinde.
+      <br><br>
+      <strong>I BC:</strong> S&oslash;g p&aring; <code>MCP Configurations</code> &rarr; opret en ny post &rarr; giv den et navn (f.eks. <em>MCP Demo</em>) &rarr; s&aelig;t til <strong>Active</strong>.
+      <br><br>
+      BC viser derefter et JSON-uddrag med konfigurationsdetaljerne &mdash; heri st&aring;r <code>ConfigurationName</code>-v&aelig;rdien, som du skal notere og inds&aelig;tte som <strong>BC_MCP_CONFIG</strong>-variablen ovenfor og som <code>--ConfigurationName</code>-argument i <code>.mcp.json</code>.
+      <br><br>
+      Uden dette argument returnerer BC: <em>"The MCP Configuration named [empty] was not found or not active."</em>
+    </div>
+  </div>
+
+  <h3>Trin 4: Klon og byg BcMCPProxy</h3>
+  <div class="alert alert-warn">
+    <div class="alert-icon">&#9888;</div>
+    <div class="alert-body">
+      <div class="alert-title">BcMCPProxy er et C#/.NET-projekt &mdash; ikke Node.js</div>
+      BcMCPProxy bygges med <code>dotnet publish</code> og k&oslash;rer som en Windows-exe. Installer <strong>.NET 8 SDK</strong> f&oslash;r du forts&aelig;tter: <code>winget install Microsoft.DotNet.SDK.8</code>
+    </div>
+  </div>
+  <div class="code-block">
+    <div class="code-header"><span class="code-title">PowerShell &mdash; klon og byg</span><button class="copy-btn" onclick="copyCode(this)">Kopi&eacute;r</button></div>
+    <pre><span class="c"># Hent kun BcMCPProxy-mappen fra BCTech-repo</span>
+<span class="cm">git</span> clone --filter=blob:none --sparse https://github.com/microsoft/BCTech.git C:\Temp\BCTech
+<span class="cm">cd</span> C:\Temp\BCTech
+<span class="cm">git</span> sparse-checkout set samples/BcMCPProxy
+
+<span class="c"># Flyt filerne til din mappe</span>
+<span class="cm">Copy-Item</span> "C:\Temp\BCTech\samples\BcMCPProxy\*" "C:\AL\BcMCPProxy\" -Recurse -Force
+
+<span class="c"># Byg med .NET (kræver .NET 8 SDK)</span>
+<span class="cm">cd</span> C:\AL\BcMCPProxy
+<span class="cm">dotnet</span> publish -c Release -o bin\publish
+
+<span class="c"># Verificer at exe er bygget:</span>
+<span class="cm">Test-Path</span> C:\AL\BcMCPProxy\bin\publish\BcMCPProxy.exe</pre>
+  </div>
+
+  <h3>Trin 5: Konfigurer .mcp.json</h3>
+  <p>BcMCPProxy modtager al konfiguration som kommandolinje-argumenter &mdash; ingen .env-fil. Parametrene s&aelig;ttes direkte i <code>.mcp.json</code>:</p>
+  <div class="code-block">
+    <div class="code-header"><span class="code-title">{PROJEKT}\.mcp.json &mdash; bc-mcp entry</span><button class="copy-btn" onclick="copyCode(this)">Kopi&eacute;r</button></div>
+    <pre><span class="k">"bc-mcp"</span>: {
+  <span class="k">"command"</span>: <span class="s">"C:\\AL\\BcMCPProxy\\bin\\publish\\BcMCPProxy.exe"</span>,
+  <span class="k">"args"</span>: [
+    <span class="s">"--TenantId"</span>,           <span class="s">"<span class="var-ref" data-var="BC_TENANT">xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx</span>"</span>,
+    <span class="s">"--ClientId"</span>,           <span class="s">"<span class="var-ref" data-var="CLIENT_ID">xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx</span>"</span>,
+    <span class="s">"--Environment"</span>,        <span class="s">"<span class="var-ref" data-var="BC_ENVIRONMENT">Sandbox</span>"</span>,
+    <span class="s">"--Company"</span>,            <span class="s">"<span class="var-ref" data-var="BC_COMPANY">CRONUS Danmark A/S</span>"</span>,
+    <span class="s">"--ConfigurationName"</span>,  <span class="s">"<span class="var-ref" data-var="BC_MCP_CONFIG">MCP Demo</span>"</span>
+  ]
+}</pre>
+  </div>
+  <div class="alert alert-tip">
+    <div class="alert-icon">&#128161;</div>
+    <div class="alert-body">
+      <div class="alert-title">Delegeret login &mdash; ingen client secret n&oslash;dvendig</div>
+      BcMCPProxy bruger <strong>delegerede rettigheder</strong> med interaktivt browser-login &mdash; ikke client credentials. Du beh&oslash;ver ikke en client secret. F&oslash;rste gang proxyen starter, &aring;bner den et browservindue hvor du logger ind med din BC-bruger. Tokens caches herefter lokalt.
+    </div>
+  </div>
+
+  <h3>S&aring;dan bruger du MCP-serverne</h3>
+  <p>Du kan enten lade Claude v&aelig;lge server automatisk ud fra kontekst, eller v&aelig;re eksplicit. Begge dele virker:</p>
+  <div class="alert alert-tip">
+    <div class="alert-icon">&#128161;</div>
+    <div class="alert-body">
+      <div class="alert-title">V&aelig;r direkte &mdash; Claude forstår "brug bc-mcp til..."</div>
+      Du kan specificere serveren direkte i dit prompt. Claude bruger s&aring; det p&aelig;gene tool frem for at g&aelig;tte. Eksempler &mdash; kopi&eacute;r og pröv:
+      <br><br>
+      <strong>bc-mcp &mdash; live BC-data:</strong>
+      <ul style="margin:.5rem 0 .5rem 1.2rem;line-height:1.9">
+        <li><code>Brug bc-mcp til at fort&aelig;lle mig, hvor mange debitorer der er i regnskabet.</code></li>
+        <li><code>Vis de 5 seneste salgsordrer via bc-mcp.</code></li>
+        <li><code>Hvad er saldoen p&aring; debitor 10000? (brug bc-mcp)</code></li>
+        <li><code>Opret en ny debitor med navn "Test ApS" via bc-mcp.</code></li>
+      </ul>
+      <strong>al-mcp &mdash; AL-kodebasen:</strong>
+      <ul style="margin:.5rem 0 .5rem 1.2rem;line-height:1.9">
+        <li><code>Brug al_symbolsearch til at finde alle procedures der kalder OnAfterInsert p&aring; Customer.</code></li>
+        <li><code>Kompil&eacute;r projektet via al-mcp og vis fejlene.</code></li>
+        <li><code>Find alle felter i Sales Header-tabellen via al-mcp.</code></li>
+        <li><code>Byg og publicer til Sandbox via al-mcp.</code></li>
+      </ul>
+      <strong>Kombineret:</strong>
+      <ul style="margin:.5rem 0 0 1.2rem;line-height:1.9">
+        <li><code>Find feltet i AL-koden der styrer betalingsbetingelser (al_symbolsearch), og vis derefter de debitorer i BC der har en anden betingelse (bc-mcp).</code></li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Almindelige fejl</h3>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Fejl</th><th>&Aring;rsag</th><th>L&oslash;sning</th></tr></thead>
+      <tbody>
+        <tr><td>AADSTS70011</td><td>Forkert scope angivet</td><td>Tjek bc-permissions.json &mdash; scope skal v&aelig;re <code>https://api.businesscentral.dynamics.com/.default</code></td></tr>
+        <tr><td>AADSTS50020</td><td>Bruger findes ikke i tenant</td><td>Brug client_credentials flow i stedet for authorization_code</td></tr>
+        <tr><td>AADSTS65001</td><td>Admin consent mangler</td><td>K&oslash;r <code>az ad app permission admin-consent</code> som Global Admin</td></tr>
+        <tr><td>401 efter 1 time</td><td>Token udl&oslash;bet, refresh fejlede</td><td>Slet tokens.json og restart BCMCPProxy &mdash; tvinger ny token</td></tr>
+        <tr><td>403 p&aring; specifik entity</td><td>App registration mangler permissions</td><td>Tjek &quot;API Connections&quot; i BC og &quot;Apps with Service-to-Service Authentication&quot;</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Token-debug snippet</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="code-title">PowerShell &mdash; verificer du kan f&aring; et token</span><button class="copy-btn" onclick="copyCode(this)">Kopi&eacute;r</button></div>
+    <pre><span class="c"># Hent et access token direkte (debugging)</span>
+$body = @{
+  client_id     = <span class="s">"<span class="var-ref" data-var="CLIENT_ID">xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx</span>"</span>
+  client_secret = <span class="s">"din-secret"</span>
+  scope         = <span class="s">"https://api.businesscentral.dynamics.com/.default"</span>
+  grant_type    = <span class="s">"client_credentials"</span>
+}
+
+$response = Invoke-RestMethod `
+  -Uri <span class="s">"https://login.microsoftonline.com/your-tenant-id/oauth2/v2.0/token"</span> `
+  -Method Post `
+  -Body $body
+
+<span class="cm">Write-Host</span> <span class="s">"Token (f&oslash;rste 50 tegn): $($response.access_token.Substring(0, 50))..."</span>
+<span class="cm">Write-Host</span> <span class="s">"Udl&oslash;ber om: $($response.expires_in) sekunder"</span></pre>
+  </div>
+</section>
+
+<section id="algo-ci">
+  <div class="section-head">
+    <div class="step-badge">TRIN 10</div>
+    <h2>Claude Code i AL-Go GitHub Actions pipelines</h2>
+    <span class="cat-wrap"><span class="tag tag-amber">Pr. projekt / repo</span></span>
+  </div>
+
+  <p>Med <code>claude --print</code> (eller den korte form <code>-p</code>) kan du k&oslash;re Claude non-interaktivt i et CI/CD-milj&oslash;. Det &aring;bner d&oslash;ren for AI-augmenterede AL-Go pipelines: automatiske code reviews p&aring; PR, auto-generation af release notes, AL-symbol diff-rapporter, og oversettelse af nye labels til xlf-filer.</p>
+
+  <div class="alert alert-tip">
+    <div class="alert-icon">&#128161;</div>
+    <div class="alert-body">
+      <div class="alert-title">Forskellen mellem interaktiv og non-interaktiv k&oslash;rsel</div>
+      I terminalen kan du k&oslash;re <code>claude</code> og chatte. I CI bruger du <code>claude --print "din opgave"</code> &mdash; Claude udf&oslash;rer opgaven, skriver resultatet til stdout, og afslutter. Ingen interaktivitet, ingen permissions-prompts (skal pre-konfigureres via env vars og settings).
+    </div>
+  </div>
+
+  <h3>GitHub Actions secret-setup</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="code-title">GitHub repo &rarr; Settings &rarr; Secrets and variables &rarr; Actions</span><button class="copy-btn" onclick="copyCode(this)">Kopi&eacute;r</button></div>
+    <pre><span class="c"># P&aring;kr&aelig;vede secrets:</span>
+ANTHROPIC_API_KEY           <span class="c"># Fra console.anthropic.com</span>
+BC_CLIENT_ID                <span class="c"># Hvis Claude skal kalde BC MCP</span>
+BC_CLIENT_SECRET            <span class="c"># Hvis Claude skal kalde BC MCP</span>
+BC_TENANT_ID                <span class="c"># Hvis Claude skal kalde BC MCP</span>
+
+<span class="c"># Anbefalede secrets:</span>
+DEEPL_API_KEY               <span class="c"># Hvis du bruger DeepL i oversaettelses-workflow</span></pre>
+  </div>
+
+  <h3>Workflow 1: Auto-review p&aring; pull request</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="code-title">.github/workflows/claude-review.yml</span><button class="copy-btn" onclick="copyCode(this)">Kopi&eacute;r</button></div>
+    <pre><span class="k">name</span>: <span class="s">Claude AL Code Review</span>
+<span class="k">on</span>:
+  <span class="k">pull_request</span>:
+    <span class="k">paths</span>: [<span class="s">'**/*.al'</span>, <span class="s">'**/*.xlf'</span>]
+
+<span class="k">jobs</span>:
+  <span class="k">review</span>:
+    <span class="k">runs-on</span>: <span class="s">windows-latest</span>
+    <span class="k">steps</span>:
+      - <span class="k">uses</span>: <span class="s">actions/checkout@v4</span>
+        <span class="k">with</span>:
+          <span class="k">fetch-depth</span>: 0  <span class="c"># Hele historik for git diff</span>
+
+      - <span class="k">name</span>: <span class="s">Setup Node.js</span>
+        <span class="k">uses</span>: <span class="s">actions/setup-node@v4</span>
+        <span class="k">with</span>: { <span class="k">node-version</span>: <span class="s">'20'</span> }
+
+      - <span class="k">name</span>: <span class="s">Install Claude Code</span>
+        <span class="k">run</span>: <span class="s">npm install -g @anthropic-ai/claude-code</span>
+
+      - <span class="k">name</span>: <span class="s">Get changed AL files</span>
+        <span class="k">id</span>: <span class="s">changed</span>
+        <span class="k">run</span>: |
+          $files = git diff --name-only origin/${{ github.base_ref }}...HEAD --diff-filter=AM | Where-Object { $_ -match '\.al$' }
+          $files | Out-File changed-files.txt
+          <span class="cm">Write-Output</span> <span class="s">"count=$($files.Count)"</span> &gt;&gt; $env:GITHUB_OUTPUT
+        <span class="k">shell</span>: <span class="s">pwsh</span>
+
+      - <span class="k">name</span>: <span class="s">Run Claude review</span>
+        <span class="k">if</span>: <span class="s">steps.changed.outputs.count != '0'</span>
+        <span class="k">env</span>:
+          <span class="k">ANTHROPIC_API_KEY</span>: <span class="s">${{ secrets.ANTHROPIC_API_KEY }}</span>
+        <span class="k">run</span>: |
+          $prompt = <span class="s">"Lav code review p&aring; AL-filerne i changed-files.txt. Tjek for: PascalCase, ToolTip/Caption p&aring; UI, korrekt ErrorBehavior, og at standard BC-felter ikke modificeres direkte. Output som markdown med fil-overskrifter."</span>
+          <span class="cm">claude</span> --print --model sonnet $prompt &gt; review.md
+        <span class="k">shell</span>: <span class="s">pwsh</span>
+
+      - <span class="k">name</span>: <span class="s">Post review as PR comment</span>
+        <span class="k">uses</span>: <span class="s">actions/github-script@v7</span>
+        <span class="k">with</span>:
+          <span class="k">script</span>: |
+            const fs = require('fs');
+            const body = fs.readFileSync('review.md', 'utf8');
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '## Claude AL Review\n\n' + body
+            });</pre>
+  </div>
+
+  <h3>Workflow 2: Auto-oversettelse af nye labels</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="code-title">.github/workflows/claude-translate.yml</span><button class="copy-btn" onclick="copyCode(this)">Kopi&eacute;r</button></div>
+    <pre><span class="k">name</span>: <span class="s">Auto-translate xlf labels</span>
+<span class="k">on</span>:
+  <span class="k">push</span>:
+    <span class="k">branches</span>: [<span class="s">main</span>]
+    <span class="k">paths</span>: [<span class="s">'**/Translations/*.g.xlf'</span>]  <span class="c"># Auto-genereret af AL compiler</span>
+
+<span class="k">jobs</span>:
+  <span class="k">translate</span>:
+    <span class="k">runs-on</span>: <span class="s">windows-latest</span>
+    <span class="k">steps</span>:
+      - <span class="k">uses</span>: <span class="s">actions/checkout@v4</span>
+      - <span class="k">uses</span>: <span class="s">actions/setup-node@v4</span>
+        <span class="k">with</span>: { <span class="k">node-version</span>: <span class="s">'20'</span> }
+      - <span class="k">run</span>: <span class="s">npm install -g @anthropic-ai/claude-code</span>
+
+      - <span class="k">name</span>: <span class="s">Translate untranslated units</span>
+        <span class="k">env</span>:
+          <span class="k">ANTHROPIC_API_KEY</span>: <span class="s">${{ secrets.ANTHROPIC_API_KEY }}</span>
+        <span class="k">run</span>: |
+          <span class="cm">claude</span> --print --model haiku <span class="s">"Find alle &lt;trans-unit&gt; uden &lt;target&gt; i Translations\App.da-DK.xlf og generer danske oversaettelser baseret p&aring; source. Bibehold BC AL terminologi (f.eks. 'Customer' &rarr; 'Debitor', 'Vendor' &rarr; 'Kreditor'). Output kun den opdaterede xlf-fil."</span> &gt; Translations\App.da-DK.xlf
+        <span class="k">shell</span>: <span class="s">pwsh</span>
+
+      - <span class="k">name</span>: <span class="s">Commit translations</span>
+        <span class="k">run</span>: |
+          <span class="cm">git</span> config user.name <span class="s">"claude-bot"</span>
+          <span class="cm">git</span> config user.email <span class="s">"claude-bot@kretzmann.dk"</span>
+          <span class="cm">git</span> add Translations/
+          <span class="cm">git</span> commit -m <span class="s">"chore: auto-translate new labels [skip ci]"</span> || echo <span class="s">"Intet at committe"</span>
+          <span class="cm">git</span> push</pre>
+  </div>
+
+  <h3>Workflow 3: Symbol diff p&aring; major version bump</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="code-title">.github/workflows/claude-symbol-diff.yml</span><button class="copy-btn" onclick="copyCode(this)">Kopi&eacute;r</button></div>
+    <pre><span class="k">name</span>: <span class="s">BC Major Version Symbol Diff</span>
+<span class="k">on</span>:
+  <span class="k">workflow_dispatch</span>:
+    <span class="k">inputs</span>:
+      <span class="k">old_version</span>: { <span class="k">required</span>: <span class="kw">true</span>, <span class="k">description</span>: <span class="s">"f.eks. 25.5"</span> }
+      <span class="k">new_version</span>: { <span class="k">required</span>: <span class="kw">true</span>, <span class="k">description</span>: <span class="s">"f.eks. 26.0"</span> }
+
+<span class="k">jobs</span>:
+  <span class="k">diff</span>:
+    <span class="k">runs-on</span>: <span class="s">windows-latest</span>
+    <span class="k">steps</span>:
+      - <span class="k">uses</span>: <span class="s">actions/checkout@v4</span>
+      - <span class="k">uses</span>: <span class="s">actions/setup-node@v4</span>
+        <span class="k">with</span>: { <span class="k">node-version</span>: <span class="s">'20'</span> }
+      - <span class="k">run</span>: <span class="s">npm install -g @anthropic-ai/claude-code</span>
+
+      - <span class="k">name</span>: <span class="s">Analyze breaking changes</span>
+        <span class="k">env</span>:
+          <span class="k">ANTHROPIC_API_KEY</span>: <span class="s">${{ secrets.ANTHROPIC_API_KEY }}</span>
+        <span class="k">run</span>: |
+          $prompt = <span class="s">"Sammenlign BC symbol-filer i .alpackages mellem v${{ github.event.inputs.old_version }} og v${{ github.event.inputs.new_version }}. Identificer breaking changes der p&aring;virker extensions: fjernede procedurer, &aelig;ndrede signaturer, obsolete events. Output som markdown med fil-grupperinger og severity-niveauer."</span>
+          <span class="cm">claude</span> --print --model opus $prompt &gt; symbol-diff-${{ github.event.inputs.new_version }}.md
+        <span class="k">shell</span>: <span class="s">pwsh</span>
+
+      - <span class="k">uses</span>: <span class="s">actions/upload-artifact@v4</span>
+        <span class="k">with</span>:
+          <span class="k">name</span>: <span class="s">symbol-diff-report</span>
+          <span class="k">path</span>: <span class="s">symbol-diff-*.md</span></pre>
+  </div>
+
+  <div class="alert alert-warn">
+    <div class="alert-icon">&#9888;</div>
+    <div class="alert-body">
+      <div class="alert-title">Token-omkostninger i CI</div>
+      Hvert PR-review koster typisk 2&ndash;15 cents afh&aelig;ngigt af diff-st&oslash;rrelse. Brug <strong>Haiku til simple opgaver</strong> (oversaettelse, formatering), <strong>Sonnet til reviews</strong>, og <strong>Opus kun til kritisk analyse</strong> som breaking-change detection. Overv&aring;g forbruget under Settings &rarr; Usage p&aring; console.anthropic.com.
+    </div>
+  </div>
+</section>
+
+<section id="tokens">
+  <div class="section-head">
+    <div class="step-badge amber">TRIN 11</div>
+    <h2>Token-optimering</h2>
+    <span class="cat-wrap"><span class="tag tag-blue">Reference</span></span>
+  </div>
+  <div class="grid2">
+    <div class="card"><div class="card-title">&#9889; Prompt Caching</div><p>Marker store statiske blokke (vendor list, AL schema) med <code>cache_control: ephemeral</code>. TTL: 5 min. Sparer op til 82% p&aring; gentagne kald.</p></div>
+    <div class="card"><div class="card-title">&#8645; Model Routing</div><p>Haiku til OCR-parsing. Sonnet til AL-generering og matching-logik. Opus kun til kompleks arkitektur-reasoning.</p></div>
+    <div class="card"><div class="card-title">&#128230; Batch API</div><p>Async faktura-processing om natten &mdash; 100 fakturaer klar til morgen. 50% lavere pris end realtime-kald.</p></div>
+    <div class="card"><div class="card-title">&#9986; Context Pruning</div><p>K&oslash;r <code>/compact</code> ved logiske brud. <code>/clear</code> mellem urelaterede tasks. <code>/cost</code> til at holde &oslash;je med forbrug.</p></div>
+  </div>
+  <h3>PowerShell $PROFILE aliases</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="code-title">PowerShell &mdash; tilf&oslash;j til $PROFILE</span><button class="copy-btn" onclick="copyCode(this)">Kopi&eacute;r</button></div>
+    <pre>function Start-BCAgent   { <span class="cm">cd</span> "<span class="var-ref" data-var="PROJECT_PATH">C:\AL\MyProject</span>"; <span class="cm">claude</span> }
+function Check-Budget    { <span class="cm">claude</span> /cost }
+function New-ALSession   { <span class="cm">claude</span> /clear }
+function Compact-Session { <span class="cm">claude</span> /compact }</pre>
+  </div>
+</section>
+
+<section id="checklist">
+  <div class="section-head">
+    <div class="step-badge green">CHECKLIST</div>
+    <h2>Setup Checklist &mdash; klik for at markere som udf&oslash;rt</h2>
+  </div>
+  <ul class="checklist" id="checklist-ul">
+    <li onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-content"><strong>Node.js 20+ installeret via nvm-windows</strong><span class="sub">nvm install 20 &rarr; nvm use 20 &rarr; node --version &rarr; v20.x.x</span></div></li>
+    <li onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-content"><strong>Claude Code installeret + f&oslash;rste-gangs-k&oslash;rsel</strong><span class="sub">npm install -g @anthropic-ai/claude-code &rarr; claude --dangerously-skip-permissions</span></div></li>
+    <li onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-content"><strong>AL extension installeret &mdash; altool.exe fundet og tilf&oslash;jet til PATH</strong><span class="sub">Get-ChildItem ~\.vscode\extensions\ms-dynamics-smb.al-* &rarr; tilf&oslash;j bin\win32 til PATH</span></div></li>
+    <li onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-content"><strong>altool launchmcpserver testet manuelt</strong><span class="sub">altool --help &rarr; altool launchmcpserver --help</span></div></li>
+    <li onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-content"><strong>~\.claude.json (user scope) oprettet med github MCP + env</strong><span class="sub">github i top-level mcpServers &mdash; PAT bliver i hjemmemappen, ikke i repo</span></div></li>
+    <li onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-content"><strong>{PROJECT}\.mcp.json (project scope) oprettet med al-mcp + bc-mcp</strong><span class="sub">al-mcp nu &mdash; tilf&oslash;j bc-mcp n&aring;r BCMCPProxy er klar</span></div></li>
+    <li onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-content"><strong>~\.claude\settings.json oprettet + ANTHROPIC_API_KEY sat som OS-milj&oslash;variabel</strong><span class="sub">Model: claude-sonnet-4-6, tokenBudget warnAt: 50000 &mdash; n&oslash;glen i milj&oslash;variabel, ikke i filen</span></div></li>
+    <li onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-content"><strong>CLAUDE.md oprettet i projektet</strong><span class="sub"><span class="var-ref" data-var="PROJECT_PATH">C:\AL\MyProject</span>\.claude\CLAUDE.md &mdash; AL-regler, navngivning, workflow</span></div></li>
+    <li onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-content"><strong>.cursorrules oprettet i projektrod</strong><span class="sub">BC version, kodestil, projekt-kontekst, svar p&aring; dansk</span></div></li>
+    <li onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-content"><strong>GitHub PAT genereret og sat som OS-milj&oslash;variabel</strong><span class="sub">repo + workflow scopes &rarr; SetEnvironmentVariable GITHUB_PERSONAL_ACCESS_TOKEN (User) &mdash; ikke i config</span></div></li>
+    <li onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-content"><strong>Git multi-account konfigureret</strong><span class="sub">git config --global credential.useHttpPath true &rarr; pr. repo: user.email + user.name</span></div></li>
+    <li onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-content"><strong>Skills-mappe oprettet med bc-al-patterns og bc-vendor-match</strong><span class="sub">%USERPROFILE%\.claude\skills\</span></div></li>
+    <li onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-content"><strong>BCMCPProxy klonet og konfigureret (BC 27.1+ milj&oslash;er)</strong><span class="sub">github.com/microsoft/BCTech/samples/BcMCPProxy &mdash; kr&aelig;ver Entra App Registration</span></div></li>
+    <li onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-content"><strong>PowerShell $PROFILE aliases sat op</strong><span class="sub">Start-BCAgent, Check-Budget, New-ALSession, Compact-Session</span></div></li>
+    <li onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-content"><strong>K&oslash;rt /init i projektet for at generere baseline CLAUDE.md</strong><span class="sub">cd <span class="var-ref" data-var="PROJECT_PATH">C:\AL\MyProject</span> &rarr; claude &rarr; /init &mdash; finpuds derefter med dine egne regler</span></div></li>
+    <li onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-content"><strong>Custom slash-commands oprettet i .claude/commands/</strong><span class="sub">F.eks. /review-al, /al-lint, /vendor-match &mdash; se sektion 7</span></div></li>
+    <li onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-content"><strong>Hooks konfigureret &mdash; minimum PostToolUse for al format</strong><span class="sub">~\.claude\settings.json &mdash; udvid med PreToolUse safety check (check-dangerous.ps1)</span></div></li>
+    <li onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-content"><strong>Entra App Registration oprettet til BC MCP OAuth</strong><span class="sub">az ad app create &rarr; bc-permissions.json &rarr; admin consent &rarr; client_credentials flow</span></div></li>
+    <li onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-content"><strong>Token-debug script gemt og verificeret</strong><span class="sub">Test at access token kan hentes f&oslash;r du fejls&oslash;ger MCP-fejl &mdash; se sektion 9</span></div></li>
+    <li onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-content"><strong>GitHub Actions secrets sat op (ANTHROPIC_API_KEY)</strong><span class="sub">Settings &rarr; Secrets and variables &rarr; Actions &mdash; plus BC_CLIENT_ID/SECRET hvis Claude skal kalde BC</span></div></li>
+    <li onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-content"><strong>Mindst &eacute;n Claude-pipeline aktiveret (review eller translate)</strong><span class="sub">.github/workflows/claude-review.yml &mdash; start med Haiku for at holde omkostninger lave</span></div></li>
+    <li onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-content"><strong>AI Development Toolkit aktiveret i BC sandbox (valgfrit)</strong><span class="sub">BC 27.4+ &mdash; til prototype af vendor agent og fremtidige BC-agenter</span></div></li>
+  </ul>
+</section>
+</main>
+
+<footer>
+  BC Dev Setup Guide 2026 &middot;
+  <a href="https://learn.microsoft.com/dynamics365/business-central/dev-itpro/developer/devenv-al-tool#al-lsp">AL LSP Docs</a> &middot;
+  <a href="https://github.com/microsoft/BCTech/tree/master/samples/BcMCPProxy">BCMCPProxy</a> &middot;
+  <a href="https://aka.ms/BCDesignAgents">Agent Toolkit Videos</a> &middot;
+  <a href="https://github.com/microsoft/AL/blob/main/News.md">AL News.md</a>
+</footer>
+
+<script>
+const VARS = {
+  PROJECT_PATH:  { id: 'v-projpath', def: 'C:\\AL\\MyProject' },
+  AL_VERSION:    { id: 'v-alver',    def: '18.0.2293710' },
+  BC_BASE_URL:   { id: 'v-bcbase',   def: 'https://businesscentral.dynamics.com' },
+  BC_TENANT:     { id: 'v-bctenant', def: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx' },
+  BC_ENVIRONMENT:{ id: 'v-bcenv',       def: 'Sandbox' },
+  BC_COMPANY_ID: { id: 'v-bccompanyid', def: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx' },
+  CLIENT_ID:     { id: 'v-clientid',   def: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx' },
+  GITHUB_PAT:    { id: 'v-ghpat',     def: 'ghp_xxxxxxxxxxxx' },
+  GIT_EMAIL:     { id: 'v-gitemail',  def: 'peter@kretzmann.dk' },
+  BC_COMPANY:    { id: 'v-bccompany', def: 'CRONUS Danmark A/S' },
+  BC_MCP_CONFIG: { id: 'v-bcmcpconfig', def: 'MCP Demo' },
+  ANTHROPIC_KEY: { id: 'v-apikey',    def: 'sk-ant-api03-...' },
+};
+
+function getVals() {
+  const v = {};
+  for (const [k, cfg] of Object.entries(VARS)) {
+    const el = document.getElementById(cfg.id);
+    v[k] = (el && el.value.trim()) ? el.value.trim() : cfg.def;
+  }
+  // Afledt fuld tenant-URL: base / tenant / environment
+  const base = v.BC_BASE_URL.replace(/\/+$/, '');
+  const parts = [base];
+  if (v.BC_TENANT)      parts.push(v.BC_TENANT);
+  if (v.BC_ENVIRONMENT) parts.push(v.BC_ENVIRONMENT);
+  v.BC_URL = parts.join('/');
+  // JSON-sikker projekt-sti: backslash fordobles, så stien er gyldig i .claude.json
+  v.PROJECT_PATH_JSON = v.PROJECT_PATH.replace(/\\/g, '\\\\');
+  return v;
+}
+
+function applyVars() {
+  const vals = getVals();
+  document.querySelectorAll('.var-ref[data-var]').forEach(el => {
+    const key = el.getAttribute('data-var');
+    if (vals[key] !== undefined) el.textContent = vals[key];
+  });
+  return vals;
+}
+
+function toggleVars(e) {
+  // Klik på "Gem & Anvend" må ikke klappe panelet sammen
+  if (e && e.target.closest('#save-btn')) return;
+  document.getElementById('vars-panel').classList.toggle('collapsed');
+}
+
+function saveVars() {
+  const vals = applyVars();
+  const banner = document.getElementById('vars-banner');
+  banner.classList.add('visible');
+  setTimeout(() => banner.classList.remove('visible'), 3000);
+  const btn = document.getElementById('save-btn');
+  btn.textContent = '\u2713 Anvendt';
+  btn.classList.add('saved');
+  setTimeout(() => { btn.textContent = 'Gem & Anvend'; btn.classList.remove('saved'); }, 2000);
+  try { localStorage.setItem('bc-vars', JSON.stringify(vals)); } catch(e) {}
+}
+
+function loadSavedVars() {
+  try {
+    const saved = JSON.parse(localStorage.getItem('bc-vars') || 'null');
+    if (!saved) return;
+    for (const [k, cfg] of Object.entries(VARS)) {
+      const el = document.getElementById(cfg.id);
+      if (el && saved[k]) el.value = saved[k];
+    }
+    saveVars();
+  } catch(e) {}
+}
+
+function copyCode(btn) {
+  const pre = btn.closest('.code-block').querySelector('pre');
+  navigator.clipboard.writeText(pre.innerText).then(() => {
+    const orig = btn.textContent;
+    btn.textContent = '\u2713 Kopieret';
+    btn.style.color = '#f0c4b0';
+    setTimeout(() => { btn.textContent = orig; btn.style.color = ''; }, 1500);
+  });
+}
+
+function toggleCheck(li) {
+  li.classList.toggle('done');
+  li.querySelector('.check-box').textContent = li.classList.contains('done') ? '\u2713' : '';
+  try {
+    const state = [...document.querySelectorAll('#checklist-ul li')].map(l => l.classList.contains('done'));
+    localStorage.setItem('bc-check', JSON.stringify(state));
+  } catch(e) {}
+}
+
+function loadChecklist() {
+  try {
+    const state = JSON.parse(localStorage.getItem('bc-check') || '[]');
+    document.querySelectorAll('#checklist-ul li').forEach((li, i) => {
+      if (state[i]) { li.classList.add('done'); li.querySelector('.check-box').textContent = '\u2713'; }
+    });
+  } catch(e) {}
+}
+
+// Nav active state
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+      const link = document.querySelector('nav a[href="#' + e.target.id + '"]');
+      if (link) link.classList.add('active');
+    }
+  });
+}, { rootMargin: '-30% 0px -60% 0px' });
+document.querySelectorAll('section[id]').forEach(s => observer.observe(s));
+
+document.querySelectorAll('nav a').forEach(a => {
+  a.addEventListener('click', e => {
+    const href = a.getAttribute('href');
+    if (!href.startsWith('#')) return;
+    e.preventDefault();
+    const t = document.querySelector(href);
+    if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
+
+loadSavedVars();
+applyVars(); // sørg for at var-refs viser aktuelle defaults/værdier ved load
+// Live-opdatering: opdatér alle kodeeksempler mens der tastes
+Object.values(VARS).forEach(cfg => {
+  const el = document.getElementById(cfg.id);
+  if (el) el.addEventListener('input', applyVars);
+});
+loadChecklist();
+
+// ─── NAV SCROLL MANAGEMENT ──────────────────────────────────
+const navInner = document.getElementById('nav-inner');
+const fadeL = document.getElementById('nav-fade-l');
+const fadeR = document.getElementById('nav-fade-r');
+const arrowL = document.getElementById('nav-arrow-l');
+const arrowR = document.getElementById('nav-arrow-r');
+
+function scrollNav(amount) {
+  navInner.scrollBy({ left: amount, behavior: 'smooth' });
+}
+
+function updateNavScrollIndicators() {
+  if (!navInner) return;
+  const canScrollL = navInner.scrollLeft > 4;
+  const canScrollR = navInner.scrollLeft < (navInner.scrollWidth - navInner.clientWidth - 4);
+  fadeL.classList.toggle('visible', canScrollL);
+  fadeR.classList.toggle('visible', canScrollR);
+  arrowL.classList.toggle('visible', canScrollL);
+  arrowR.classList.toggle('visible', canScrollR);
+}
+
+if (navInner) {
+  navInner.addEventListener('scroll', updateNavScrollIndicators);
+  window.addEventListener('resize', updateNavScrollIndicators);
+  // Initial check after layout settles
+  setTimeout(updateNavScrollIndicators, 100);
+
+  // Scroll active link into view when nav changes
+  const scrollActiveIntoView = () => {
+    const active = navInner.querySelector('a.active');
+    if (active) {
+      const navRect = navInner.getBoundingClientRect();
+      const activeRect = active.getBoundingClientRect();
+      if (activeRect.left < navRect.left || activeRect.right > navRect.right) {
+        active.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+      }
+    }
+  };
+  // Run once after load so active link is centered — no interval
+  setTimeout(scrollActiveIntoView, 300);
+}
+</script>
+</body>
+</html>
