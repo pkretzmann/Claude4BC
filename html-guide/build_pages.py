@@ -24,6 +24,7 @@ Manifest format (JSON, UTF-8):
   "locale":       "da-DK",                                // required; pages go under <website>/<locale>/
   "footer":       "<inner HTML of <footer>>",            // optional
   "lang":         "da",                                   // optional, default "da"  (<html lang>)
+  "motion":       true,                                   // optional, default true; sets <body class="fx"> (scroll-reveal)
   "title_suffix": " · My Product",                       // optional, appended to <title>
   "pages": [
     {
@@ -71,7 +72,7 @@ SKELETON = """<!DOCTYPE html>
 @@CSS@@
   </style>
 </head>
-<body>
+<body@@BODYCLASS@@>
   <header>
     @@BADGE@@
     <h1>@@H1@@</h1>
@@ -138,6 +139,8 @@ def main():
     title_suffix = cfg.get("title_suffix", "")
     footer = cfg.get("footer", DEFAULT_FOOTER)
     toc_title = cfg.get("toc_title", "På denne side")
+    # Motion (animated diagrams need only CSS; scroll-reveal needs <body class="fx">).
+    bodyclass = ' class="fx"' if cfg.get("motion", True) else ""
 
     css = resolve_css(website)
     js = read_text(os.path.join(SCRIPT_DIR, "script.js"))
@@ -179,6 +182,7 @@ def main():
         html = (
             SKELETON
             .replace("@@LANG@@", lang)
+            .replace("@@BODYCLASS@@", bodyclass)
             .replace("@@TITLE@@", title)
             .replace("@@TITLE_SUFFIX@@", title_suffix)
             .replace("@@FAVICON@@", favicon)

@@ -14,7 +14,7 @@ Kaldes af "Start dokumentation.cmd" (cwd = .website) og af .claude/launch.json
 """
 import sys
 import functools
-from http.server import HTTPServer, SimpleHTTPRequestHandler
+from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
 
 
 class NoCacheHandler(SimpleHTTPRequestHandler):
@@ -36,7 +36,11 @@ if __name__ == "__main__":
     port = int(sys.argv[1]) if len(sys.argv) > 1 else 8765
     directory = sys.argv[2] if len(sys.argv) > 2 else None
     handler = functools.partial(NoCacheHandler, directory=directory) if directory else NoCacheHandler
-    httpd = HTTPServer(("127.0.0.1", port), handler)
+    # ThreadingHTTPServer: hver forespoergsel i sin egen traad, saa portalens
+    # mange samtidige fetch-kald (fuldtekst-indeks) + iframe-load ikke overloeber
+    # serverens backlog og giver "connection refused".
+    httpd = ThreadingHTTPServer(("127.0.0.1", port), handler)
+    httpd.daemon_threads = True
     print(f"Dokumentation (no-cache) paa http://localhost:{port}/  - stop med Ctrl+C")
     try:
         httpd.serve_forever()
