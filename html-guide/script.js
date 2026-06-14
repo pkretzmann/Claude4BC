@@ -188,4 +188,39 @@
 
     input.addEventListener('input', runSearch);
   }
+
+  /* ── Scroll-reveal + count-up (opt-in via <body class="fx">) ──
+        Sections fade/slide in as they enter the viewport. Guarded so the guide
+        is fully readable without JS: CSS only hides sections under .js-fx, which
+        we add here — and only when motion is allowed. Honours reduced-motion. ── */
+  var wantsFx = document.body.classList.contains('fx');
+  var reduceMotion = window.matchMedia &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function countUp(el) {
+    var target = parseFloat(el.getAttribute('data-countup'));
+    if (isNaN(target)) return;
+    var dur = 900, start = null;
+    function step(ts) {
+      if (start === null) start = ts;
+      var p = Math.min((ts - start) / dur, 1);
+      el.textContent = String(Math.round(target * p));
+      if (p < 1) requestAnimationFrame(step); else el.textContent = String(target);
+    }
+    requestAnimationFrame(step);
+  }
+
+  if (wantsFx && !reduceMotion && 'IntersectionObserver' in window) {
+    document.body.classList.add('js-fx');
+    var revObserver = new IntersectionObserver(function (entries, obs) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add('in-view');
+        obs.unobserve(entry.target);
+        var counters = entry.target.querySelectorAll('[data-countup]');
+        for (var i = 0; i < counters.length; i++) countUp(counters[i]);
+      });
+    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
+    document.querySelectorAll('.section').forEach(function (s) { revObserver.observe(s); });
+  }
 })();

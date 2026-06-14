@@ -139,6 +139,7 @@ Vejledningerne er **som standard interaktive**. Et lille, kanonisk forbedringsla
   - Kopiér-knap på `<pre>`-kodeblokke (tekniske guides)
   - "Fold alle ud/ind" på `<details>`-FAQ
   - "Til toppen"-knap der dukker op ved scroll
+  - Scroll-reveal: `.section`-kort toner ind når de scrolles i syne (kun når `<body class="fx">` — se *Designregler*; respekterer `prefers-reduced-motion`)
 - De tilhørende styles (`.copy-btn`, `.to-top-btn`, `.expand-all-btn`, `.toc a.active`) findes
   allerede i `styles.css` og skjules i print.
 
@@ -178,6 +179,18 @@ Sitet har et fælles ikon, `favicon.svg`, som ligger i **roden af `.website/`** 
 - **Tabeller**: Mørk navy header-række, zebra-stribet body, hover-highlight
 - **Nummererede trin**: Cirkel-numre i brandfarve, lys baggrund. **Layout-regel (vigtig — håndhæves allerede af `styles.css`):** Brug **ikke** `display: flex` på selve `<li>` i `.steps`/`.sub-steps`. Flex gør hvert tekststykke og hvert inline-element til separate flex-items på én linje, så et trin der fylder mere end én linje kollapser til ét ord pr. linje. Brug i stedet `position: relative` på `<li>` med `padding-left` til at give plads, og placér cirkel-nummeret/pilen med `position: absolute` i venstre margen. Så flyder teksten normalt og ombrydes pænt over flere linjer. Reglerne scopes med child-combinator (`.steps > li`, ikke `.steps li`), så en `.sub-steps` nestet inde i et trin **ikke** arver nummercirklen og lægger sig oven i sin egen tekst.
 - **Flowdiagrammer**: HTML-bokse (IKKE ASCII-art), brug `.fc-node`, `.fc-node.start`, `.fc-node.decision`, `.fc-node.action`, `.fc-node.end`
+- **To-system data-flow-diagram** (`.sysflow`): til at vise data der flyder **mellem to systemer**. To `.sysflow-node`-bokse med en `.sysflow-wires`-søjle imellem; hver `.sysflow-wire` (`.to-right`/`.to-left`) har en `.sysflow-label` + fire `<i class="dot">`, hvor prikkerne glider langs wiren (ren CSS, ingen JS). Diagrammet er **dekorativt** — sæt `aria-hidden="true"` og hav den tilsvarende tabel/tekst tæt på. Eksempel:
+  ```html
+  <div class="sysflow" aria-hidden="true">
+    <div class="sysflow-node">System A<span class="sysflow-sub">ejer stamdata</span></div>
+    <div class="sysflow-wires">
+      <div class="sysflow-wire to-right"><span class="sysflow-label">Stamdata ▶</span><i class="dot"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i></div>
+      <div class="sysflow-wire to-left"><span class="sysflow-label">◀ Hændelser</span><i class="dot"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i></div>
+    </div>
+    <div class="sysflow-node">System B<span class="sysflow-sub">ejer hændelser</span></div>
+  </div>
+  ```
+- **Bevægelse / scroll-reveal** (`.fx`): når `<body>` har klassen `fx`, toner `.section`-kort blødt ind, når de scrolles i syne (via `script.js`). Det er **progressive enhancement** og **opt-in**: CSS skjuler kun sektioner under `.js-fx`, som scriptet selv tilføjer — uden JS (eller ved `prefers-reduced-motion`) vises alt normalt. `build_pages.py` sætter `fx` som standard; i enkeltfil-tilstand tilføjer du selv `class="fx"` på `<body>`, hvis du vil have effekten. Tal kan tælle op ved at give et element `data-countup="<tal>"` (skriv slutværdien som elementets tekst, så no-JS viser den).
 - **FAQ**: `<details>`/`<summary>` accordion
 - **Advarselsboks** (Vigtigt): gul/orange note-box
 - **Infoboks** (neutral info): blå info-box
