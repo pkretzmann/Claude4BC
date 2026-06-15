@@ -26,6 +26,7 @@ Kør denne kommando **én gang** når et nyt projekt skal have dokumentation.
 ```
 .website/
 ├── index.html                   ← redirect-side: sender videre til standardsprogets portal
+├── 404.html                     ← retter store/små bogstaver i sprogstien (GitHub Pages)
 ├── favicon.svg                  ← sitets ikon (delt på tværs af alle sprog)
 ├── README.md                    ← forklarer hvordan sitet åbnes/vedligeholdes
 ├── Start dokumentation.cmd      ← starter lokal server + åbner portalen
@@ -72,6 +73,9 @@ Kør denne kommando **én gang** når et nyt projekt skal have dokumentation.
      (delt på tværs af sprog; kan være tilpasset til projektets brand).
    - `serve.py` fra `${CLAUDE_PLUGIN_ROOT}/html-guide/serve.py` til `.website/serve.py`
      (den lokale no-cache-server, som `Start dokumentation.cmd` og `launch.json` kalder).
+   - `404.html` fra `${CLAUDE_PLUGIN_ROOT}/html-guide/404.html` til `.website/404.html`
+     (retter store/små bogstaver i sprogstien, fx `/da-dk/` → `/da-DK/`, når GitHub Pages
+     ellers ville give 404 på en case-følsom server; delt på tværs af sprog).
 5. **Opret/flet `.claude/launch.json`** (lokal preview-server til Claude Code):
    - Find git-roden med `git rev-parse --show-toplevel`. Slår det fejl (intet git-repo),
      så spring dette trin over.
@@ -102,8 +106,9 @@ Kør denne kommando **én gang** når et nyt projekt skal have dokumentation.
 
 > Sender videre til standardsprogets portal. `LOCALES`/`DEFAULT` (mellem markørerne) og
 > `meta refresh`/no-script-linket indsættes ud fra de initialiserede sprog — standardsproget
-> (`da-DK`) er fald-tilbage, mens browserens sprog forsøges matchet først. `/update-website`
-> holder `LOCALES`/`DEFAULT` i sync, når der senere tilføjes eller fjernes sprogmapper.
+> (`da-DK`) er fald-tilbage. Et tidligere **manuelt sprogvalg** (gemt i `localStorage` af portalens
+> sprogvælger under nøglen `docs.locale`) vinder; ellers forsøges browserens sprog matchet.
+> `/update-website` holder `LOCALES`/`DEFAULT` i sync, når der senere tilføjes eller fjernes sprogmapper.
 
 ```html
 <!DOCTYPE html>
@@ -114,17 +119,24 @@ Kør denne kommando **én gang** når et nyt projekt skal have dokumentation.
   <title>Dokumentation</title>
   <meta http-equiv="refresh" content="0; url=da-DK/index.html" />
   <script>
-    // Vælg sprogmappe ud fra browserens sprog; ellers standardsproget.
+    // Vælg sprogmappe: gemt manuelt valg (fra portalens sprogvælger) vinder, ellers browserens sprog.
     (function () {
       // === LOCALES:START — auto-genereret af /update-website. Rediger ikke manuelt. ===
       var LOCALES = ["da-DK", "en-US"];
       var DEFAULT = "da-DK";
       // === LOCALES:END ===
-      var want = (navigator.language || navigator.userLanguage || "").toLowerCase();
-      var pick = DEFAULT;
-      for (var i = 0; i < LOCALES.length; i++) {
-        var l = LOCALES[i].toLowerCase();
-        if (want === l || want.split("-")[0] === l.split("-")[0]) { pick = LOCALES[i]; break; }
+      function valid(c){ for (var i = 0; i < LOCALES.length; i++) { if (LOCALES[i] === c) return true; } return false; }
+      var pick = null;
+      // 1) Manuelt gemt valg (sat af portalens sprogvælger) vinder.
+      try { var saved = localStorage.getItem("docs.locale"); if (saved && valid(saved)) pick = saved; } catch (e) {}
+      // 2) Ellers browserens sprog, med standardsproget som fald-tilbage.
+      if (!pick) {
+        var want = (navigator.language || navigator.userLanguage || "").toLowerCase();
+        pick = DEFAULT;
+        for (var i = 0; i < LOCALES.length; i++) {
+          var l = LOCALES[i].toLowerCase();
+          if (want === l || want.split("-")[0] === l.split("-")[0]) { pick = LOCALES[i]; break; }
+        }
       }
       location.replace(pick + "/index.html");
     })();
@@ -330,12 +342,20 @@ sender videre til standardsproget.
 - Kommandoen er **idempotent**: kør den trygt igen — eksisterende filer røres ikke.
 - **Standardsproget er `da-DK`**, og rod-`index.html` er kun en redirect — alt indhold ligger
   i sprogmapperne (`da-DK/`, `en-US/`, …). Hver sprogmappes portal dannes af `/update-website`.
+- **Manuelt sprogvalg.** Portalens sprogvælger (globus-dropdown i topbaren) og rod-redirecten deler
+  `localStorage`-nøglen `docs.locale`: vælger brugeren et sprog i en portal, gemmes koden der, og
+  rod-redirecten sender brugeren til det sprog ved næste besøg i stedet for browsersproget. Virker på
+  http(s)/GitHub Pages; under `file://` kan `localStorage` være utilgængelig — så skifter vælgeren
+  blot sprog uden at huske valget (alle kald er fejltolerante).
 - `favicon.svg` ligger i **roden af `.website/`** og deles af alle sprog. Sider i en sprogmappe
   peger relativt tilbage til roden (fx `../favicon.svg` for en portal, `../../favicon.svg` for en
   side i `<sprog>/<emne>/`).
-- `script.js`, `styles-default.css`, `favicon.svg`, `serve.py` og selve `/html-guide` ligger i
-  claude4bc-submodulet. Projektets brandede `.website/styles.css` oprettes med `/create-css`.
-  Kun `favicon.svg` og `serve.py` kopieres herfra til `.website/`; resten oprettes ikke her.
+- `script.js`, `styles-default.css`, `favicon.svg`, `serve.py`, `404.html` og selve `/html-guide`
+  ligger i claude4bc-submodulet. Projektets brandede `.website/styles.css` oprettes med `/create-css`.
+  Kun `favicon.svg`, `serve.py` og `404.html` kopieres herfra til `.website/`; resten oprettes ikke her.
+- `404.html` ligger i **roden af `.website/`** og deles af alle sprog. På en case-følsom host
+  (GitHub Pages) sender den en forespørgsel på fx `/da-dk/…` videre til den korrekte
+  `/da-DK/…`-sti, så links med forkert bogstavstørrelse stadig rammer rigtigt.
 - `serve.py` er en lille lokal server, der sætter **no-cache-headers** og aldrig svarer
   `304 Not Modified`. Rå `python -m http.server` sender `Last-Modified`/`304`, så browseren
   genbruger gamle (cachede) sider — især i portalens fetch-baserede indhold. `serve.py` gør
@@ -354,3 +374,5 @@ før `serve.py` blev indført, skal opdateres manuelt for at få no-cache-server
    `%PY% "%~dp0serve.py" %PORT%`
 3. Ret `runtimeArgs` i `.claude/launch.json` (`docs`-posten) til:
    `["<WEBSITE_REL>/serve.py", "8765", "<WEBSITE_REL>"]`
+4. Kopiér `404.html` fra submodulets `html-guide/404.html` til projektets `.website/404.html`
+   (giver case-korrekt redirect af sprogstien på GitHub Pages).

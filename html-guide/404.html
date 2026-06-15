@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+  const path = window.location.pathname.toLowerCase();
+  if (path.includes('/da-dk/')) {
+    window.location.replace(
+      window.location.href.replace(/\/da-dk\//i, '/da-DK/')
+    );
+  } else if (path.includes('/en-us/')) {
+    window.location.replace(
+      window.location.href.replace(/\/en-us\//i, '/en-US/')
+    );
+  }
+</script>
+</head>
+</html>

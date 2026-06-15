@@ -112,6 +112,30 @@ ligger i `:root` mellem markørerne `/* === BRAND:START … */` og `/* === BRAND
 Dette gælder **både** når portalen lige er oprettet fra skabelonen (trin 6) og når en eksisterende
 portal opdateres — så brandfarverne holdes i sync med `.website/styles.css` ved hver kørsel.
 
+### 6c. Sprogvælger (globus-dropdown)
+Portalens topbar har en globus-dropdown, hvor brugeren selv kan vælge sprog. Listen af sprog ligger i
+portalens `const LOCALES = [ … ]` mellem markørerne `// === LOCALES:START …` og `// === LOCALES:END ===`.
+
+- **Skriv hele sproglisten ind** mellem markørerne — **samme liste og rækkefølge som trin 7**
+  (standardsproget først, derefter de øvrige), fx:
+
+  ```js
+      "da-DK", "en-US",
+  ```
+
+  Brug hele sitets sprogmapper (samme scanning som trin 7), **uanset** om kørslen kun behandlede ét
+  sprog i `$ARGUMENTS` — alle portaler skal vise hele sproglisten.
+- **Skriv ikke** det aktuelle sprog ind: portalens JS udleder det fra sin egen sti (mappenavnet), så
+  `LOCALES`-blokken er **identisk** i alle sprogportaler.
+- **Findes markørerne ikke** (ældre portal uden sprogvælger), så **spring over** og bemærk i
+  rapporten, at portalen skal **gendannes fra skabelonen** for at få sprogvælgeren — slet
+  `.website/<sprog>/index.html` og kør kommandoen igen (NAV genopbygges). Sprogvælgeren er en
+  layout-ændring (skabelonen), ikke en NAV-ændring, så den injiceres ikke i en portal der mangler
+  markup/CSS/JS til den.
+
+Dette gælder **både** ved oprettelse fra skabelonen (trin 6) og ved opdatering af en eksisterende
+portal — så sproglisten holdes i sync med sprogmapperne ved hver kørsel.
+
 ### 7. Opdatér rod-redirecten `.website/index.html`
 Hold redirect-sidens sprogliste i sync med de sprogmapper, der faktisk findes i `.website/`.
 - **Find alle sprogmapper** i `.website/` (umiddelbare undermapper hvis navn ikke starter med `.`),
@@ -134,9 +158,11 @@ Hold redirect-sidens sprogliste i sync med de sprogmapper, der faktisk findes i 
 ### 8. Rapportér
 Vis en kort oversigt **pr. sprog**: antal sider fundet, grupper, og hvad der er
 **tilføjet/fjernet/omdøbt** i forhold til den tidligere NAV-liste. Nævn desuden, om
-rod-redirectens sprogliste blev opdateret (og til hvilke sprog/standardsprog), og om portalernes
-brandfarver blev synkroniseret fra `.website/styles.css` (eller om der blev brugt neutrale
-standardfarver, fordi `.website/styles.css` mangler).
+rod-redirectens sprogliste blev opdateret (og til hvilke sprog/standardsprog), om portalernes
+sprogvælger-liste (`LOCALES`) blev synkroniseret (og for hvilke portaler markørerne manglede, så de
+skal gendannes fra skabelonen), og om portalernes brandfarver blev synkroniseret fra
+`.website/styles.css` (eller om der blev brugt neutrale standardfarver, fordi `.website/styles.css`
+mangler).
 
 ## Vigtigt
 
@@ -147,6 +173,9 @@ standardfarver, fordi `.website/styles.css` mangler).
   rediger dem ikke i hånden. De afledes af projektets `.website/styles.css`; skift farver med
   `/create-css` og kør derefter `/update-website` igen. Skabelonens egne BRAND-farver er kun en
   neutral standard for u-brandede projekter.
+- Portalens **sprogliste** (`LOCALES`-blokken mellem markørerne) er også et genereret artefakt —
+  rediger den ikke i hånden. Den afspejler sprogmapperne i `.website/` og holdes i sync ved hver
+  kørsel. Sprogvælgeren skjules automatisk, hvis der kun findes ét sprog.
 - Sti-værdier i `NAV` skal være **relative til portalen** (dvs. til sprogmappen `.website/<sprog>/`),
   så portalen kan loade siderne i sin iframe og fuldtekst-søgningen kan `fetch`'e dem. Hold derfor
   hver sides kildemateriale og færdige HTML i **samme** sprogmappe.

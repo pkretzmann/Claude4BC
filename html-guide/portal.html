@@ -98,6 +98,31 @@
     border:1px solid var(--gray-200); white-space:nowrap; transition:all .12s;
   }
   .open-ext:hover{background:var(--brand-subtle); border-color:var(--brand-light); color:var(--brand-dark)}
+
+  /* ── Sprogvælger ── */
+  .langpick{position:relative}
+  .langpick-btn{
+    display:inline-flex; align-items:center; gap:6px;
+    font-size:12.5px; font-weight:600; color:var(--gray-700);
+    background:none; border:1px solid var(--gray-200); border-radius:8px;
+    padding:7px 10px; cursor:pointer; font-family:inherit; transition:all .12s;
+  }
+  .langpick-btn:hover{background:var(--brand-subtle); border-color:var(--brand-light); color:var(--brand-dark)}
+  .langpick-btn svg{display:block}
+  .langpick-menu{
+    display:none; position:absolute; top:calc(100% + 6px); right:0; z-index:20;
+    min-width:160px; padding:6px; background:var(--white);
+    border:1px solid var(--gray-200); border-radius:10px; box-shadow:0 8px 28px rgba(10,25,40,.16);
+  }
+  .langpick.open .langpick-menu{display:block}
+  .langpick-menu button{
+    display:flex; align-items:center; gap:8px; width:100%; text-align:left;
+    padding:8px 10px; border:0; border-radius:7px; background:none; cursor:pointer;
+    font-family:inherit; font-size:13px; color:var(--gray-700); transition:background .12s,color .12s;
+  }
+  .langpick-menu button:hover{background:var(--brand-subtle); color:var(--brand-dark)}
+  .langpick-menu button.current{background:var(--brand-pale); color:var(--brand-dark); font-weight:600}
+
   .frame-wrap{flex:1; min-height:0; background:var(--gray-100)}
   iframe{width:100%; height:100%; border:0; display:block; background:var(--white)}
 
@@ -135,6 +160,14 @@
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
       </button>
       <div class="crumb" id="crumb">Vælg en side</div>
+      <div class="langpick" id="langpick" hidden>
+        <button class="langpick-btn" id="langpickBtn" aria-haspopup="true" aria-expanded="false" aria-label="Skift sprog" title="Skift sprog">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          <span id="langpickCur"></span>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="langpick-menu" id="langpickMenu" role="menu"></div>
+      </div>
       <a class="open-ext" id="openExt" href="#" target="_blank" rel="noopener" title="Åbn siden i ny fane">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/></svg>
         Åbn i ny fane
@@ -157,6 +190,14 @@ const NAV = [
   // === NAV:START — auto-genereret af /update-website. Rediger ikke manuelt. ===
   // (ingen sider endnu — generér sider med /html-guide og kør /update-website)
   // === NAV:END ===
+];
+
+/* Tilgængelige sprog. Udfyldes af /update-website ud fra sprogmapperne i .website/.
+   Rediger ikke indholdet mellem LOCALES:START og LOCALES:END manuelt. */
+const LOCALES = [
+  // === LOCALES:START — auto-genereret af /update-website. Rediger ikke manuelt. ===
+  // (udfyldes af /update-website ud fra sprogmapperne i .website/)
+  // === LOCALES:END ===
 ];
 
 const navEl   = document.getElementById('nav');
@@ -298,6 +339,52 @@ function closeNav(){ body.classList.remove('nav-open'); }
 document.getElementById('hamburger').addEventListener('click', () =>
   body.classList.toggle('nav-open'));
 scrim.addEventListener('click', closeNav);
+
+/* ── Sprogvælger ── */
+(function () {
+  var wrap = document.getElementById('langpick');
+  if (!wrap || !Array.isArray(LOCALES) || LOCALES.length < 2) return;  // skjul ved 0-1 sprog
+  var btn = document.getElementById('langpickBtn');
+  var cur = document.getElementById('langpickCur');
+  var menu = document.getElementById('langpickMenu');
+
+  // Aktuelt sprog = mappenavnet portalen ligger i (…/<sprog>/index.html)
+  var segs = location.pathname.replace(/\/index\.html?$/i, '').split('/').filter(Boolean);
+  var current = segs.length ? segs[segs.length - 1] : '';
+
+  function label(code) {
+    try {
+      var dn = new Intl.DisplayNames([code], { type: 'language' });
+      var s = dn.of(code.split('-')[0]);
+      return s ? s.charAt(0).toUpperCase() + s.slice(1) : code;
+    } catch (e) { return code; }
+  }
+
+  cur.textContent = label(current) || current || 'Sprog';
+  LOCALES.forEach(function (code) {
+    var b = document.createElement('button');
+    b.type = 'button'; b.setAttribute('role', 'menuitem');
+    b.textContent = label(code);
+    if (code === current) b.className = 'current';
+    b.addEventListener('click', function () {
+      try { localStorage.setItem('docs.locale', code); } catch (e) {}
+      location.href = '../' + code + '/index.html';
+    });
+    menu.appendChild(b);
+  });
+
+  function close() { wrap.classList.remove('open'); btn.setAttribute('aria-expanded', 'false'); }
+  btn.addEventListener('click', function (e) {
+    e.stopPropagation();
+    var open = wrap.classList.toggle('open');
+    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+  document.addEventListener('click', close);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+  menu.addEventListener('click', function (e) { e.stopPropagation(); });
+
+  wrap.hidden = false;
+})();
 
 /* Init */
 routeFromHash();
