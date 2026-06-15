@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title id="page-title">GitHub Pages Deploy via Actions</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+:root {
+  --brand-dark:    #003F7F;
+  --brand-mid:     #0069B4;
+  --brand-light:   #00AEEF;
+  --brand-pale:    #E3F2FB;
+  --brand-subtle:  #F0F7FC;
+  --accent:        #00AEEF;
+}
+:root {
+  --white:        #FFFFFF;
+  --gray-100:     #F4F6F8;
+  --gray-200:     #E1E8EF;
+  --gray-400:     #9BAFC0;
+  --gray-700:     #4A5C6A;
+  --text:         #1A2A38;
+  --note-bg:      #FFF8E1;
+  --note-border:  #F4A918;
+  --success:      #1A7F4B;
+  --success-bg:   #E6F6EE;
+  --code-bg:      #0E2230;
+  --code-text:    #D6E7F2;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Inter', -apple-system, sans-serif;
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--text);
+  background: var(--gray-100);
+}
+header {
+  background: linear-gradient(135deg, var(--brand-dark) 0%, var(--brand-mid) 60%, var(--brand-light) 100%);
+  color: var(--white);
+  padding: 48px 48px 36px;
+  position: relative;
+  overflow: hidden;
+}
+header::before {
+  content: '';
+  position: absolute;
+  top: -60px; right: -60px;
+  width: 280px; height: 280px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.06);
+}
+header::after {
+  content: '';
+  position: absolute;
+  bottom: -80px; left: 30%;
+  width: 360px; height: 360px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.04);
+}
+.header-badge {
+  display: inline-block;
+  background: rgba(255,255,255,0.18);
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 20px;
+  padding: 4px 14px;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+header h1 {
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  margin-bottom: 8px;
+  position: relative;
+  z-index: 1;
+}
+header p {
+  font-size: 15px;
+  opacity: 0.85;
+  font-weight: 300;
+  position: relative;
+  z-index: 1;
+}
+.header-pills {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+  position: relative;
+  z-index: 1;
+}
+.pill {
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 20px;
+  padding: 5px 14px;
+  font-size: 13px;
+  font-weight: 500;
+}
+.container {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 40px 24px 64px;
+}
+.toc {
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-left: 4px solid var(--brand-mid);
+  border-radius: 8px;
+  padding: 24px 28px;
+  margin-bottom: 40px;
+}
+.toc h2 {
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--brand-mid);
+  margin-bottom: 14px;
+}
+.toc ol {
+  padding-left: 20px;
+  column-count: 2;
+  column-gap: 32px;
+}
+.toc li { margin-bottom: 5px; }
+.toc a {
+  color: var(--brand-dark);
+  text-decoration: none;
+  font-size: 14px;
+  transition: color 0.15s;
+}
+.toc a:hover { color: var(--brand-light); }
+.section {
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: 12px;
+  padding: 36px 40px;
+  margin-bottom: 28px;
+  box-shadow: 0 2px 8px rgba(0,63,127,0.06);
+}
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 24px;
+  padding-bottom: 18px;
+  border-bottom: 2px solid var(--brand-pale);
+}
+.section-icon {
+  width: 40px; height: 40px;
+  border-radius: 10px;
+  background: var(--brand-pale);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+h2 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--brand-dark);
+  letter-spacing: -0.3px;
+}
+h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--brand-mid);
+  margin: 24px 0 12px;
+}
+h4 {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--gray-700);
+  margin: 18px 0 8px;
+}
+p { margin-bottom: 14px; }
+ul.bullets { margin: 0 0 14px 20px; }
+ul.bullets li { margin-bottom: 6px; }
+strong { font-weight: 600; }
+code {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 12.5px;
+  background: var(--brand-subtle);
+  border: 1px solid var(--gray-200);
+  border-radius: 4px;
+  padding: 1px 6px;
+  color: var(--brand-dark);
+  overflow-wrap: break-word;
+}
+pre {
+  background: var(--code-bg);
+  color: var(--code-text);
+  border-radius: 10px;
+  padding: 18px 20px;
+  margin: 16px 0;
+  overflow-x: auto;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 12.5px;
+  line-height: 1.6;
+}
+pre code {
+  background: none;
+  border: none;
+  padding: 0;
+  color: inherit;
+  white-space: pre;
+  font-size: inherit;
+}
+.steps {
+  counter-reset: step;
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.steps > li {
+  counter-increment: step;
+  position: relative;
+  padding: 14px 18px 14px 52px;
+  background: var(--brand-subtle);
+  border-radius: 8px;
+  font-size: 14px;
+  border: 1px solid var(--brand-pale);
+}
+.steps > li::before {
+  content: counter(step);
+  position: absolute;
+  left: 14px;
+  top: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  background: var(--brand-mid);
+  color: white;
+  font-size: 12px;
+  font-weight: 700;
+}
+.sub-steps {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.sub-steps > li {
+  position: relative;
+  padding: 8px 12px 8px 32px;
+  background: var(--white);
+  border-radius: 6px;
+  font-size: 13.5px;
+  border: 1px solid var(--gray-200);
+}
+.sub-steps > li::before {
+  content: '→';
+  position: absolute;
+  left: 14px;
+  top: 8px;
+  color: var(--brand-light);
+  font-weight: 700;
+}
+.table-wrap { overflow-x: auto; margin: 16px 0; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+}
+thead tr { background: var(--brand-dark); color: var(--white); }
+thead th {
+  padding: 11px 14px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.2px;
+}
+tbody tr:nth-child(even) { background: var(--brand-subtle); }
+tbody tr:hover { background: var(--brand-pale); }
+tbody td {
+  padding: 9px 14px;
+  border-bottom: 1px solid var(--gray-200);
+  vertical-align: top;
+}
+table code { white-space: nowrap; }
+.note {
+  background: var(--note-bg);
+  border-left: 4px solid var(--note-border);
+  border-radius: 0 8px 8px 0;
+  padding: 14px 18px;
+  margin: 18px 0;
+  font-size: 14px;
+}
+.note strong { color: #B7770A; }
+.info-box {
+  background: var(--brand-pale);
+  border-left: 4px solid var(--brand-mid);
+  border-radius: 0 8px 8px 0;
+  padding: 14px 18px;
+  margin: 18px 0;
+  font-size: 14px;
+}
+.flowchart {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  padding: 24px 0;
+  font-size: 13px;
+}
+.fc-node {
+  background: var(--white);
+  border: 2px solid var(--brand-mid);
+  border-radius: 8px;
+  padding: 11px 22px;
+  text-align: center;
+  max-width: 560px;
+  width: 100%;
+  color: var(--text);
+  font-weight: 500;
+  box-shadow: 0 2px 6px rgba(0,63,127,0.1);
+}
+.fc-node.start {
+  background: var(--brand-dark);
+  border-color: var(--brand-dark);
+  color: white;
+  font-weight: 600;
+  border-radius: 24px;
+}
+.fc-node.action {
+  background: var(--success-bg);
+  border-color: var(--success);
+}
+.fc-node.end {
+  background: var(--gray-200);
+  border-color: var(--gray-400);
+  color: var(--gray-700);
+  border-radius: 24px;
+  font-weight: 600;
+}
+.fc-arrow {
+  color: var(--brand-mid);
+  font-size: 22px;
+  line-height: 1;
+  margin: 2px 0;
+}
+footer {
+  background: var(--brand-dark);
+  color: rgba(255,255,255,0.6);
+  text-align: center;
+  padding: 20px;
+  font-size: 12px;
+  margin-top: 32px;
+}
+footer strong { color: rgba(255,255,255,0.9); }
+.toc a.active { color: var(--brand-light); font-weight: 600; }
+pre { position: relative; }
+.copy-btn {
+  position: absolute; top: 8px; right: 8px;
+  background: rgba(255,255,255,0.12); color: var(--code-text);
+  border: 1px solid rgba(255,255,255,0.25); border-radius: 5px;
+  padding: 2px 10px; font-size: 11.5px; font-weight: 600;
+  cursor: pointer; font-family: 'Inter', -apple-system, sans-serif;
+}
+.copy-btn:hover { background: rgba(255,255,255,0.22); }
+.to-top-btn {
+  position: fixed; bottom: 24px; right: 24px;
+  width: 44px; height: 44px; border-radius: 50%;
+  background: var(--brand-mid); color: #fff; border: none;
+  font-size: 20px; line-height: 1; cursor: pointer;
+  box-shadow: 0 3px 10px rgba(0,63,127,0.25);
+  opacity: 0; visibility: hidden; transition: opacity 0.2s, visibility 0.2s;
+  z-index: 50;
+}
+.to-top-btn.visible { opacity: 1; visibility: visible; }
+.to-top-btn:hover { background: var(--brand-dark); }
+@media print {
+  body { background: white; font-size: 13px; }
+  .section { box-shadow: none; border: 1px solid #ccc; page-break-inside: avoid; }
+  header { background: var(--brand-dark) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  pre { background: #f4f4f4 !important; color: #111 !important; border: 1px solid #ccc; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .to-top-btn, .copy-btn { display: none !important; }
+}
+  </style>
+</head>
+<body>
+
+<script>
+  // ══════════════════════════════════════════════════════════════
+  //  KONFIGURATION — ret kun disse værdier til dit projekt
+  // ══════════════════════════════════════════════════════════════
+  const CONFIG = {
+    // Den mappe i repo'et der skal publiceres som GitHub Pages root
+    websiteFolder:      '.website',
+
+    // Filnavnet på workflow-filen (uden sti — lægges altid under .github/workflows/)
+    workflowFilename:   'DeployDocsWebsite.yaml',
+
+    // Den branch der overvåges og deployes fra
+    branch:             'main',
+
+    // GitHub Pages URL efter deploy (udfyldes automatisk af GitHub, men nyttigt som reference)
+    // Format: https://<username>.github.io/<repo>/
+    pagesUrl:           'https://pkretzmann.github.io/Toggl/',
+
+    // Footer
+    footerText:         'Kretzmann ApS · GitHub Pages Deploy-vejledning · Opdateret juni 2026',
+  };
+  // ══════════════════════════════════════════════════════════════
+
+  document.addEventListener('DOMContentLoaded', function () {
+    // Udfyld alle data-cfg placeholders
+    document.querySelectorAll('[data-cfg]').forEach(function (el) {
+      var key = el.getAttribute('data-cfg');
+      if (CONFIG[key] !== undefined) el.textContent = CONFIG[key];
+    });
+
+    // Dynamiske titler
+    document.getElementById('page-title').textContent =
+      'GitHub Pages Deploy · ' + CONFIG.websiteFolder;
+    document.getElementById('header-title').textContent =
+      'Deploy af ' + CONFIG.websiteFolder + ' til GitHub Pages';
+    document.getElementById('header-sub').innerHTML =
+      'Automatisk publicering af <code style="background:rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.3);border-radius:4px;padding:1px 6px;font-family:\'JetBrains Mono\',monospace;font-size:13px">'
+      + CONFIG.websiteFolder
+      + '</code> som GitHub Pages via GitHub Actions — uden at bruge <em>Deploy from a branch</em>.';
+
+    // Generér workflow-YAML dynamisk
+    document.getElementById('workflow-yaml').textContent =
+`name: Deploy Documentation Website
+on:
+  push:
+    branches: [ ${CONFIG.branch} ]
+    paths:
+      - '${CONFIG.websiteFolder}/**'
+      - '.github/workflows/${CONFIG.workflowFilename}'
+  workflow_dispatch:
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true   # dæmper Node20-deprecation-advarsel
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: false
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: \${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+      - name: Upload website as Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '${CONFIG.websiteFolder}'
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4`;
+
+    // Footer
+    document.getElementById('footer-text').textContent = CONFIG.footerText;
+  });
+</script>
+
+<header>
+  <div class="header-badge">GitHub Actions · GitHub Pages</div>
+  <h1 id="header-title"><!-- udfyldes af JS --></h1>
+  <p id="header-sub"><!-- udfyldes af JS --></p>
+  <div class="header-pills">
+    <span class="pill">⚡ GitHub Actions</span>
+    <span class="pill">🌐 GitHub Pages</span>
+    <span class="pill">📁 Valgfri kilde-mappe</span>
+    <span class="pill">🔄 Automatisk ved push</span>
+  </div>
+</header>
+
+<div class="container">
+
+  <nav class="toc">
+    <h2>Indholdsfortegnelse</h2>
+    <ol>
+      <li><a href="#overblik">1 · Overblik</a></li>
+      <li><a href="#konfiguration">2 · Konfiguration</a></li>
+      <li><a href="#pages-opsaetning">3 · GitHub Pages-opsætning</a></li>
+      <li><a href="#workflow">4 · Workflow-filen</a></li>
+      <li><a href="#forklaring">5 · Forklaring af workflow</a></li>
+      <li><a href="#verificering">6 · Verificering</a></li>
+    </ol>
+  </nav>
+
+  <!-- ── 1 Overblik ── -->
+  <div class="section" id="overblik">
+    <div class="section-header">
+      <div class="section-icon">🧭</div>
+      <h2>1 · Overblik</h2>
+    </div>
+    <p>GitHub Pages understøtter normalt kun publicering fra <strong>repo-roden</strong> eller en <code>/docs</code>-mappe via <em>Deploy from a branch</em>. Denne løsning omgår den begrænsning ved at bruge GitHub Actions, der uploader en <strong>valgfri mappe</strong> — i dette tilfælde <code><span data-cfg="websiteFolder"></span></code> — direkte som Pages-artifact.</p>
+    <p>Fordelen er at resten af repo'et (AL-kode, scripts, konfigurationsfiler) ikke er synligt på websitet — kun indholdet af <code><span data-cfg="websiteFolder"></span></code> publiceres.</p>
+
+    <div class="flowchart">
+      <div class="fc-node start">Push til <code><span data-cfg="branch"></span></code> med ændringer i <code><span data-cfg="websiteFolder"></span>/</code></div>
+      <div class="fc-arrow">↓</div>
+      <div class="fc-node">GitHub Actions trigger workflow</div>
+      <div class="fc-arrow">↓</div>
+      <div class="fc-node">Checkout → Setup Pages → Upload artifact fra <code><span data-cfg="websiteFolder"></span></code></div>
+      <div class="fc-arrow">↓</div>
+      <div class="fc-node action">Deploy til GitHub Pages</div>
+      <div class="fc-arrow">↓</div>
+      <div class="fc-node end">Site live på <span data-cfg="pagesUrl"></span></div>
+    </div>
+
+    <div class="info-box"><strong>workflow_dispatch:</strong> Workflow'et kan også køres manuelt fra GitHub → Actions-fanen uden at skulle pushe en ændring. Nyttigt til at tvinge et re-deploy.</div>
+  </div>
+
+  <!-- ── 2 Konfiguration ── -->
+  <div class="section" id="konfiguration">
+    <div class="section-header">
+      <div class="section-icon">⚙️</div>
+      <h2>2 · Konfiguration for dette projekt</h2>
+    </div>
+    <p>Alle projekt-specifikke værdier styres fra <code>CONFIG</code>-objektet øverst i denne fils <code>&lt;script&gt;</code>-tag. Ret kun de værdier — resten af dokumentet opdateres automatisk.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Variabel</th><th>Værdi</th><th>Beskrivelse</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><code>websiteFolder</code></td>
+            <td><code><span data-cfg="websiteFolder"></span></code></td>
+            <td>Mappen der publiceres som Pages-root. Kan være en hvilken som helst sti relativt til repo-roden.</td>
+          </tr>
+          <tr>
+            <td><code>workflowFilename</code></td>
+            <td><code><span data-cfg="workflowFilename"></span></code></td>
+            <td>Filnavnet på workflow-filen. Bruges i <code>paths</code>-filteret så workflow'et også re-deployer når selve workflow-filen ændres.</td>
+          </tr>
+          <tr>
+            <td><code>branch</code></td>
+            <td><code><span data-cfg="branch"></span></code></td>
+            <td>Den branch der overvåges for push-events og deployes fra.</td>
+          </tr>
+          <tr>
+            <td><code>pagesUrl</code></td>
+            <td><code><span data-cfg="pagesUrl"></span></code></td>
+            <td>Den forventede GitHub Pages URL efter deploy. Sættes automatisk af GitHub i <code>steps.deployment.outputs.page_url</code>.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="note"><strong>⚠ Ingen secrets nødvendige:</strong> Denne løsning bruger ikke PAT eller secrets. GitHub Actions har de nødvendige tilladelser via <code>permissions: pages: write</code> og <code>id-token: write</code> direkte i workflow-filen.</div>
+  </div>
+
+  <!-- ── 3 GitHub Pages-opsætning ── -->
+  <div class="section" id="pages-opsaetning">
+    <div class="section-header">
+      <div class="section-icon">🌐</div>
+      <h2>3 · GitHub Pages-opsætning i repo'et</h2>
+    </div>
+    <p>Før workflow'et kan deploye, skal GitHub Pages konfigureres til at modtage deploys fra GitHub Actions — <strong>ikke</strong> fra en branch.</p>
+    <ol class="steps">
+      <li>Gå til dit repo på GitHub → <strong>Settings</strong>.</li>
+      <li>Vælg <strong>Pages</strong> i venstre menu.</li>
+      <li>
+        Under <strong>Build and deployment</strong>, skift Source til:
+        <ul class="sub-steps">
+          <li><strong>GitHub Actions</strong> (ikke "Deploy from a branch")</li>
+        </ul>
+      </li>
+      <li>Klik <strong>Save</strong> hvis der er en gem-knap — ellers gemmes det automatisk.</li>
+    </ol>
+    <div class="info-box"><strong>Dette er forskellen fra standard-opsætningen:</strong> Med <em>Deploy from a branch</em> publicerer GitHub automatisk fra <code>/</code> eller <code>/docs</code> på en valgt branch. Med <em>GitHub Actions</em> er det udelukkende workflow'et der bestemmer hvad der publiceres — og du kan pege på en hvilken som helst mappe via <code>upload-pages-artifact</code>.</div>
+  </div>
+
+  <!-- ── 4 Workflow-filen ── -->
+  <div class="section" id="workflow">
+    <div class="section-header">
+      <div class="section-icon">📄</div>
+      <h2>4 · Workflow-filen</h2>
+    </div>
+    <p>Opret filen på denne sti i repo'et:</p>
+    <p><code>.github/workflows/<span data-cfg="workflowFilename"></span></code></p>
+    <pre><code id="workflow-yaml"><!-- udfyldes af JS --></code></pre>
+    <p>Commit og push til <code><span data-cfg="branch"></span></code>. Workflow'et trigger automatisk fordi filen selv matcher <code>paths</code>-filteret.</p>
+  </div>
+
+  <!-- ── 5 Forklaring ── -->
+  <div class="section" id="forklaring">
+    <div class="section-header">
+      <div class="section-icon">🔍</div>
+      <h2>5 · Forklaring af workflow-blokkene</h2>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Blok / felt</th><th>Hvad det gør</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><code>on.push.paths</code></td>
+            <td>Workflow'et kører kun når der pushes filer under <code><span data-cfg="websiteFolder"></span>/</code> eller workflow-filen selv ændres. Undgår unødvendige deploys ved AL-kode-ændringer.</td>
+          </tr>
+          <tr>
+            <td><code>workflow_dispatch</code></td>
+            <td>Giver mulighed for at starte workflow'et manuelt fra GitHub → Actions uden at pushe en ændring.</td>
+          </tr>
+          <tr>
+            <td><code>FORCE_JAVASCRIPT_ACTIONS_TO_NODE24</code></td>
+            <td>Dæmper deprecation-advarsler om Node 20 i GitHub Actions-loggen. Ingen funktionel betydning.</td>
+          </tr>
+          <tr>
+            <td><code>permissions</code></td>
+            <td><code>pages: write</code> og <code>id-token: write</code> er påkrævet for at workflow'et må skrive til GitHub Pages. <code>contents: read</code> giver checkout-adgang.</td>
+          </tr>
+          <tr>
+            <td><code>concurrency.cancel-in-progress: false</code></td>
+            <td>Sikrer at et igangværende deploy ikke afbrydes af et nyt push. Det nye deploy venter i kø i stedet.</td>
+          </tr>
+          <tr>
+            <td><code>environment: github-pages</code></td>
+            <td>Knytter jobbet til GitHub Pages-environmentet. <code>url</code> vises som et klikbart link i Actions-loggen efter deploy.</td>
+          </tr>
+          <tr>
+            <td><code>actions/configure-pages@v5</code></td>
+            <td>Forbereder GitHub Pages til at modtage et artifact-deploy.</td>
+          </tr>
+          <tr>
+            <td><code>actions/upload-pages-artifact@v3</code></td>
+            <td>Uploader indholdet af <code><span data-cfg="websiteFolder"></span></code> som et Pages-artifact. Det er her mappen specificeres — <strong>ikke</strong> i Pages-indstillingerne.</td>
+          </tr>
+          <tr>
+            <td><code>actions/deploy-pages@v4</code></td>
+            <td>Publicerer artifactet til GitHub Pages og returnerer den endelige URL i <code>steps.deployment.outputs.page_url</code>.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="note"><strong>⚠ path med og uden trailing slash:</strong> I <code>upload-pages-artifact</code> angives <code>path: '<span data-cfg="websiteFolder"></span>'</code> uden trailing slash. GitHub Actions håndterer begge dele, men vær konsekvent for at undgå forvirring.</div>
+  </div>
+
+  <!-- ── 6 Verificering ── -->
+  <div class="section" id="verificering">
+    <div class="section-header">
+      <div class="section-icon">✅</div>
+      <h2>6 · Verificering</h2>
+    </div>
+    <ol class="steps">
+      <li>Push workflow-filen til <code><span data-cfg="branch"></span></code> — det trigger det første deploy automatisk.</li>
+      <li>Gå til repo'et → <strong>Actions</strong> → find workflow'et <em>Deploy Documentation Website</em> og tjek at det kører (gult = i gang, grønt = success).</li>
+      <li>Klik på det kørende/gennemførte job → <strong>deploy</strong> → under <em>Deploy to GitHub Pages</em> finder du et klikbart link til den publicerede URL.</li>
+      <li>Gå til <strong>Settings → Pages</strong> og bekræft at <em>Source</em> viser <strong>GitHub Actions</strong> og at der er et grønt flueben med den seneste deploy-URL.</li>
+    </ol>
+
+    <h3>Fejlfinding</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Symptom</th><th>Sandsynlig årsag</th><th>Løsning</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>Workflow kører ikke ved push</td>
+            <td><code>paths</code>-filteret matcher ikke de ændrede filer</td>
+            <td>Tjek at du pushede filer under <code><span data-cfg="websiteFolder"></span>/</code></td>
+          </tr>
+          <tr>
+            <td><code>Error: Artifact not found</code></td>
+            <td>Mappen <code><span data-cfg="websiteFolder"></span></code> eksisterer ikke i repo'et</td>
+            <td>Tjek at mappen er committed og stavet korrekt (case-sensitiv)</td>
+          </tr>
+          <tr>
+            <td><code>Permission denied</code> på deploy-steget</td>
+            <td>Pages er ikke sat til <em>GitHub Actions</em> som source</td>
+            <td>Gå til Settings → Pages og skift source til <strong>GitHub Actions</strong></td>
+          </tr>
+          <tr>
+            <td>404 på GitHub Pages URL</td>
+            <td>Ingen <code>index.html</code> i roden af <code><span data-cfg="websiteFolder"></span></code></td>
+            <td>Tjek at <code><span data-cfg="websiteFolder"></span>/index.html</code> eksisterer</td>
+          </tr>
+          <tr>
+            <td>Gammelt indhold vises stadig</td>
+            <td>Browser-cache eller CDN-forsinkelse</td>
+            <td>Vent 1-2 min og hard-refresh (<code>Ctrl+Shift+R</code>)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <strong id="footer-text"><!-- udfyldes af JS --></strong>
+</footer>
+
+<script>
+(function () {
+  'use strict';
+
+  document.querySelectorAll('a[href^="#"]').forEach(function (link) {
+    link.addEventListener('click', function (e) {
+      var id = link.getAttribute('href').slice(1);
+      var target = id && document.getElementById(id);
+      if (!target) return;
+      e.preventDefault();
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if (history.replaceState) history.replaceState(null, '', '#' + id);
+    });
+  });
+
+  var tocLinks = Array.prototype.slice.call(
+    document.querySelectorAll('.toc a[href^="#"]')
+  );
+  if (tocLinks.length && 'IntersectionObserver' in window) {
+    var byId = {};
+    tocLinks.forEach(function (l) { byId[l.getAttribute('href').slice(1)] = l; });
+    var sections = tocLinks
+      .map(function (l) { return document.getElementById(l.getAttribute('href').slice(1)); })
+      .filter(Boolean);
+    var spy = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        var link = byId[entry.target.id];
+        if (link && entry.isIntersecting) {
+          tocLinks.forEach(function (l) { l.classList.remove('active'); });
+          link.classList.add('active');
+        }
+      });
+    }, { rootMargin: '0px 0px -75% 0px', threshold: 0 });
+    sections.forEach(function (s) { spy.observe(s); });
+  }
+
+  if (navigator.clipboard) {
+    document.querySelectorAll('pre').forEach(function (pre) {
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'copy-btn';
+      btn.textContent = 'Kopiér';
+      btn.addEventListener('click', function () {
+        var code = pre.querySelector('code') || pre;
+        navigator.clipboard.writeText(code.innerText).then(function () {
+          btn.textContent = 'Kopieret ✓';
+          setTimeout(function () { btn.textContent = 'Kopiér'; }, 1500);
+        });
+      });
+      pre.appendChild(btn);
+    });
+  }
+
+  var toTop = document.createElement('button');
+  toTop.type = 'button';
+  toTop.className = 'to-top-btn';
+  toTop.setAttribute('aria-label', 'Til toppen');
+  toTop.textContent = '↑';
+  toTop.addEventListener('click', function () {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+  document.body.appendChild(toTop);
+  window.addEventListener('scroll', function () {
+    toTop.classList.toggle('visible', window.scrollY > 400);
+  }, { passive: true });
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title id="page-title">GitHub Mappe-synkronisering</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+:root {
+  --brand-dark:    #003F7F;
+  --brand-mid:     #0069B4;
+  --brand-light:   #00AEEF;
+  --brand-pale:    #E3F2FB;
+  --brand-subtle:  #F0F7FC;
+  --accent:        #00AEEF;
+}
+:root {
+  --white:        #FFFFFF;
+  --gray-100:     #F4F6F8;
+  --gray-200:     #E1E8EF;
+  --gray-400:     #9BAFC0;
+  --gray-700:     #4A5C6A;
+  --text:         #1A2A38;
+  --note-bg:      #FFF8E1;
+  --note-border:  #F4A918;
+  --success:      #1A7F4B;
+  --success-bg:   #E6F6EE;
+  --code-bg:      #0E2230;
+  --code-text:    #D6E7F2;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Inter', -apple-system, sans-serif;
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--text);
+  background: var(--gray-100);
+}
+header {
+  background: linear-gradient(135deg, var(--brand-dark) 0%, var(--brand-mid) 60%, var(--brand-light) 100%);
+  color: var(--white);
+  padding: 48px 48px 36px;
+  position: relative;
+  overflow: hidden;
+}
+header::before {
+  content: '';
+  position: absolute;
+  top: -60px; right: -60px;
+  width: 280px; height: 280px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.06);
+}
+header::after {
+  content: '';
+  position: absolute;
+  bottom: -80px; left: 30%;
+  width: 360px; height: 360px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.04);
+}
+.header-badge {
+  display: inline-block;
+  background: rgba(255,255,255,0.18);
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 20px;
+  padding: 4px 14px;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+header h1 {
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  margin-bottom: 8px;
+  position: relative;
+  z-index: 1;
+}
+header p {
+  font-size: 15px;
+  opacity: 0.85;
+  font-weight: 300;
+  position: relative;
+  z-index: 1;
+}
+.header-pills {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+  position: relative;
+  z-index: 1;
+}
+.pill {
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 20px;
+  padding: 5px 14px;
+  font-size: 13px;
+  font-weight: 500;
+}
+.container {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 40px 24px 64px;
+}
+.toc {
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-left: 4px solid var(--brand-mid);
+  border-radius: 8px;
+  padding: 24px 28px;
+  margin-bottom: 40px;
+}
+.toc h2 {
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--brand-mid);
+  margin-bottom: 14px;
+}
+.toc ol {
+  padding-left: 20px;
+  column-count: 2;
+  column-gap: 32px;
+}
+.toc li { margin-bottom: 5px; }
+.toc a {
+  color: var(--brand-dark);
+  text-decoration: none;
+  font-size: 14px;
+  transition: color 0.15s;
+}
+.toc a:hover { color: var(--brand-light); }
+.section {
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: 12px;
+  padding: 36px 40px;
+  margin-bottom: 28px;
+  box-shadow: 0 2px 8px rgba(0,63,127,0.06);
+}
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 24px;
+  padding-bottom: 18px;
+  border-bottom: 2px solid var(--brand-pale);
+}
+.section-icon {
+  width: 40px; height: 40px;
+  border-radius: 10px;
+  background: var(--brand-pale);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+h2 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--brand-dark);
+  letter-spacing: -0.3px;
+}
+h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--brand-mid);
+  margin: 24px 0 12px;
+}
+h4 {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--gray-700);
+  margin: 18px 0 8px;
+}
+p { margin-bottom: 14px; }
+ul.bullets { margin: 0 0 14px 20px; }
+ul.bullets li { margin-bottom: 6px; }
+strong { font-weight: 600; }
+code {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 12.5px;
+  background: var(--brand-subtle);
+  border: 1px solid var(--gray-200);
+  border-radius: 4px;
+  padding: 1px 6px;
+  color: var(--brand-dark);
+  overflow-wrap: break-word;
+}
+pre {
+  background: var(--code-bg);
+  color: var(--code-text);
+  border-radius: 10px;
+  padding: 18px 20px;
+  margin: 16px 0;
+  overflow-x: auto;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 12.5px;
+  line-height: 1.6;
+}
+pre code {
+  background: none;
+  border: none;
+  padding: 0;
+  color: inherit;
+  white-space: pre;
+  font-size: inherit;
+}
+.steps {
+  counter-reset: step;
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.steps > li {
+  counter-increment: step;
+  position: relative;
+  padding: 14px 18px 14px 52px;
+  background: var(--brand-subtle);
+  border-radius: 8px;
+  font-size: 14px;
+  border: 1px solid var(--brand-pale);
+}
+.steps > li::before {
+  content: counter(step);
+  position: absolute;
+  left: 14px;
+  top: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  background: var(--brand-mid);
+  color: white;
+  font-size: 12px;
+  font-weight: 700;
+}
+.sub-steps {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.sub-steps > li {
+  position: relative;
+  padding: 8px 12px 8px 32px;
+  background: var(--white);
+  border-radius: 6px;
+  font-size: 13.5px;
+  border: 1px solid var(--gray-200);
+}
+.sub-steps > li::before {
+  content: '→';
+  position: absolute;
+  left: 14px;
+  top: 8px;
+  color: var(--brand-light);
+  font-weight: 700;
+}
+.table-wrap { overflow-x: auto; margin: 16px 0; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+}
+thead tr {
+  background: var(--brand-dark);
+  color: var(--white);
+}
+thead th {
+  padding: 11px 14px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.2px;
+}
+tbody tr:nth-child(even) { background: var(--brand-subtle); }
+tbody tr:hover { background: var(--brand-pale); }
+tbody td {
+  padding: 9px 14px;
+  border-bottom: 1px solid var(--gray-200);
+  vertical-align: top;
+}
+table code { white-space: nowrap; }
+.note {
+  background: var(--note-bg);
+  border-left: 4px solid var(--note-border);
+  border-radius: 0 8px 8px 0;
+  padding: 14px 18px;
+  margin: 18px 0;
+  font-size: 14px;
+}
+.note strong { color: #B7770A; }
+.info-box {
+  background: var(--brand-pale);
+  border-left: 4px solid var(--brand-mid);
+  border-radius: 0 8px 8px 0;
+  padding: 14px 18px;
+  margin: 18px 0;
+  font-size: 14px;
+}
+footer {
+  background: var(--brand-dark);
+  color: rgba(255,255,255,0.6);
+  text-align: center;
+  padding: 20px;
+  font-size: 12px;
+  margin-top: 32px;
+}
+footer strong { color: rgba(255,255,255,0.9); }
+.toc a.active { color: var(--brand-light); font-weight: 600; }
+pre { position: relative; }
+.copy-btn {
+  position: absolute; top: 8px; right: 8px;
+  background: rgba(255,255,255,0.12); color: var(--code-text);
+  border: 1px solid rgba(255,255,255,0.25); border-radius: 5px;
+  padding: 2px 10px; font-size: 11.5px; font-weight: 600;
+  cursor: pointer; font-family: 'Inter', -apple-system, sans-serif;
+}
+.copy-btn:hover { background: rgba(255,255,255,0.22); }
+.to-top-btn {
+  position: fixed; bottom: 24px; right: 24px;
+  width: 44px; height: 44px; border-radius: 50%;
+  background: var(--brand-mid); color: #fff; border: none;
+  font-size: 20px; line-height: 1; cursor: pointer;
+  box-shadow: 0 3px 10px rgba(0,63,127,0.25);
+  opacity: 0; visibility: hidden; transition: opacity 0.2s, visibility 0.2s;
+  z-index: 50;
+}
+.to-top-btn.visible { opacity: 1; visibility: visible; }
+.to-top-btn:hover { background: var(--brand-dark); }
+@media print {
+  body { background: white; font-size: 13px; }
+  .section { box-shadow: none; border: 1px solid #ccc; page-break-inside: avoid; }
+  header { background: var(--brand-dark) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  pre { background: #f4f4f4 !important; color: #111 !important; border: 1px solid #ccc; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .to-top-btn, .copy-btn { display: none !important; }
+}
+  </style>
+</head>
+<body>
+
+<script>
+  // ── Konfiguration — ret disse variabler til dit projekt ──
+  const CONFIG = {
+    // Hoved-repo: stien til den mappe du vil synkronisere (relativ til repo-roden)
+    sourceFolder:        'Toggl/.website',
+
+    // Mirror repo: dit GitHub username og repo-navn
+    githubUsername:      'pkretzmann',
+    mirrorRepo:          'Toggl-Web-Site',
+
+    // Den branch der pushes fra og til
+    sourceBranch:        'main',
+    targetBranch:        'main',
+
+    // Navnet på den GitHub Secret du oprettede
+    secretName:          'TOGGL_WEBSITE_SECRET',
+
+    // Footer-tekst
+    footerText:          'Kretzmann ApS · GitHub Sync-vejledning · Opdateret juni 2026',
+  };
+
+  // Udfyld alle steder i dokumentet med CONFIG-værdierne
+  document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('[data-cfg]').forEach(function (el) {
+      var key = el.getAttribute('data-cfg');
+      if (CONFIG[key] !== undefined) el.textContent = CONFIG[key];
+    });
+    document.getElementById('page-title').textContent =
+      'GitHub Sync · ' + CONFIG.sourceFolder + ' → ' + CONFIG.mirrorRepo;
+    document.getElementById('header-title').textContent =
+      'Synkronisering af ' + CONFIG.sourceFolder;
+    document.getElementById('header-sub').innerHTML =
+      'Automatisk kopiering af <code style="background:rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.3);border-radius:4px;padding:1px 6px;font-family:\'JetBrains Mono\',monospace;font-size:13px">'
+      + CONFIG.sourceFolder + '</code> til <strong>' + CONFIG.mirrorRepo + '</strong> via GitHub Actions.';
+
+    // Indsæt workflow-yaml dynamisk
+    document.getElementById('workflow-yaml').textContent =
+`name: Sync ${CONFIG.sourceFolder} to mirror repo
+
+on:
+  push:
+    paths:
+      - '${CONFIG.sourceFolder}/**'
+    branches:
+      - ${CONFIG.sourceBranch}
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Push subfolder to mirror repo
+        uses: cpina/github-action-push-to-another-repository@main
+        env:
+          API_TOKEN_GITHUB: \${{ secrets.${CONFIG.secretName} }}
+        with:
+          source-directory: ${CONFIG.sourceFolder}
+          destination-github-username: ${CONFIG.githubUsername}
+          destination-repository-name: ${CONFIG.mirrorRepo}
+          target-branch: ${CONFIG.targetBranch}
+          commit-message: "Sync from main repo: \${{ github.sha }}"`;
+
+    // Footer
+    document.getElementById('footer-text').textContent = CONFIG.footerText;
+  });
+</script>
+
+<header>
+  <div class="header-badge">GitHub Actions · Automatisk synkronisering</div>
+  <h1 id="header-title"><!-- udfyldes af JS --></h1>
+  <p id="header-sub"><!-- udfyldes af JS --></p>
+  <div class="header-pills">
+    <span class="pill">🤖 GitHub Actions</span>
+    <span class="pill">📁 Subfolder sync</span>
+    <span class="pill">🔑 PAT Secret</span>
+    <span class="pill">🔄 Automatisk ved push</span>
+  </div>
+</header>
+
+<div class="container">
+
+  <nav class="toc">
+    <h2>Indholdsfortegnelse</h2>
+    <ol>
+      <li><a href="#overblik">1 · Overblik</a></li>
+      <li><a href="#mirror-repo">2 · Opret mirror repository</a></li>
+      <li><a href="#pat">3 · Opret Personal Access Token</a></li>
+      <li><a href="#secret">4 · Tilføj secret i hoved-repo</a></li>
+      <li><a href="#workflow">5 · Opret workflow-fil</a></li>
+      <li><a href="#404">6 · Case-insensitiv 404-redirect</a></li>
+    </ol>
+  </nav>
+
+  <!-- ── 1 Overblik ── -->
+  <div class="section" id="overblik">
+    <div class="section-header">
+      <div class="section-icon">🧭</div>
+      <h2>1 · Overblik</h2>
+    </div>
+    <p>Målet er at holde et separat GitHub-repository — <strong><span data-cfg="mirrorRepo"></span></strong> — automatisk synkroniseret med en enkelt mappe (<code><span data-cfg="sourceFolder"></span></code>) fra et større hoved-repository.</p>
+    <p>Løsningen bruger <strong>GitHub Actions</strong>: hver gang der pushes ændringer til stien <code><span data-cfg="sourceFolder"></span>/**</code> i hoved-repo'et, kører en workflow der kopierer mappeindholdet til mirror-repo'et som ny root.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Komponent</th><th>Værdi i dette projekt</th><th>Beskrivelse</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Kilde-mappe</strong></td><td><code><span data-cfg="sourceFolder"></span></code></td><td>Den mappe der synkroniseres</td></tr>
+          <tr><td><strong>Mirror repo</strong></td><td><code><span data-cfg="githubUsername"></span>/<span data-cfg="mirrorRepo"></span></code></td><td>Modtager-repository</td></tr>
+          <tr><td><strong>Trigger-branch</strong></td><td><code><span data-cfg="sourceBranch"></span></code></td><td>Branch der overvåges</td></tr>
+          <tr><td><strong>Secret-navn</strong></td><td><code><span data-cfg="secretName"></span></code></td><td>GitHub Secret med PAT</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="info-box"><strong>Fuldt automatisk:</strong> Når workflow-filen er på plads, sker synkroniseringen hands-off ved hvert push der rammer <code><span data-cfg="sourceFolder"></span>/**</code>. Der kræves ingen manuel handling.</div>
+  </div>
+
+  <!-- ── 2 Mirror repo ── -->
+  <div class="section" id="mirror-repo">
+    <div class="section-header">
+      <div class="section-icon">📦</div>
+      <h2>2 · Opret mirror repository</h2>
+    </div>
+    <p>Mirror-repo'et modtager indholdet af kilde-mappen og kan bruges som GitHub Pages-site eller til andre formål.</p>
+    <ol class="steps">
+      <li>Gå til <strong>github.com</strong> og log ind.</li>
+      <li>Klik <strong>New repository</strong> (øverst til højre).</li>
+      <li>Giv repo'et navnet <code><span data-cfg="mirrorRepo"></span></code>.</li>
+      <li>Lad det være <strong>tomt</strong> — ingen README, ingen .gitignore. GitHub Actions opretter indholdet første gang.</li>
+      <li>Klik <strong>Create repository</strong>.</li>
+    </ol>
+    <div class="note"><strong>⚠ Vigtigt:</strong> Repo'et skal være tomt ved oprettelse. Hvis der allerede er en <code>main</code>-branch med commits, kan det første push fra workflow'et fejle med en merge-konflikt.</div>
+  </div>
+
+  <!-- ── 3 PAT ── -->
+  <div class="section" id="pat">
+    <div class="section-header">
+      <div class="section-icon">🔑</div>
+      <h2>3 · Opret Personal Access Token (PAT)</h2>
+    </div>
+    <p>GitHub Actions skal have tilladelse til at skrive til mirror-repo'et. Det gives via et Personal Access Token (PAT) med <code>repo</code>-scope.</p>
+    <ol class="steps">
+      <li>Gå til din GitHub-profil → <strong>Settings</strong> (øverst til højre under dit avatar).</li>
+      <li>Venstre menu, helt nederst → <strong>Developer settings</strong>.</li>
+      <li>Vælg <strong>Personal access tokens</strong> → <strong>Tokens (classic)</strong>.</li>
+      <li>Klik <strong>Generate new token (classic)</strong>.</li>
+      <li>Giv token et navn, fx <code>website-sync</code>, og vælg en udløbsdato.</li>
+      <li>Sæt scope: ✅ <strong>repo</strong> (hele blokken — giver læse- og skriveadgang til repositories).</li>
+      <li>Klik <strong>Generate token</strong> — <strong>kopiér token med det samme</strong>, det vises kun én gang.</li>
+    </ol>
+    <div class="note"><strong>⚠ Gem token et sikkert sted</strong> — fx i en password manager. Hvis du mister det, skal du generere et nyt og opdatere secret'en i trin 4.</div>
+  </div>
+
+  <!-- ── 4 Secret ── -->
+  <div class="section" id="secret">
+    <div class="section-header">
+      <div class="section-icon">🔒</div>
+      <h2>4 · Tilføj secret i hoved-repo'et</h2>
+    </div>
+    <p>PAT'en gemmes som en krypteret GitHub Secret i hoved-repo'et, så den ikke ligger i klar tekst i workflow-filen.</p>
+    <ol class="steps">
+      <li>Gå til dit <strong>hoved-repo</strong> på GitHub.</li>
+      <li>Klik <strong>Settings</strong> → <strong>Secrets and variables</strong> → <strong>Actions</strong>.</li>
+      <li>Klik <strong>New repository secret</strong>.</li>
+      <li>
+        Udfyld felterne:
+        <ul class="sub-steps">
+          <li><strong>Name:</strong> <code><span data-cfg="secretName"></span></code></li>
+          <li><strong>Secret:</strong> indsæt PAT fra trin 3</li>
+        </ul>
+      </li>
+      <li>Klik <strong>Add secret</strong>.</li>
+    </ol>
+    <div class="info-box"><strong>Case-sensitive:</strong> Secret-navnet skal matche præcis det navn der bruges i workflow-filen under <code>secrets.<span data-cfg="secretName"></span></code>. GitHub skelner mellem store og små bogstaver.</div>
+  </div>
+
+  <!-- ── 5 Workflow ── -->
+  <div class="section" id="workflow">
+    <div class="section-header">
+      <div class="section-icon">⚙️</div>
+      <h2>5 · Opret workflow-fil</h2>
+    </div>
+    <p>Workflow-filen fortæller GitHub Actions hvornår og hvordan synkroniseringen skal køre. Opret filen på denne sti i hoved-repo'et:</p>
+    <p><code>.github/workflows/sync-website.yml</code></p>
+    <pre><code id="workflow-yaml"><!-- udfyldes af JS --></code></pre>
+    <p>Commit og push filen til <code><span data-cfg="sourceBranch"></span></code>-branchen. Herefter trigger workflow'et automatisk næste gang der pushes en ændring under <code><span data-cfg="sourceFolder"></span>/</code>.</p>
+
+    <h3>Sådan verificerer du at det virker</h3>
+    <ol class="steps">
+      <li>Lav en lille ændring i en fil under <code><span data-cfg="sourceFolder"></span>/</code> i hoved-repo'et.</li>
+      <li>Commit og push til <code><span data-cfg="sourceBranch"></span></code>.</li>
+      <li>Gå til hoved-repo'et → <strong>Actions</strong> — du bør se workflow'et køre med et grønt flueben.</li>
+      <li>Gå til <strong><span data-cfg="githubUsername"></span>/<span data-cfg="mirrorRepo"></span></strong> — filerne fra <code><span data-cfg="sourceFolder"></span>/</code> bør nu ligge i roden.</li>
+    </ol>
+    <div class="note"><strong>⚠ Hvis workflow'et fejler</strong> med "Permission denied" eller "Authentication failed", skyldes det typisk at PAT'en er udløbet eller ikke har <code>repo</code>-scope. Generer en ny PAT og opdater secret'en.</div>
+  </div>
+
+  <!-- ── 6 404-redirect ── -->
+  <div class="section" id="404">
+    <div class="section-header">
+      <div class="section-icon">🔀</div>
+      <h2>6 · Case-insensitiv 404-redirect</h2>
+    </div>
+    <p>GitHub Pages kører på Linux, som er <strong>case-sensitive</strong>. En mappe der hedder <code>da-DK</code> nås ikke via URL'en <code>/da-dk/</code>. For at håndtere dette oprettes en <code>404.html</code> i roden af mirror-repo'et, der automatisk redirecter til den korrekte sti.</p>
+
+    <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;script&gt;
+  const path = window.location.pathname.toLowerCase();
+  if (path.includes('/da-dk/')) {
+    window.location.replace(
+      window.location.href.replace(/\/da-dk\//i, '/da-DK/')
+    );
+  } else if (path.includes('/en-us/')) {
+    window.location.replace(
+      window.location.href.replace(/\/en-us\//i, '/en-US/')
+    );
+  }
+&lt;/script&gt;
+&lt;/head&gt;
+&lt;/html&gt;</code></pre>
+
+    <h3>Hvordan det virker</h3>
+    <ul class="bullets">
+      <li>GitHub Pages viser <code>404.html</code> når en URL ikke matches.</li>
+      <li><code>window.location.pathname.toLowerCase()</code> gør hele URL-stien til lowercase før sammenligningen — så <code>DA-DK</code>, <code>da-Dk</code> og <code>Da-DK</code> matches alle.</li>
+      <li>Regex-erstatningen (<code>/\/da-dk\//i</code>) udskifter den forkert-casede del med den korrekte og redirecter.</li>
+    </ul>
+
+    <div class="info-box"><strong>Placering:</strong> <code>404.html</code> skal ligge i <strong>roden</strong> af <code><span data-cfg="mirrorRepo"></span></code>-repo'et — dvs. i <code><span data-cfg="sourceFolder"></span>/</code> i hoved-repo'et, så den synkroniseres automatisk via workflow'et.</div>
+  </div>
+
+</div>
+
+<footer>
+  <strong id="footer-text"><!-- udfyldes af JS --></strong>
+</footer>
+
+<script>
+(function () {
+  'use strict';
+
+  document.querySelectorAll('a[href^="#"]').forEach(function (link) {
+    link.addEventListener('click', function (e) {
+      var id = link.getAttribute('href').slice(1);
+      var target = id && document.getElementById(id);
+      if (!target) return;
+      e.preventDefault();
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if (history.replaceState) history.replaceState(null, '', '#' + id);
+    });
+  });
+
+  var tocLinks = Array.prototype.slice.call(
+    document.querySelectorAll('.toc a[href^="#"]')
+  );
+  if (tocLinks.length && 'IntersectionObserver' in window) {
+    var byId = {};
+    tocLinks.forEach(function (l) { byId[l.getAttribute('href').slice(1)] = l; });
+    var sections = tocLinks
+      .map(function (l) { return document.getElementById(l.getAttribute('href').slice(1)); })
+      .filter(Boolean);
+    var spy = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        var link = byId[entry.target.id];
+        if (link && entry.isIntersecting) {
+          tocLinks.forEach(function (l) { l.classList.remove('active'); });
+          link.classList.add('active');
+        }
+      });
+    }, { rootMargin: '0px 0px -75% 0px', threshold: 0 });
+    sections.forEach(function (s) { spy.observe(s); });
+  }
+
+  if (navigator.clipboard) {
+    document.querySelectorAll('pre').forEach(function (pre) {
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'copy-btn';
+      btn.textContent = 'Kopiér';
+      btn.addEventListener('click', function () {
+        var code = pre.querySelector('code') || pre;
+        navigator.clipboard.writeText(code.innerText).then(function () {
+          btn.textContent = 'Kopieret ✓';
+          setTimeout(function () { btn.textContent = 'Kopiér'; }, 1500);
+        });
+      });
+      pre.appendChild(btn);
+    });
+  }
+
+  var toTop = document.createElement('button');
+  toTop.type = 'button';
+  toTop.className = 'to-top-btn';
+  toTop.setAttribute('aria-label', 'Til toppen');
+  toTop.textContent = '↑';
+  toTop.addEventListener('click', function () {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+  document.body.appendChild(toTop);
+  window.addEventListener('scroll', function () {
+    toTop.classList.toggle('visible', window.scrollY > 400);
+  }, { passive: true });
+})();
+</script>
+
+</body>
+</html>

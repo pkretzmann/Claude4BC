@@ -9,13 +9,13 @@
   <style>
 /* ============================================================
    html-guide — canonical stylesheet
-   The /claude4bc:html-guide command reads this file and inlines it verbatim
+   The /c4bc:html-guide command reads this file and inlines it verbatim
    into the generated HTML's <style>. Do NOT rewrite CSS from memory.
    ============================================================ */
 
 /* ============================================================
    BRAND — the ONLY per-project edit zone.
-   Edit these by hand, or run:  /claude4bc:create-css <website-url> [type]
+   Edit these by hand, or run:  /c4bc:create-css <website-url> [type]
    Company: <Company/Project Name>
    ============================================================ */
 :root {
@@ -577,9 +577,9 @@ pre { position: relative; }   /* anchor for the copy button */
       <div class="section-icon">🧭</div>
       <h2>1 · Overblik</h2>
     </div>
-    <p>Værktøjet hører til <strong>claude4bc</strong> — et delt bundt af kommandoer til Claude Code. Kommandoen <code>/claude4bc:html-guide</code> konverterer en markdown-brugervejledning til en professionel, selvstændig HTML-fil med projektets farvepalette og designsystem. Selve kommandoen er beskrevet i pluginnets <code>commands/html-guide.md</code>, som indeholder designreglerne og en tabel over, hvordan markdown-elementer bliver til HTML-komponenter.</p>
-    <p>claude4bc er installeret som et <strong>plugin</strong>, så kommandoerne dukker automatisk op i listen over slash-kommandoer — du skal ikke installere eller kopiere noget manuelt for at bruge dem.</p>
-    <div class="info-box"><strong>Kommandoerne i bundtet:</strong> <code>/claude4bc:html-guide</code>, <code>/claude4bc:create-css</code>, <code>/claude4bc:init-website</code>, <code>/claude4bc:update-website</code> og <code>/claude4bc:update-translations</code>.</div>
+    <p>Værktøjet hører til <strong>c4bc</strong> — et delt bundt af kommandoer til Claude Code. Kommandoen <code>/c4bc:html-guide</code> konverterer en markdown-brugervejledning til en professionel, selvstændig HTML-fil med projektets farvepalette og designsystem. Selve kommandoen er beskrevet i pluginnets <code>commands/html-guide.md</code>, som indeholder designreglerne og en tabel over, hvordan markdown-elementer bliver til HTML-komponenter.</p>
+    <p>c4bc er installeret som et <strong>plugin</strong>, så kommandoerne dukker automatisk op i listen over slash-kommandoer — du skal ikke installere eller kopiere noget manuelt for at bruge dem.</p>
+    <div class="info-box"><strong>Kommandoerne i bundtet:</strong> <code>/c4bc:html-guide</code>, <code>/c4bc:create-css</code>, <code>/c4bc:init-website</code>, <code>/c4bc:update-website</code> og <code>/c4bc:update-translations</code>.</div>
   </div>
 
   <!-- ── 2 Submodul vs plugin ── -->
@@ -598,7 +598,7 @@ pre { position: relative; }   /* anchor for the copy button */
     <h3>Billedet: en delt værktøjskasse</h3>
     <ul class="bullets">
       <li><strong>Submodulet</strong> er som en <em>delt værktøjskasse</em>, der ejes ét sted (på GitHub) og lånes ind i hvert projekt. Når ejeren lægger et nyt værktøj i kassen, kan alle projekter hente opdateringen. Men en kasse, der bare står på hylden, gør i sig selv ingenting.</li>
-      <li><strong>Pluginnet</strong> er at <em>tilslutte</em> kassen til Claude Code, så værktøjerne "tænder" og kan bruges — kommandoerne dukker op som <code>/claude4bc:…</code>, og fx Azure DevOps-forbindelsen kobler sig på.</li>
+      <li><strong>Pluginnet</strong> er at <em>tilslutte</em> kassen til Claude Code, så værktøjerne "tænder" og kan bruges — kommandoerne dukker op som <code>/c4bc:…</code>, og fx Azure DevOps-forbindelsen kobler sig på.</li>
     </ul>
     <p>Det er <strong>den samme mappe</strong>, der er begge dele på én gang: et git-submodul (så indholdet deles og holdes opdateret) <em>og</em> et plugin (så Claude Code aktiverer det).</p>
 
@@ -624,11 +624,11 @@ pre { position: relative; }   /* anchor for the copy button */
       <div class="section-icon">⚡</div>
       <h2>3 · Sådan kalder du kommandoerne</h2>
     </div>
-    <p>Skriv <code>/claude4bc:</code> i Claude Code, så foreslås alle bundtets kommandoer. Til HTML-vejledninger bruger du <code>/claude4bc:html-guide</code> med stien til en eller flere markdown-filer — eller en hel mappe:</p>
+    <p>Skriv <code>/c4bc:</code> i Claude Code, så foreslås alle bundtets kommandoer. Til HTML-vejledninger bruger du <code>/c4bc:html-guide</code> med stien til en eller flere markdown-filer — eller en hel mappe:</p>
     <ul class="bullets">
-      <li><code>/claude4bc:html-guide &lt;fil.md&gt;</code> — én fil bliver til én HTML i <strong>samme mappe</strong> med samme navn.</li>
-      <li><code>/claude4bc:html-guide &lt;fil1.md&gt; &lt;fil2.md&gt; …</code> — flere filer samles til <strong>ét</strong> dokument (i den angivne rækkefølge).</li>
-      <li><code>/claude4bc:html-guide &lt;mappe&gt;</code> — alle <strong>.md</strong>-filer i mappen samles til <strong>ét</strong> dokument (i naturlig navnerækkefølge).</li>
+      <li><code>/c4bc:html-guide &lt;fil.md&gt;</code> — én fil bliver til én HTML i <strong>samme mappe</strong> med samme navn.</li>
+      <li><code>/c4bc:html-guide &lt;fil1.md&gt; &lt;fil2.md&gt; …</code> — flere filer samles til <strong>ét</strong> dokument (i den angivne rækkefølge).</li>
+      <li><code>/c4bc:html-guide &lt;mappe&gt;</code> — alle <strong>.md</strong>-filer i mappen samles til <strong>ét</strong> dokument (i naturlig navnerækkefølge).</li>
     </ul>
     <div class="note"><strong>⚠ Bemærk:</strong> Et nyt plugin — eller ændringer i det — opdages først efter en <strong>genstart</strong> af Claude Code (eller med kommandoen <code>/reload-plugins</code>).</div>
   </div>
@@ -641,12 +641,14 @@ pre { position: relative; }   /* anchor for the copy button */
     </div>
     <p>Fordi værktøjet er et delt submodul, der virker som et plugin, skal du <strong>ikke kopiere filer manuelt</strong>. Du låner bundtet ind under projektets <code>.claude/skills/</code>, og Claude Code aktiverer det automatisk:</p>
     <ol class="steps">
-      <li>Tilføj submodulet under <code>.claude/skills/</code> i projektet — repoets sti er <code>https://github.com/pkretzmann/Claude4BC.git</code>:<br><code>git submodule add https://github.com/pkretzmann/Claude4BC.git .claude/skills/claude4bc</code></li>
-      <li><strong>Genstart Claude Code.</strong> Mappen indeholder en <code>plugin.json</code>, så den loades automatisk som pluginnet <code>claude4bc</code> — og kommandoerne <code>/claude4bc:…</code> dukker op.</li>
-      <li>Kør <code>/claude4bc:init-website</code> <strong>én gang</strong> for at initialisere dokumentationssitet — den opretter <code>.website/</code> med sprogmapper (<code>da-DK</code>, <code>en-US</code>), rod-redirect, kildemateriale-mapper, start-script og preview-konfigurationen <code>.claude/launch.json</code>.</li>
-      <li>Kør <code>/claude4bc:create-css &lt;hjemmeside-url&gt; [type]</code> for at hente kundens brandfarver og oprette projektets eget <code>.website/styles.css</code>.</li>
-      <li>Kør <code>/claude4bc:html-guide</code> på dine markdown-vejledninger — de får automatisk projektets design.</li>
-      <li>Kør <code>/claude4bc:update-website</code> for at bygge sprogenes portal-menu, så de nye sider dukker op i dokumentationssitet.</li>
+      <li>Tilføj submodulet under <code>.claude/skills/</code> i projektet. Kør denne ene kommando i projektets rod — brug <em>Kopiér</em>-knappen for at kopiere præcis linjen:
+        <pre><code>git submodule add https://github.com/pkretzmann/Claude4BC.git .claude/skills/c4bc</code></pre>
+      </li>
+      <li><strong>Genstart Claude Code.</strong> Mappen indeholder en <code>plugin.json</code>, så den loades automatisk som pluginnet <code>c4bc</code> — og kommandoerne <code>/c4bc:…</code> dukker op.</li>
+      <li>Kør <code>/c4bc:init-website</code> <strong>én gang</strong> for at initialisere dokumentationssitet — den opretter <code>.website/</code> med sprogmapper (<code>da-DK</code>, <code>en-US</code>), rod-redirect, kildemateriale-mapper, start-script og preview-konfigurationen <code>.claude/launch.json</code>.</li>
+      <li>Kør <code>/c4bc:create-css &lt;hjemmeside-url&gt; [type]</code> for at hente kundens brandfarver og oprette projektets eget <code>.website/styles.css</code>.</li>
+      <li>Kør <code>/c4bc:html-guide</code> på dine markdown-vejledninger — de får automatisk projektets design.</li>
+      <li>Kør <code>/c4bc:update-website</code> for at bygge sprogenes portal-menu, så de nye sider dukker op i dokumentationssitet.</li>
     </ol>
     <div class="info-box"><strong>Vigtigt om placering:</strong> Pluginnet skal ligge under <strong>den mappe, du åbner Claude Code i</strong> (projektets egen <code>.claude/skills/</code>). Ligger det et niveau højere oppe — fx i en fælles monorepo-rod — bliver det <em>ikke</em> fundet.</div>
   </div>
@@ -658,9 +660,9 @@ pre { position: relative; }   /* anchor for the copy button */
       <h2>5 · Design og farver</h2>
     </div>
     <p>Hele designsystemet — farvepalette <strong>og</strong> alle komponenter — ligger i pluginnets <code>html-guide/styles-default.css</code>. Kommandoen lægger filens indhold direkte ind i hver genereret HTML, så hver vejledning er selvstændig og kan deles, printes og åbnes uden internet.</p>
-    <p>Vil du give et bestemt projekt sine egne brandfarver, opretter du <code>.website/styles.css</code> i projektet — den bruges automatisk frem for standarden. Det nemmeste er kommandoen <code>/claude4bc:create-css</code>, der henter brandfarver fra en hjemmeside og laver filen for dig:</p>
-    <pre><code>/claude4bc:create-css https://www.kunde.dk "Wine Retail"</code></pre>
-    <div class="note"><strong>Tip:</strong> Brandfarverne styres af <code>--brand-*</code>-variablerne øverst i stylesheetet. <code>/claude4bc:create-css</code> opdaterer kun dem — resten af designet er låst, så layoutet altid ser ensartet ud, uanset farvevalg.</div>
+    <p>Vil du give et bestemt projekt sine egne brandfarver, opretter du <code>.website/styles.css</code> i projektet — den bruges automatisk frem for standarden. Det nemmeste er kommandoen <code>/c4bc:create-css</code>, der henter brandfarver fra en hjemmeside og laver filen for dig:</p>
+    <pre><code>/c4bc:create-css https://www.kunde.dk "Wine Retail"</code></pre>
+    <div class="note"><strong>Tip:</strong> Brandfarverne styres af <code>--brand-*</code>-variablerne øverst i stylesheetet. <code>/c4bc:create-css</code> opdaterer kun dem — resten af designet er låst, så layoutet altid ser ensartet ud, uanset farvevalg.</div>
   </div>
 
   <!-- ── 6 Interaktivitet ── -->
@@ -683,7 +685,7 @@ pre { position: relative; }   /* anchor for the copy button */
 </div>
 
 <footer>
-  <strong>Kretzmann ApS</strong> · claude4bc-plugin · html-guide · Opdateret juni 2026
+  <strong>Kretzmann ApS</strong> · c4bc-plugin · html-guide · Opdateret juni 2026
 </footer>
 
 <script>
