@@ -14,8 +14,12 @@ Claude4BC/
     init-website.md        ← Initialisér dokumentationssitet (.website)
     update-website.md      ← Synkronisér portalens NAV med .website/-sider
     deploy-website.md      ← Publicér .website til GitHub Pages via GitHub Actions
+    build-pdf.md           ← Saml .website-sitet til én PDF-brugervejledning pr. sprog
     update-translations.md ← Opdatér XLIFF-oversættelsesfiler
   html-guide/
+  pdf-build/
+    build-pdf.mjs          ← Generator: .website-HTML → samlet PDF (Playwright + pdf-lib)
+    package.json           ← Afhængigheder til build-pdf (installeres lokalt, git-ignoreret)
     styles-default.css     ← Fuldt kanonisk fallback-stylesheet (neutralt brand)
     script.js              ← Standard JavaScript til HTML-guides (inkl. scroll-reveal-bevægelse)
     serve.py               ← Lokal no-cache dokumentationsserver (kopieres til .website/)
@@ -127,6 +131,18 @@ Initialisér GitHub Actions-workflowen `.github/workflows/DeployDocsWebsite.yaml
 ```
 
 Idempotent — findes workflowen, vises forskellen og du spørges før overskrivning. Husk bagefter at sætte **Settings → Pages → Source = »GitHub Actions«** i repoet. Selve `.website`-indholdet dannes af `/init-website`, `/html-guide` og `/update-website`.
+
+### `/build-pdf [sti] [--locale xx-XX]`
+Danner **én samlet PDF pr. sprog** ud af `.website`-sitet: brandet forside + indholdsfortegnelse med sidetal + alle indholdssider i portalens kapitelrækkefølge (fra `NAV`). Projekt-agnostisk — brandfarver fra `styles.css`, titel fra portalens `<title>`, logo fra `favicon.svg`. Renderes med headless Chromium (Playwright) og flettes med pdf-lib.
+
+**Eksempler:**
+```
+/build-pdf
+/build-pdf --locale da-DK
+/build-pdf "EbroFrost Base App/.website"
+```
+
+Output: `<.website>/<sprog>/Brugervejledning.pdf` (da-DK) / `User Guide.pdf` (en-US). Kræver Node.js; afhængigheder installeres én gang i plugin'ets `pdf-build/` (git-ignoreret). Sprog uden `NAV`-array springes over.
 
 ---
 

@@ -1,0 +1,11 @@
+{
+  "name": "c4bc-build-pdf",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "c4bc build-pdf — samlet PDF-brugervejledning ud af et .website-dokumentationssite.",
+  "dependencies": {
+    "pdf-lib": "^1.17.1",
+    "playwright": "^1.49.0"
+  }
+}
