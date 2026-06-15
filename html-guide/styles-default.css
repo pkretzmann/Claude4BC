@@ -553,6 +553,117 @@
   mark.search-hit { background: #FFE9A8; color: inherit; border-radius: 3px; padding: 0 1px; }
   .faq-no-results { padding: 14px 18px; font-size: 14px; color: var(--gray-700); font-style: italic; }
   
+  /* ── Two-system data-flow diagram (.sysflow) ──
+     Pure CSS/markup, no JS. Two system boxes with two "wires" between them;
+     data dots glide along each wire (opposite directions) to show data flowing
+     between two systems. Decorative — keep an accessible table/text nearby and
+     mark the diagram aria-hidden. Animation pauses under reduced-motion/print. */
+  .sysflow {
+    display: flex;
+    align-items: stretch;
+    gap: 14px;
+    margin: 22px 0;
+    flex-wrap: wrap;
+  }
+  .sysflow-node {
+    flex: 1 1 160px;
+    min-width: 150px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 4px;
+    padding: 18px 16px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--brand-dark), var(--brand-mid));
+    color: #fff;
+    font-weight: 600;
+    font-size: 15px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  }
+  .sysflow-node .sysflow-sub { font-weight: 400; font-size: 12px; opacity: 0.82; }
+  .sysflow-wires {
+    flex: 2 1 220px;
+    min-width: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 16px;
+    padding: 6px 0;
+  }
+  .sysflow-wire {
+    position: relative;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    border-radius: 17px;
+    padding: 0 14px;
+    font-size: 12px;
+    font-weight: 600;
+    overflow: hidden;
+    background: var(--brand-subtle);
+    border: 1px solid var(--brand-pale);
+  }
+  .sysflow-wire .sysflow-label { position: relative; z-index: 2; color: var(--brand-dark); }
+  .sysflow-wire.to-left .sysflow-label { margin-left: auto; }
+  .sysflow-wire::before {
+    content: '';
+    position: absolute;
+    left: 0; right: 0; top: 50%;
+    height: 2px;
+    transform: translateY(-50%);
+    opacity: 0.35;
+  }
+  .sysflow-wire.to-right::before { background: var(--brand-mid); }
+  .sysflow-wire.to-left::before  { background: var(--accent); }
+  .sysflow-wire .dot {
+    position: absolute;
+    top: 50%;
+    width: 9px; height: 9px;
+    margin-top: -4.5px;
+    border-radius: 50%;
+    z-index: 1;
+  }
+  .sysflow-wire.to-right .dot { background: var(--brand-mid); animation: sysflow-right 2.6s linear infinite; }
+  .sysflow-wire.to-left  .dot { background: var(--accent);   animation: sysflow-left  2.6s linear infinite; }
+  .sysflow-wire .dot:nth-of-type(1) { animation-delay: 0s; }
+  .sysflow-wire .dot:nth-of-type(2) { animation-delay: 0.65s; }
+  .sysflow-wire .dot:nth-of-type(3) { animation-delay: 1.3s; }
+  .sysflow-wire .dot:nth-of-type(4) { animation-delay: 1.95s; }
+  @keyframes sysflow-right {
+    0%   { left: -4%;  opacity: 0; }
+    12%  { opacity: 1; }
+    88%  { opacity: 1; }
+    100% { left: 104%; opacity: 0; }
+  }
+  @keyframes sysflow-left {
+    0%   { left: 104%; opacity: 0; }
+    12%  { opacity: 1; }
+    88%  { opacity: 1; }
+    100% { left: -4%;  opacity: 0; }
+  }
+  @media (max-width: 600px) {
+    .sysflow { flex-direction: column; }
+  }
+
+  /* ── Scroll-reveal — only active under .js-fx (added by script.js when
+     <body class="fx"> and motion is allowed). Without JS the class is never
+     added, so sections stay fully visible. ── */
+  .js-fx .section {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    will-change: opacity, transform;
+  }
+  .js-fx .section.in-view { opacity: 1; transform: none; }
+
+  /* ── Motion safety: honour the OS "reduce motion" setting ── */
+  @media (prefers-reduced-motion: reduce) {
+    .sysflow-wire .dot { animation: none; }
+    .js-fx .section { opacity: 1; transform: none; transition: none; }
+  }
+
   /* ── Print ── */
   @media print {
     body { background: white; font-size: 13px; }
@@ -561,5 +672,7 @@
     pre { background: #f4f4f4 !important; color: #111 !important; border: 1px solid #ccc; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     .to-top-btn, .copy-btn, .expand-all-btn,
     .reading-progress, .doc-search, .faq-no-results { display: none !important; }
+    .sysflow-wire .dot { display: none !important; }
+    .js-fx .section { opacity: 1 !important; transform: none !important; }
   }
   

@@ -13,12 +13,14 @@ Konverter en markdown-brugervejledning til en professionel, interaktiv HTML-fil 
 /html-guide <fil.md>                       → én fil → én HTML (samme basisnavn, samme mappe)
 /html-guide <fil1.md> <fil2.md> …          → flere filer → ÉN samlet HTML (i angiven rækkefølge)
 /html-guide <mappe>                         → alle .md i mappen → ÉN samlet HTML (naturlig navne-rækkefølge)
+/html-guide <mappe> → .website/<sprog>      → ÉN side pr. emne i sprogmappen (multi-side; til /update-website)
 ```
 
 Eksempler:
 - `/html-guide <mappe>/<vejledning>.md`
 - `/html-guide "<mappe>/Step 0 — Oversigt.md" "<mappe>/Step 1.md"`
 - `/html-guide "<mappe>"`
+- `/html-guide "<mappe>" — skriv som multi-side i .website/da-DK` (multi-side-tilstand, se nedenfor)
 
 ## Hvad kommandoen gør
 
@@ -58,6 +60,48 @@ Når der gives flere filer eller en mappe, samles alt til **ét** sammenhængend
   nedenfor. Tekniske "AL-objekter"-tabeller, objekt-/codeunit-/tabel-ID'er og kodeblokke udelades i
   hele den samlede HTML, uanset hvilken kildefil de stammer fra.
 
+## Multi-side-tilstand (én side pr. emne → `.website/<sprog>`)
+
+Ud over "ét samlet dokument" findes en **multi-side-tilstand**: i stedet for ét stort HTML-dokument
+genereres **én selvstændig side pr. kildefil/emne**, lagt i sprogmappen, klar til at
+`/update-website` binder dem sammen i en portal. Brug den til en **komplet, flersidet
+dokumentationsportal** frem for ét langt dokument.
+
+**Hvornår vælges denne tilstand:** når brugeren beder om "multi-side"/"flersidet" dokumentation,
+**eller** når output-målet er en sprogmappe i et `.website` (fx `.website/da-DK`). Ellers gælder
+enkeltfil-/ét-dokument-reglerne ovenfor.
+
+Regler (forskelle fra "ét dokument"):
+
+- **Én HTML pr. kildefil/emne** — ikke ét samlet dokument. Hver side er fuldt selvstændig efter de
+  samme regler som enkeltfil-tilstanden (CSS **og** JS indlejret ordret, `<header>` med badge/pills,
+  `<footer>`, og en **per-side `<nav class="toc">`** der linker til sidens egne `##`-sektioner).
+- **Placering:** `.website/<sprog>/<gruppe>/<emne>.html`. Læg hver side i en **gruppemappe** der
+  afspejler dokumentets dele (fx "Opsætning", "Daglig brug", "Reference").
+- **Gruppe-rækkefølge:** `/update-website` sorterer grupper **alfabetisk** og bruger mappenavnet som
+  menu-overskrift. Skal grupperne vises i en bestemt læse-rækkefølge, så **nummer-præfiks** mappenavnet
+  (fx `1. Kom godt i gang`, `2. Opsætning`, `3. Daglig brug`).
+- **Filnavne:** korte og helst ascii. Brug nummer-præfiks (`1-…`, `2-…`) for at styre rækkefølgen
+  **inden for** en gruppe (siderne sorteres naturligt).
+- **Favicon:** siderne ligger to mappeniveauer under `.website/`, så `href="../../favicon.svg"`
+  (udelades hvis `.website/favicon.svg` ikke findes — se *Favicon*).
+- **Ingen samlet header/TOC/footer på tværs** (modsat ét-dokument-tilstanden). Portalen fra
+  `/update-website` leverer cross-side-navigationen.
+- **Krydsside-links undgås:** referencer mellem siderne skrives som **tekst** ("se afsnittet
+  Opsætning → Knyt data"), ikke som hyperlinks — siderne loades i portalens iframe, og relative
+  fil-links på tværs af gruppemapper er skrøbelige. Interne ankre **på samme side** er fine.
+- **End-user-/ingen-kode-reglerne gælder uændret** på hver side.
+- **Efterbehandling:** bed brugeren køre `/update-website` bagefter for at bygge portalens menu og
+  opdatere rod-redirectens sprogliste.
+
+> **Hjælpescript (anbefalet for mange sider).** Da hver side skal indlejre `styles.css` + `script.js`
+> **ordret**, er det både hurtigere og mindre fejlbehæftet at lade et lille script wrappe de
+> Claude-skrevne bodies end at indsætte CSS/JS i hånden på N sider. Brug
+> `${CLAUDE_PLUGIN_ROOT}/html-guide/build_pages.py`: Claude skriver **kun** hver sides body (selve
+> `.section`-kortene) + et lille manifest, og scriptet indsætter ordret CSS/JS, bygger per-side-TOC'en,
+> beregner favicon-stien og skriver siderne. Se scriptets egen dok-streng for manifest-formatet.
+> Scriptet wrapper kun boilerplate — **indholdet** (kuratering, oversættelse, opdeling) skriver Claude.
+
 ## Styling (CSS)
 
 Hele designsystemet — farvepalette **og** alle komponenter — ligger i ét stylesheet. Projektets
@@ -95,6 +139,7 @@ Vejledningerne er **som standard interaktive**. Et lille, kanonisk forbedringsla
   - Kopiér-knap på `<pre>`-kodeblokke (tekniske guides)
   - "Fold alle ud/ind" på `<details>`-FAQ
   - "Til toppen"-knap der dukker op ved scroll
+  - Scroll-reveal: `.section`-kort toner ind når de scrolles i syne (kun når `<body class="fx">` — se *Designregler*; respekterer `prefers-reduced-motion`)
 - De tilhørende styles (`.copy-btn`, `.to-top-btn`, `.expand-all-btn`, `.toc a.active`) findes
   allerede i `styles.css` og skjules i print.
 
@@ -134,6 +179,18 @@ Sitet har et fælles ikon, `favicon.svg`, som ligger i **roden af `.website/`** 
 - **Tabeller**: Mørk navy header-række, zebra-stribet body, hover-highlight
 - **Nummererede trin**: Cirkel-numre i brandfarve, lys baggrund. **Layout-regel (vigtig — håndhæves allerede af `styles.css`):** Brug **ikke** `display: flex` på selve `<li>` i `.steps`/`.sub-steps`. Flex gør hvert tekststykke og hvert inline-element til separate flex-items på én linje, så et trin der fylder mere end én linje kollapser til ét ord pr. linje. Brug i stedet `position: relative` på `<li>` med `padding-left` til at give plads, og placér cirkel-nummeret/pilen med `position: absolute` i venstre margen. Så flyder teksten normalt og ombrydes pænt over flere linjer. Reglerne scopes med child-combinator (`.steps > li`, ikke `.steps li`), så en `.sub-steps` nestet inde i et trin **ikke** arver nummercirklen og lægger sig oven i sin egen tekst.
 - **Flowdiagrammer**: HTML-bokse (IKKE ASCII-art), brug `.fc-node`, `.fc-node.start`, `.fc-node.decision`, `.fc-node.action`, `.fc-node.end`
+- **To-system data-flow-diagram** (`.sysflow`): til at vise data der flyder **mellem to systemer**. To `.sysflow-node`-bokse med en `.sysflow-wires`-søjle imellem; hver `.sysflow-wire` (`.to-right`/`.to-left`) har en `.sysflow-label` + fire `<i class="dot">`, hvor prikkerne glider langs wiren (ren CSS, ingen JS). Diagrammet er **dekorativt** — sæt `aria-hidden="true"` og hav den tilsvarende tabel/tekst tæt på. Eksempel:
+  ```html
+  <div class="sysflow" aria-hidden="true">
+    <div class="sysflow-node">System A<span class="sysflow-sub">ejer stamdata</span></div>
+    <div class="sysflow-wires">
+      <div class="sysflow-wire to-right"><span class="sysflow-label">Stamdata ▶</span><i class="dot"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i></div>
+      <div class="sysflow-wire to-left"><span class="sysflow-label">◀ Hændelser</span><i class="dot"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i></div>
+    </div>
+    <div class="sysflow-node">System B<span class="sysflow-sub">ejer hændelser</span></div>
+  </div>
+  ```
+- **Bevægelse / scroll-reveal** (`.fx`): når `<body>` har klassen `fx`, toner `.section`-kort blødt ind, når de scrolles i syne (via `script.js`). Det er **progressive enhancement** og **opt-in**: CSS skjuler kun sektioner under `.js-fx`, som scriptet selv tilføjer — uden JS (eller ved `prefers-reduced-motion`) vises alt normalt. `build_pages.py` sætter `fx` som standard; i enkeltfil-tilstand tilføjer du selv `class="fx"` på `<body>`, hvis du vil have effekten. Tal kan tælle op ved at give et element `data-countup="<tal>"` (skriv slutværdien som elementets tekst, så no-JS viser den).
 - **FAQ**: `<details>`/`<summary>` accordion
 - **Advarselsboks** (Vigtigt): gul/orange note-box
 - **Infoboks** (neutral info): blå info-box
@@ -205,6 +262,7 @@ Vejledningerne er skrevet til **slutbrugere** — ikke udviklere. Sproget skal v
 | Tekniske detaljer (feltnumre, obj-ID) | **Udelades** |
 | "AL-objekter"-tabel (Objekt/ID/Fil) | **Udelades** |
 | Flere kildefiler / en mappe | Ét dokument med fælles header/TOC/footer; hver fil = sektionsgruppe; AL-objekt-tabeller udelades |
+| Mappe → `.website/<sprog>` (multi-side) | Én selvstændig side pr. emne i gruppemapper; per-side header/TOC/footer; bind sammen med `/update-website` |
 
 ## Påkrævet indhold
 
