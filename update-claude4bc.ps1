@@ -9,21 +9,25 @@ if (-not $gitRoot) {
     exit 1
 }
 
-# Find submodule stien relativt til git-roden.
-# Linjeformat: "<status-tegn><SHA> <sti> (<branch>)" — stien kan indeholde
-# mellemrum (fx "EbroFrost Base App/..."), saa vi kan IKKE bare splitte paa
-# whitespace. Vi fanger i stedet stien mellem SHA og det afsluttende " (...)".
-$submodulePath = git -C $gitRoot submodule status |
-    Where-Object { $_ -match "claude4bc" } |
-    ForEach-Object { if ($_ -match '^[\s+\-U]*[0-9a-f]{7,}\s+(.+?)\s+\([^)]*\)\s*$') { $matches[1] } } |
-    Select-Object -First 1
+# Udled submodulets sti direkte fra scriptets egen placering i stedet for at
+# filtrere submodule-listen paa navn (mappen kan hedde "c4bc", "claude4bc" osv.,
+# og der kan vaere flere kopier af samme submodul i projektet).
+$fullSubmodulePath = git -C $PSScriptRoot rev-parse --show-toplevel 2>$null
+
+if (-not $fullSubmodulePath) {
+    Write-Host "Fejl: Kunne ikke finde submodulets git-rod." -ForegroundColor Red
+    exit 1
+}
+
+# Normalisér stier og beregn submodulets sti relativt til projektets git-rod.
+$gitRoot = (Resolve-Path $gitRoot).Path
+$fullSubmodulePath = (Resolve-Path $fullSubmodulePath).Path
+$submodulePath = $fullSubmodulePath.Substring($gitRoot.Length).TrimStart('\', '/').Replace('\', '/')
 
 if (-not $submodulePath) {
     Write-Host "Fejl: Kunne ikke finde claude4bc submodulet." -ForegroundColor Red
     exit 1
 }
-
-$fullSubmodulePath = Join-Path $gitRoot $submodulePath
 
 # Hent commit-info
 $currentCommit = git -C $fullSubmodulePath rev-parse --short HEAD 2>$null
