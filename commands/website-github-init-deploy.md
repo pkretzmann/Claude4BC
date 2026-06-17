@@ -3,7 +3,7 @@ description: Initialisér en GitHub Actions-workflow der publicerer dokumentatio
 argument-hint: "(valgfrit) sti til .website — standard er projektets .website-mappe"
 ---
 
-# website-init-deploy-github — Publicér dokumentationssitet på GitHub Pages
+# website-github-init-deploy — Publicér dokumentationssitet på GitHub Pages
 
 Opretter GitHub Actions-workflowfilen `.github/workflows/DeployDocsWebsite.yaml`, der
 automatisk bygger og udgiver projektets `.website`-site til **GitHub Pages**, hver gang
@@ -16,8 +16,8 @@ Kør denne kommando **én gang** pr. projekt, når dokumentationen skal lægges 
 ## Brug
 
 ```
-/website-init-deploy-github                → finder selv projektets .website og opretter workflowen
-/website-init-deploy-github <sti-til-.website>
+/website-github-init-deploy                → finder selv projektets .website og opretter workflowen
+/website-github-init-deploy <sti-til-.website>
 ```
 
 ## Hvad kommandoen opretter

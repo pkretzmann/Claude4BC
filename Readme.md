@@ -13,7 +13,7 @@ Claude4BC/
     website-build.md       ← Konverter markdown til HTML-brugervejledning
     website-init.md        ← Initialisér dokumentationssitet (.website)
     website-update-index.md ← Synkronisér portalens NAV med .website/-sider
-    website-init-deploy-github.md ← Publicér .website til GitHub Pages via GitHub Actions
+    website-github-init-deploy.md ← Publicér .website til GitHub Pages via GitHub Actions
     pdf-build.md           ← Saml .website-sitet til én PDF-brugervejledning pr. sprog
     al-update-translations.md ← Opdatér XLIFF-oversættelsesfiler
   html-guide/
@@ -121,13 +121,13 @@ Findes `index.html` ikke i forvejen, oprettes den fra den kanoniske skabelon `ht
 
 ---
 
-### `/website-init-deploy-github [sti]`
+### `/website-github-init-deploy [sti]`
 Initialisér GitHub Actions-workflowen `.github/workflows/DeployDocsWebsite.yaml`, der publicerer projektets `.website`-site til **GitHub Pages**. Generisk: finder selv `.website` (i roden eller en app-undermappe, også med mellemrum i stien) og hovedgrenen, og indsætter dem i workflowen.
 
 **Eksempler:**
 ```
-/website-init-deploy-github
-/website-init-deploy-github "EbroFrost Base App/.website"
+/website-github-init-deploy
+/website-github-init-deploy "EbroFrost Base App/.website"
 ```
 
 Idempotent — findes workflowen, vises forskellen og du spørges før overskrivning. Husk bagefter at sætte **Settings → Pages → Source = »GitHub Actions«** i repoet. Selve `.website`-indholdet dannes af `/website-init`, `/website-build` og `/website-update-index`.
