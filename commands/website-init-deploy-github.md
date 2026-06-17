@@ -3,7 +3,7 @@ description: Initialisér en GitHub Actions-workflow der publicerer dokumentatio
 argument-hint: "(valgfrit) sti til .website — standard er projektets .website-mappe"
 ---
 
-# deploy-website — Publicér dokumentationssitet på GitHub Pages
+# website-init-deploy-github — Publicér dokumentationssitet på GitHub Pages
 
 Opretter GitHub Actions-workflowfilen `.github/workflows/DeployDocsWebsite.yaml`, der
 automatisk bygger og udgiver projektets `.website`-site til **GitHub Pages**, hver gang
@@ -16,8 +16,8 @@ Kør denne kommando **én gang** pr. projekt, når dokumentationen skal lægges 
 ## Brug
 
 ```
-/deploy-website                → finder selv projektets .website og opretter workflowen
-/deploy-website <sti-til-.website>
+/website-init-deploy-github                → finder selv projektets .website og opretter workflowen
+/website-init-deploy-github <sti-til-.website>
 ```
 
 ## Hvad kommandoen opretter
@@ -29,7 +29,7 @@ Kør denne kommando **én gang** pr. projekt, når dokumentationen skal lægges 
 ```
 
 > Filen er det eneste, kommandoen opretter. Selve `.website`-indholdet dannes af
-> `/init-website`, `/html-guide` og `/update-website`. GitHub Pages skal desuden slås til
+> `/website-init`, `/website-build` og `/website-update-index`. GitHub Pages skal desuden slås til
 > i repoets indstillinger (se afsnittet **Efter oprettelse**, som kommandoen printer).
 
 ## Fremgangsmåde (for Claude)
@@ -44,7 +44,7 @@ Kør denne kommando **én gang** pr. projekt, når dokumentationen skal lægges 
 - Ellers søg efter mapper med navnet `.website` under repo-roden. **Udelad** mapper under
   `.git/`, `node_modules/` og `.claude/` (submodul-skabeloner må aldrig matche).
 - Håndtér resultatet:
-  - **Ingen `.website` fundet** → fortæl brugeren at køre `/claude4bc:init-website` først, og stop.
+  - **Ingen `.website` fundet** → fortæl brugeren at køre `/claude4bc:website-init` først, og stop.
   - **Præcis én fundet** → brug den.
   - **Flere fundet** (monorepo med flere apps) → vis listen og **spørg** brugeren, hvilken
     der skal publiceres. (Bemærk: én workflow publicerer ét site — se `## Bemærk`.)

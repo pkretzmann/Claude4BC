@@ -3,7 +3,7 @@ description: Dan én samlet PDF-brugervejledning (forside + indholdsfortegnelse 
 argument-hint: "(valgfrit) sti til .website og/eller --locale da-DK"
 ---
 
-# build-pdf — Saml dokumentationssitet til én PDF
+# pdf-build — Saml dokumentationssitet til én PDF
 
 Genererer **én samlet PDF pr. sprog** ud af HTML-siderne i projektets `.website`-site:
 en brandet **forside**, en **indholdsfortegnelse med sidetal**, og derefter **alle
@@ -21,10 +21,10 @@ og PDF'erne flettes med **pdf-lib**. Output pr. sprog: `<.website>/<sprog>/Bruge
 ## Brug
 
 ```
-/c4bc:build-pdf                          → finder selv projektets .website, bygger alle sprog
-/c4bc:build-pdf <sti-til-.website>
-/c4bc:build-pdf --locale da-DK           → kun ét sprog
-/c4bc:build-pdf <sti> --locale en-US
+/c4bc:pdf-build                          → finder selv projektets .website, bygger alle sprog
+/c4bc:pdf-build <sti-til-.website>
+/c4bc:pdf-build --locale da-DK           → kun ét sprog
+/c4bc:pdf-build <sti> --locale en-US
 ```
 
 Valgfri parametre kan gives videre til scriptet: `--title`, `--subtitle`, `--date`, `--output`.
@@ -44,7 +44,7 @@ Valgfri parametre kan gives videre til scriptet: `--title`, `--subtitle`, `--dat
   eksisterende `.website`-mappe, så brug den.
 - Ellers søg efter en mappe ved navn `.website` under repo-roden (`git rev-parse --show-toplevel`).
   **Udelad** `.git/`, `node_modules/` og `.claude/` (submodul-skabeloner må aldrig matche).
-  - **Ingen fundet** → bed brugeren køre `/c4bc:init-website` først, og stop.
+  - **Ingen fundet** → bed brugeren køre `/c4bc:website-init` først, og stop.
   - **Præcis én** → brug den.
   - **Flere** (monorepo) → vis listen og **spørg**, hvilken der skal bygges.
 

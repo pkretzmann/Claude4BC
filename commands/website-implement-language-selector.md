@@ -3,7 +3,7 @@ description: Tilføj (efter-monter) sprogvælgeren til eksisterende dokumentatio
 argument-hint: "(valgfrit) sti til .website eller til en bestemt sprogmappe — standard er alle sprog"
 ---
 
-# implement-language-selector — Efter-montér sprogvælgeren i ældre portaler
+# website-implement-language-selector — Efter-montér sprogvælgeren i ældre portaler
 
 Tilføjer globus-**sprogvælgeren** til portaler (`.website/<sprog>/index.html`) der blev dannet
 **før** sprogvælgeren kom i skabelonen, og gør rod-redirecten `.website/index.html` "klæbende"
@@ -11,9 +11,9 @@ Tilføjer globus-**sprogvælgeren** til portaler (`.website/<sprog>/index.html`)
 eksisterende — evt. **oversatte** — UI-tekst (undertekst, søgefelt, brødkrumme, knapper) bevares.
 
 > **Hvornår.** Brug denne kommando på et site hvor topbaren mangler sprogvælgeren. Et **nyt** site
-> får den automatisk fra skabelonen (`/update-website` danner portalen ud fra
+> får den automatisk fra skabelonen (`/website-update-index` danner portalen ud fra
 > `${CLAUDE_PLUGIN_ROOT}/html-guide/portal.html`, som allerede indeholder vælgeren). Denne kommando
-> er kun til **ældre** portaler, hvor en `/update-website` ellers ville springe vælgeren over (den
+> er kun til **ældre** portaler, hvor en `/website-update-index` ellers ville springe vælgeren over (den
 > er en layout-ændring, ikke en NAV-ændring).
 
 > **Idempotent.** Indeholder en portal allerede vælgeren (markup med `id="langpick"`), springes den
@@ -22,21 +22,21 @@ eksisterende — evt. **oversatte** — UI-tekst (undertekst, søgefelt, brødkr
 ## Brug
 
 ```
-/implement-language-selector                       → alle sprogmappers portaler i projektets .website/
-/implement-language-selector <sti-til-.website>    → som ovenfor, under den angivne .website-mappe
-/implement-language-selector <sti-til-sprogmappe>  → kun ét sprog (fx …/.website/da-DK)
+/website-implement-language-selector                       → alle sprogmappers portaler i projektets .website/
+/website-implement-language-selector <sti-til-.website>    → som ovenfor, under den angivne .website-mappe
+/website-implement-language-selector <sti-til-sprogmappe>  → kun ét sprog (fx …/.website/da-DK)
 ```
 
 ## Fremgangsmåde (for Claude)
 
 ### 1. Find .website-mappen og sprogmapperne
-Som i `/update-website`:
+Som i `/website-update-index`:
 - Ingen `$ARGUMENTS` → `<projektrod>/.website`, behandl **alle** sprogmapper.
 - `$ARGUMENTS` = en `.website`-mappe → den, alle sprogmapper.
 - `$ARGUMENTS` = en **sprogmappe** → kun det sprog (`.website`-roden er forældermappen, til trin 4).
-- Findes `.website` ikke → bed brugeren køre `/init-website` først, og stop.
+- Findes `.website` ikke → bed brugeren køre `/website-init` først, og stop.
 - **Sprogmapper** = umiddelbare undermapper i `.website/` hvis navn **ikke** starter med `.`
-  (fx `da-DK`, `en-US`). Findes ingen → bed om `/init-website`, og stop.
+  (fx `da-DK`, `en-US`). Findes ingen → bed om `/website-init`, og stop.
 
 ### 2. Hent de kanoniske dele af vælgeren
 **Foretrukket:** læs skabelonen `${CLAUDE_PLUGIN_ROOT}/html-guide/portal.html` og udtræk de fire
@@ -50,7 +50,7 @@ Kan skabelonen ikke læses, så brug de **indlejrede kopier** nederst i denne fi
 "Kanoniske kodestumper") — de er funktionelt identiske.
 
 ### 3. For hver portal `.website/<sprog>/index.html`
-Spring portalen over hvis den **ikke findes** (bemærk i rapporten — kør `/update-website` for at
+Spring portalen over hvis den **ikke findes** (bemærk i rapporten — kør `/website-update-index` for at
 danne den), eller hvis den **allerede** indeholder `id="langpick"` (vælgeren findes → kun trin 3e).
 
 Ellers injicér de fire dele ved disse ankre (lad alt andet stå urørt):
@@ -61,7 +61,7 @@ Ellers injicér de fire dele ved disse ankre (lad alt andet stå urørt):
   `<div class="crumb" id="crumb">…</div>` og `<a class="open-ext" …>`.
 - **c) LOCALES** — indsæt `const LOCALES = [ … ];`-blokken **lige efter** `const NAV = [ … ];`
   (før `const navEl`). Findes NAV-arrayet ikke, så **spring portalen over** og bemærk, at den er
-  for gammel/afvigende og skal **gendannes fra skabelonen** (`/update-website`).
+  for gammel/afvigende og skal **gendannes fra skabelonen** (`/website-update-index`).
 - **d) JS** — indsæt sprogvælger-IIFE'en **lige før** den afsluttende `/* Init */`/`routeFromHash();`
   (fald-tilbage-anker: lige før `</script>`).
 - **e) LOCALES-indhold** — skriv hele sitets sprogliste mellem `LOCALES:START/END`,
@@ -98,7 +98,7 @@ det falder tilbage til browsersproget:
 - Ellers erstat **kun** valg-logikken (mellem funktionsstart og `location.replace(...)`) med den
   klæbende variant nedenfor. **Bevar** `// === LOCALES:START … END ===`-blokken (`LOCALES`/`DEFAULT`)
   og no-script-linket i `<body>` uændret.
-- Findes `.website/index.html` ikke → opret den **ikke** her; bed brugeren køre `/init-website`.
+- Findes `.website/index.html` ikke → opret den **ikke** her; bed brugeren køre `/website-init`.
 
 ```js
       function valid(c){ for (var i = 0; i < LOCALES.length; i++) { if (LOCALES[i] === c) return true; } return false; }
@@ -123,14 +123,14 @@ det falder tilbage til browsersproget:
   `wrap.hidden = false` kun når der er ≥ 2 sprog.
 - **Rapportér** pr. portal: *injiceret* / *fandtes allerede* / *sprunget over* (mangler ankre →
   gendan fra skabelon), om rod-redirecten blev gjort klæbende, og hvilken sprogliste der blev skrevet.
-- **Anbefal** at køre `/update-website` bagefter — nu hvor markørerne findes, holder den fremover
+- **Anbefal** at køre `/website-update-index` bagefter — nu hvor markørerne findes, holder den fremover
   `NAV`, `LOCALES` og `BRAND` i sync.
 
 ## Bemærk
 - Kommandoen **rører kun** `.website/<sprog>/index.html` (portaler) og `.website/index.html`
   (rod-redirect). Den ændrer **ikke** indholds-siderne eller skabelonen i submodulet.
 - Efter monteringen er portalen funktionelt identisk med skabelon-output, men beholder sin egen
-  (evt. oversatte) chrome. Fremtidige `/update-website`-kørsler vedligeholder markør-blokkene.
+  (evt. oversatte) chrome. Fremtidige `/website-update-index`-kørsler vedligeholder markør-blokkene.
 
 ## Kanoniske kodestumper (fald-tilbage hvis skabelonen ikke kan læses)
 
@@ -183,7 +183,7 @@ det falder tilbage til browsersproget:
 
 ```js
 
-/* Tilgængelige sprog. Udfyldes af /update-website ud fra sprogmapperne i .website/.
+/* Tilgængelige sprog. Udfyldes af /website-update-index ud fra sprogmapperne i .website/.
    Rediger ikke indholdet mellem LOCALES:START og LOCALES:END manuelt. */
 const LOCALES = [
   // === LOCALES:START — auto-genereret af /update-website. Rediger ikke manuelt. ===

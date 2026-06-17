@@ -3,16 +3,16 @@ description: Udled brandfarver fra en hjemmeside og skriv dem ind i projektets .
 argument-hint: "<website-url> [type]"
 ---
 
-# create-css — Generér brandfarver til html-guide ud fra en hjemmeside
+# website-create-css — Generér brandfarver til html-guide ud fra en hjemmeside
 
 Udled en farvepalette fra en virksomheds hjemmeside (og en valgfri branche-"flavor") og skriv den
 ind i `:root`-blokken øverst i projektets `.website/styles.css`. Bruges til at brande
-`/html-guide`-output til et nyt projekt med én kommando.
+`/website-build`-output til et nyt projekt med én kommando.
 
 ## Brug
 
 ```
-/create-css <website-url> [type]
+/website-create-css <website-url> [type]
 ```
 
 - `<website-url>` — virksomhedens hjemmeside, fx `https://www.eksempel.dk`.
@@ -24,9 +24,9 @@ ind i `:root`-blokken øverst i projektets `.website/styles.css`. Bruges til at 
   - (andet/ukendt) — neutral, afbalanceret palette ud fra de fundne farver.
 
 Eksempler:
-- `/create-css https://www.eksempel.dk`
-- `/create-css https://www.vingaarden.dk "Wine Retail"`
-- `/create-css https://www.fabrik.dk Production`
+- `/website-create-css https://www.eksempel.dk`
+- `/website-create-css https://www.vingaarden.dk "Wine Retail"`
+- `/website-create-css https://www.fabrik.dk Production`
 
 ## Hvad kommandoen gør
 
@@ -66,9 +66,9 @@ Eksempler:
      `${CLAUDE_PLUGIN_ROOT}/html-guide/styles-default.css` til `.website/styles.css`, og sæt derefter
      brandfarverne i `:root`. Så får projektet et komplet stylesheet (komponenter + neutrale tokens)
      med sine egne brandfarver.
-   - Findes `.website/`-mappen ikke, så bed brugeren køre `/init-website` først.
+   - Findes `.website/`-mappen ikke, så bed brugeren køre `/website-init` først.
 
-5. **Afslut** med en kort opsummering og forslag om at køre `/html-guide` for at se resultatet.
+5. **Afslut** med en kort opsummering og forslag om at køre `/website-build` for at se resultatet.
 
 ## Noter
 
@@ -76,4 +76,4 @@ Eksempler:
   er derfor altid håndredigerbar bagefter.
 - Kommandoen ændrer kun farver. Layout og komponenter er låst i resten af `.website/styles.css` og
   påvirkes ikke.
-- Sproget i selve vejledningerne styres af `/html-guide`, ikke her.
+- Sproget i selve vejledningerne styres af `/website-build`, ikke her.

@@ -3,20 +3,20 @@ description: Synkronisér dokumentationsportalen pr. sprog (.website/<sprog>/ind
 argument-hint: "(valgfrit) sti til .website eller til en bestemt sprogmappe — standard er alle sprog"
 ---
 
-# update-website — Byg/opdatér dokumentationsportalens NAV (pr. sprog)
+# website-update-index — Byg/opdatér dokumentationsportalens NAV (pr. sprog)
 
 Holder hver sprogmappes portal `.website/<sprog>/index.html` i sync med de faktiske
 HTML-sider i **samme** sprogmappe. Kommandoen **scanner filsystemet** og (gen)bygger
 `NAV`-listen pr. sprog — den er idempotent og håndterer nye, omdøbte og slettede sider
 automatisk. Den holder også rod-redirectens (`.website/index.html`) sprogliste opdateret.
-`/html-guide` rører ikke nogen `index.html`; det er denne kommandos opgave.
+`/website-build` rører ikke nogen `index.html`; det er denne kommandos opgave.
 
 ## Brug
 
 ```
-/update-website                       → synkroniser alle sprogmappers portaler i projektets .website/
-/update-website <sti-til-.website>    → som ovenfor, men under den angivne .website-mappe
-/update-website <sti-til-sprogmappe>  → synkroniser kun ét sprog (fx …/.website/da-DK)
+/website-update-index                       → synkroniser alle sprogmappers portaler i projektets .website/
+/website-update-index <sti-til-.website>    → som ovenfor, men under den angivne .website-mappe
+/website-update-index <sti-til-sprogmappe>  → synkroniser kun ét sprog (fx …/.website/da-DK)
 ```
 
 ## Fremgangsmåde (for Claude)
@@ -27,10 +27,10 @@ automatisk. Den holder også rod-redirectens (`.website/index.html`) sprogliste 
   - `$ARGUMENTS` peger på en `.website`-mappe → brug den og behandl **alle** sprogmapper i den.
   - `$ARGUMENTS` peger på en **sprogmappe** (en undermappe i et `.website`, fx `.website/da-DK`)
     → behandl **kun** det sprog. `.website`-roden er da forældermappen (bruges til redirecten i trin 7).
-  - Findes `.website` ikke, så bed brugeren køre `/init-website` først, og stop.
+  - Findes `.website` ikke, så bed brugeren køre `/website-init` først, og stop.
 - **Sprogmapper** = de umiddelbare undermapper i `.website/`, hvis navn **ikke** starter med `.`
   (fx `da-DK`, `en-US`). Mapper der starter med `.` (`.sourcematerial.md` osv.) er **ikke** sprog.
-  Findes ingen sprogmapper, så bed brugeren køre `/init-website` først, og stop.
+  Findes ingen sprogmapper, så bed brugeren køre `/website-init` først, og stop.
 
 Behandl **hver** valgt sprogmappe med trin 2–6. Kør derefter trin 7 (rod-redirect) og trin 8 (rapport).
 
@@ -95,7 +95,7 @@ Generér JavaScript med **2-mellemrums indrykning**, præcis dette format:
 - Skriv resultatet til `.website/<sprog>/index.html`.
 
 ### 6b. Brand portalen med projektets farvepalette
-Portalens sidebjælke og UI skal matche projektets `/create-css`-palette. Brandfarverne i portalen
+Portalens sidebjælke og UI skal matche projektets `/website-create-css`-palette. Brandfarverne i portalen
 ligger i `:root` mellem markørerne `/* === BRAND:START … */` og `/* === BRAND:END === */`.
 
 - **Læs brandfarverne fra `.website/styles.css`** — de seks variabler i dens `:root`-BRAND-blok:
@@ -105,9 +105,9 @@ ligger i `:root` mellem markørerne `/* === BRAND:START … */` og `/* === BRAND
   `--sidebar-w`) og al øvrig CSS stå urørt.
 - Findes markørerne ikke (ældre portal uden BRAND-blok), så erstat de eksisterende
   `--brand-*`-linjer i portalens `:root` og indsæt markørerne samtidig.
-- **Findes `.website/styles.css` ikke** (projektet er ikke brandet med `/create-css`), så lad
+- **Findes `.website/styles.css` ikke** (projektet er ikke brandet med `/website-create-css`), så lad
   portalens skabelon-standardfarver stå, og **bemærk** i rapporten, at portalen bruger neutrale
-  standardfarver — kør `/create-css` for at brande den.
+  standardfarver — kør `/website-create-css` for at brande den.
 
 Dette gælder **både** når portalen lige er oprettet fra skabelonen (trin 6) og når en eksisterende
 portal opdateres — så brandfarverne holdes i sync med `.website/styles.css` ved hver kørsel.
@@ -152,7 +152,7 @@ Hold redirect-sidens sprogliste i sync med de sprogmapper, der faktisk findes i 
 
   Lad alt andet i filen stå urørt. Findes markørerne ikke (ældre/manuel redirect), så lad filen
   være og **bemærk** i rapporten, at sproglisten ikke kunne opdateres automatisk.
-- **Findes `.website/index.html` ikke** → opret den **ikke** her; bed brugeren køre `/init-website`
+- **Findes `.website/index.html` ikke** → opret den **ikke** her; bed brugeren køre `/website-init`
   for at danne redirect-siden, og bemærk det i rapporten.
 
 ### 8. Rapportér
@@ -171,7 +171,7 @@ mangler).
   `${CLAUDE_PLUGIN_ROOT}/html-guide/portal.html`, ikke i den enkelte `index.html`.
 - Portalens **brandfarver** er ligeledes et genereret artefakt (BRAND-blokken mellem markørerne) —
   rediger dem ikke i hånden. De afledes af projektets `.website/styles.css`; skift farver med
-  `/create-css` og kør derefter `/update-website` igen. Skabelonens egne BRAND-farver er kun en
+  `/website-create-css` og kør derefter `/website-update-index` igen. Skabelonens egne BRAND-farver er kun en
   neutral standard for u-brandede projekter.
 - Portalens **sprogliste** (`LOCALES`-blokken mellem markørerne) er også et genereret artefakt —
   rediger den ikke i hånden. Den afspejler sprogmapperne i `.website/` og holdes i sync ved hver

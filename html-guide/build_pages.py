@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 """build_pages.py — wrap Claude-authored bodies into standalone html-guide pages.
 
-Used by the /html-guide command's MULTI-PAGE mode (one HTML per topic, written into
-a .website language folder for /update-website to stitch into a portal).
+Used by the /website-build command's MULTI-PAGE mode (one HTML per topic, written into
+a .website language folder for /website-update-index to stitch into a portal).
 
 This helper does ONLY the mechanical wrapping that is identical on every page:
   * inline the chosen stylesheet (.website/styles.css, else sibling styles-default.css)
@@ -210,7 +210,7 @@ def main():
 
     print("\n%d page(s) written to %s" % (len(written), locale_dir))
     if not has_favicon:
-        print("note: %s/favicon.svg not found — <link rel=icon> omitted (run /init-website)" % website)
+        print("note: %s/favicon.svg not found — <link rel=icon> omitted (run /website-init)" % website)
 
 
 if __name__ == "__main__":

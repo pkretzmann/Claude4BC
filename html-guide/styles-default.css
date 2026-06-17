@@ -1,15 +1,15 @@
 /* ============================================================
    html-guide — DEFAULT (fallback) stylesheet
    This is the generic, neutral-branded canonical stylesheet that
-   /html-guide falls back to when a project has no .website/styles.css.
-   To brand a project, create .website/styles.css (e.g. via /create-css)
+   /website-build falls back to when a project has no .website/styles.css.
+   To brand a project, create .website/styles.css (e.g. via /website-create-css)
    — do NOT edit this shared file per project. Inlined verbatim by
-   /html-guide; do NOT rewrite CSS from memory.
+   /website-build; do NOT rewrite CSS from memory.
    ============================================================ */
 
 /* ============================================================
    BRAND — neutral defaults. Per project these are set in
-   .website/styles.css (by hand or via /create-css <website-url> [type]).
+   .website/styles.css (by hand or via /website-create-css <website-url> [type]).
    Company: <projekt>
    ============================================================ */
    :root {

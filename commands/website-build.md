@@ -3,24 +3,24 @@ description: Konvertér en eller flere markdown-brugervejledninger til en selvst
 argument-hint: "<fil.md | \"fil1.md\" \"fil2.md\" | mappe>"
 ---
 
-# html-guide — Konverter markdown brugervejledning til HTML
+# website-build — Konverter markdown brugervejledning til HTML
 
 Konverter en markdown-brugervejledning til en professionel, interaktiv HTML-fil med projektets farvepalette og designsystem (CSS i `.website/styles.css` med fald-tilbage til `${CLAUDE_PLUGIN_ROOT}/html-guide/styles-default.css`, JavaScript i `${CLAUDE_PLUGIN_ROOT}/html-guide/script.js`).
 
 ## Brug
 
 ```
-/html-guide <fil.md>                       → én fil → én HTML (samme basisnavn, samme mappe)
-/html-guide <fil1.md> <fil2.md> …          → flere filer → ÉN samlet HTML (i angiven rækkefølge)
-/html-guide <mappe>                         → alle .md i mappen → ÉN samlet HTML (naturlig navne-rækkefølge)
-/html-guide <mappe> → .website/<sprog>      → ÉN side pr. emne i sprogmappen (multi-side; til /update-website)
+/website-build <fil.md>                       → én fil → én HTML (samme basisnavn, samme mappe)
+/website-build <fil1.md> <fil2.md> …          → flere filer → ÉN samlet HTML (i angiven rækkefølge)
+/website-build <mappe>                         → alle .md i mappen → ÉN samlet HTML (naturlig navne-rækkefølge)
+/website-build <mappe> → .website/<sprog>      → ÉN side pr. emne i sprogmappen (multi-side; til /website-update-index)
 ```
 
 Eksempler:
-- `/html-guide <mappe>/<vejledning>.md`
-- `/html-guide "<mappe>/Step 0 — Oversigt.md" "<mappe>/Step 1.md"`
-- `/html-guide "<mappe>"`
-- `/html-guide "<mappe>" — skriv som multi-side i .website/da-DK` (multi-side-tilstand, se nedenfor)
+- `/website-build <mappe>/<vejledning>.md`
+- `/website-build "<mappe>/Step 0 — Oversigt.md" "<mappe>/Step 1.md"`
+- `/website-build "<mappe>"`
+- `/website-build "<mappe>" — skriv som multi-side i .website/da-DK` (multi-side-tilstand, se nedenfor)
 
 ## Hvad kommandoen gør
 
@@ -64,7 +64,7 @@ Når der gives flere filer eller en mappe, samles alt til **ét** sammenhængend
 
 Ud over "ét samlet dokument" findes en **multi-side-tilstand**: i stedet for ét stort HTML-dokument
 genereres **én selvstændig side pr. kildefil/emne**, lagt i sprogmappen, klar til at
-`/update-website` binder dem sammen i en portal. Brug den til en **komplet, flersidet
+`/website-update-index` binder dem sammen i en portal. Brug den til en **komplet, flersidet
 dokumentationsportal** frem for ét langt dokument.
 
 **Hvornår vælges denne tilstand:** når brugeren beder om "multi-side"/"flersidet" dokumentation,
@@ -78,7 +78,7 @@ Regler (forskelle fra "ét dokument"):
   `<footer>`, og en **per-side `<nav class="toc">`** der linker til sidens egne `##`-sektioner).
 - **Placering:** `.website/<sprog>/<gruppe>/<emne>.html`. Læg hver side i en **gruppemappe** der
   afspejler dokumentets dele (fx "Opsætning", "Daglig brug", "Reference").
-- **Gruppe-rækkefølge:** `/update-website` sorterer grupper **alfabetisk** og bruger mappenavnet som
+- **Gruppe-rækkefølge:** `/website-update-index` sorterer grupper **alfabetisk** og bruger mappenavnet som
   menu-overskrift. Skal grupperne vises i en bestemt læse-rækkefølge, så **nummer-præfiks** mappenavnet
   (fx `1. Kom godt i gang`, `2. Opsætning`, `3. Daglig brug`).
 - **Filnavne:** korte og helst ascii. Brug nummer-præfiks (`1-…`, `2-…`) for at styre rækkefølgen
@@ -86,12 +86,12 @@ Regler (forskelle fra "ét dokument"):
 - **Favicon:** siderne ligger to mappeniveauer under `.website/`, så `href="../../favicon.svg"`
   (udelades hvis `.website/favicon.svg` ikke findes — se *Favicon*).
 - **Ingen samlet header/TOC/footer på tværs** (modsat ét-dokument-tilstanden). Portalen fra
-  `/update-website` leverer cross-side-navigationen.
+  `/website-update-index` leverer cross-side-navigationen.
 - **Krydsside-links undgås:** referencer mellem siderne skrives som **tekst** ("se afsnittet
   Opsætning → Knyt data"), ikke som hyperlinks — siderne loades i portalens iframe, og relative
   fil-links på tværs af gruppemapper er skrøbelige. Interne ankre **på samme side** er fine.
 - **End-user-/ingen-kode-reglerne gælder uændret** på hver side.
-- **Efterbehandling:** bed brugeren køre `/update-website` bagefter for at bygge portalens menu og
+- **Efterbehandling:** bed brugeren køre `/website-update-index` bagefter for at bygge portalens menu og
   opdatere rod-redirectens sprogliste.
 
 > **Hjælpescript (anbefalet for mange sider).** Da hver side skal indlejre `styles.css` + `script.js`
@@ -114,8 +114,8 @@ udgave er `.website/styles.css`; findes den ikke, bruges den fulde, neutralt-bra
 - **Valg af stylesheet (fald-tilbage-rækkefølge):**
   1. Findes `.website/styles.css` (projekt-specifik), bruges den.
   2. Findes den **ikke**, bruges default'en `${CLAUDE_PLUGIN_ROOT}/html-guide/styles-default.css`.
-  - Findes **ingen** af de to filer, så stop og bed brugeren køre `/create-css <website-url> [type]`
-    (eller `/init-website` efterfulgt af `/create-css`) før konverteringen fortsætter.
+  - Findes **ingen** af de to filer, så stop og bed brugeren køre `/website-create-css <website-url> [type]`
+    (eller `/website-init` efterfulgt af `/website-create-css`) før konverteringen fortsætter.
 - **Brandfarver** ændres kun i `:root`-BRAND-blokken øverst i `.website/styles.css` (variablerne
   `--brand-dark`, `--brand-mid`, `--brand-light`, `--brand-pale`, `--brand-subtle`, `--accent`).
   Resten af filen (neutrale tokens og komponent-CSS) røres normalt ikke.
@@ -154,7 +154,7 @@ en brugervejledning — og hører ikke under denne kommando.
 ## Favicon
 
 Sitet har et fælles ikon, `favicon.svg`, som ligger i **roden af `.website/`** (lægges der af
-`/init-website`) og **deles på tværs af alle sprog**. Hver genereret side skal pege på det med et
+`/website-init`) og **deles på tværs af alle sprog**. Hver genereret side skal pege på det med et
 `<link rel="icon">` i `<head>`.
 
 - **Relativ sti — beregnes ud fra sidens placering i forhold til `.website/`.** Sitet er
@@ -167,7 +167,7 @@ Sitet har et fælles ikon, `favicon.svg`, som ligger i **roden af `.website/`** 
 - **Hvorfor relativ (ikke `/favicon.svg`):** en rod-relativ sti virker kun når sitet serveres over
   `http://localhost`/GitHub Pages — ikke når en enkelt side åbnes som `file://`. Den relative sti
   virker i begge tilfælde og holder siden portabel.
-- **Findes `.website/favicon.svg` ikke** (fx hvis `/init-website` ikke er kørt), så udelad
+- **Findes `.website/favicon.svg` ikke** (fx hvis `/website-init` ikke er kørt), så udelad
   `<link rel="icon">`-linjen helt frem for at lave et dødt link.
 
 ## Designregler
@@ -262,7 +262,7 @@ Vejledningerne er skrevet til **slutbrugere** — ikke udviklere. Sproget skal v
 | Tekniske detaljer (feltnumre, obj-ID) | **Udelades** |
 | "AL-objekter"-tabel (Objekt/ID/Fil) | **Udelades** |
 | Flere kildefiler / en mappe | Ét dokument med fælles header/TOC/footer; hver fil = sektionsgruppe; AL-objekt-tabeller udelades |
-| Mappe → `.website/<sprog>` (multi-side) | Én selvstændig side pr. emne i gruppemapper; per-side header/TOC/footer; bind sammen med `/update-website` |
+| Mappe → `.website/<sprog>` (multi-side) | Én selvstændig side pr. emne i gruppemapper; per-side header/TOC/footer; bind sammen med `/website-update-index` |
 
 ## Påkrævet indhold
 

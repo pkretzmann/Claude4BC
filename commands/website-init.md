@@ -3,13 +3,13 @@ description: Initialiserer dokumentationssitet (.website) med sprogmapper (da-DK
 argument-hint: "(valgfrit) sti til projektroden — standard er det aktuelle projekt"
 ---
 
-# init-website — Opret dokumentationssitets mappestruktur
+# website-init — Opret dokumentationssitets mappestruktur
 
 Opretter den faste mappe- og filstruktur, som projektets dokumentationssite bygger på.
 Sitet er **flersproget**: roden af `.website/` indeholder kun en lille `index.html`, der
 **sender videre** (redirect) til standardsprogets portal, og selve indholdet ligger i én
 mappe pr. sprog (`da-DK`, `en-US`, …). Hver sprogmappe har sin egen portal (`index.html`,
-dannet med `/update-website`), sine færdige HTML-sider og sin egen `.sourcematerial.md`-mappe
+dannet med `/website-update-index`), sine færdige HTML-sider og sin egen `.sourcematerial.md`-mappe
 med det kildemateriale, siderne dannes ud fra.
 
 Kør denne kommando **én gang** når et nyt projekt skal have dokumentation.
@@ -17,8 +17,8 @@ Kør denne kommando **én gang** når et nyt projekt skal have dokumentation.
 ## Brug
 
 ```
-/init-website                → opretter strukturen i projektroden
-/init-website <projektrod>   → opretter strukturen under den angivne sti
+/website-init                → opretter strukturen i projektroden
+/website-init <projektrod>   → opretter strukturen under den angivne sti
 ```
 
 ## Hvad kommandoen opretter
@@ -45,8 +45,8 @@ Kør denne kommando **én gang** når et nyt projekt skal have dokumentation.
 > matche browserens sprog mod de tilgængelige sprogmapper).
 >
 > Den enkelte sprogmappes portal (`da-DK/index.html`, `en-US/index.html`) oprettes **ikke**
-> her — den dannes af `/update-website`, når du har genereret dine første sider med
-> `/html-guide`. Indtil da viser den lokale server blot en mappeliste, hvilket er fint som
+> her — den dannes af `/website-update-index`, når du har genereret dine første sider med
+> `/website-build`. Indtil da viser den lokale server blot en mappeliste, hvilket er fint som
 > udgangspunkt.
 
 ## Fremgangsmåde (for Claude)
@@ -97,8 +97,8 @@ Kør denne kommando **én gang** når et nyt projekt skal have dokumentation.
 > `.website/index.html` (ældre struktur, hvor siderne lå direkte under `.website/`), så
 > overskriver kommandoen den **ikke**. Fortæl i stedet brugeren, at det gamle indhold skal
 > flyttes ind i standardsprogets mappe (`.website/da-DK/`), og at rod-`index.html` skal
-> erstattes med redirect-skabelonen herunder (eller slettes, så `/init-website` kan danne den).
-> Kør derefter `/update-website` for at genopbygge portalen pr. sprog.
+> erstattes med redirect-skabelonen herunder (eller slettes, så `/website-init` kan danne den).
+> Kør derefter `/website-update-index` for at genopbygge portalen pr. sprog.
 
 ## Skabeloner
 
@@ -108,7 +108,7 @@ Kør denne kommando **én gang** når et nyt projekt skal have dokumentation.
 > `meta refresh`/no-script-linket indsættes ud fra de initialiserede sprog — standardsproget
 > (`da-DK`) er fald-tilbage. Et tidligere **manuelt sprogvalg** (gemt i `localStorage` af portalens
 > sprogvælger under nøglen `docs.locale`) vinder; ellers forsøges browserens sprog matchet.
-> `/update-website` holder `LOCALES`/`DEFAULT` i sync, når der senere tilføjes eller fjernes sprogmapper.
+> `/website-update-index` holder `LOCALES`/`DEFAULT` i sync, når der senere tilføjes eller fjernes sprogmapper.
 
 ```html
 <!DOCTYPE html>
@@ -244,18 +244,18 @@ samme origin og kan derfor læses af portalen.
 
 ## Tilføj en ny side
 1. Læg kildematerialet i dit sprogs mappe, `<sprog>/.sourcematerial.md/<emne>/`
-   (fx `da-DK/.sourcematerial.md/<emne>/`), og kør `/html-guide` på det.
+   (fx `da-DK/.sourcematerial.md/<emne>/`), og kør `/website-build` på det.
 2. Læg den genererede HTML-fil i den relevante undermappe under **samme** sprogmappe
    (fx `da-DK/<emne>/`).
-3. Kør `/update-website` — den scanner hver sprogmappe og opdaterer den pågældende portals
+3. Kør `/website-update-index` — den scanner hver sprogmappe og opdaterer den pågældende portals
    menu automatisk (og holder rod-redirectens sprogliste opdateret).
 
-Du behøver ikke redigere nogen `index.html` i hånden; `/update-website` bygger menuen ud fra
+Du behøver ikke redigere nogen `index.html` i hånden; `/website-update-index` bygger menuen ud fra
 de filer der ligger i hver sprogmappe.
 
 ## Tilføj et nyt sprog
 1. Opret en ny sprogmappe, fx `.website/de-DE/`, med en `.sourcematerial.md/`-undermappe.
-2. Læg sider i den som beskrevet ovenfor og kør `/update-website` — den danner sprogets portal
+2. Læg sider i den som beskrevet ovenfor og kør `/website-update-index` — den danner sprogets portal
    og tilføjer sproget til rod-redirecten.
 ````
 
@@ -274,20 +274,20 @@ bygges ud fra. Hver sprogmappe (`da-DK/`, `en-US/`, …) har sin egen `.sourcema
 
 ## Hvad bruges materialet til?
 
-Indholdet her er **input** til `/html-guide`-kommandoen. Når kommandoen køres på et
+Indholdet her er **input** til `/website-build`-kommandoen. Når kommandoen køres på et
 emne, læser den kildematerialet i den relevante undermappe og danner en poleret,
 selvstændig HTML-side ud fra det. De genererede HTML-sider lægges i **samme sprogmappe**
 (og indgår i sprogets dokumentationsportal `index.html`).
 
 ```
-<sprog>/.sourcematerial.md/<emne>/   →   /html-guide   →   <sprog>/<emne>/<side>.html
+<sprog>/.sourcematerial.md/<emne>/   →   /website-build   →   <sprog>/<emne>/<side>.html
    (kildemateriale)                                          (færdig HTML-side)
 ```
 
 Stylingen kommer fra projektets `.website/styles.css` (med fald-tilbage til den delte
 `styles-default.css`), og den interaktive adfærd (indholdsfortegnelse, søgning,
 kopiér-knapper, læse-fremgangslinje osv.) fra `script.js` i claude4bc-submodulet —
-`/html-guide` inliner dem i hver side. Selve kildematerialet skal derfor **kun**
+`/website-build` inliner dem i hver side. Selve kildematerialet skal derfor **kun**
 indeholde indhold — ikke styling.
 
 ## Organisering
@@ -308,9 +308,9 @@ Hver emnemappe kan indeholde flere filtyper:
 ## Sådan tilføjer eller opdaterer du en side
 
 1. Læg eller opdater kildematerialet i den relevante undermappe her.
-2. Kør `/html-guide` på emnet for at danne (eller gendanne) HTML-siden, og læg den i
+2. Kør `/website-build` på emnet for at danne (eller gendanne) HTML-siden, og læg den i
    den relevante undermappe under **samme** sprogmappe.
-3. Kør `/update-website` for at opdatere portalens menu (se `.website/README.md`).
+3. Kør `/website-update-index` for at opdatere portalens menu (se `.website/README.md`).
 ````
 
 ### Fil: `.claude/launch.json` (i git-roden)
@@ -341,7 +341,7 @@ sender videre til standardsproget.
 
 - Kommandoen er **idempotent**: kør den trygt igen — eksisterende filer røres ikke.
 - **Standardsproget er `da-DK`**, og rod-`index.html` er kun en redirect — alt indhold ligger
-  i sprogmapperne (`da-DK/`, `en-US/`, …). Hver sprogmappes portal dannes af `/update-website`.
+  i sprogmapperne (`da-DK/`, `en-US/`, …). Hver sprogmappes portal dannes af `/website-update-index`.
 - **Manuelt sprogvalg.** Portalens sprogvælger (globus-dropdown i topbaren) og rod-redirecten deler
   `localStorage`-nøglen `docs.locale`: vælger brugeren et sprog i en portal, gemmes koden der, og
   rod-redirecten sender brugeren til det sprog ved næste besøg i stedet for browsersproget. Virker på
@@ -350,8 +350,8 @@ sender videre til standardsproget.
 - `favicon.svg` ligger i **roden af `.website/`** og deles af alle sprog. Sider i en sprogmappe
   peger relativt tilbage til roden (fx `../favicon.svg` for en portal, `../../favicon.svg` for en
   side i `<sprog>/<emne>/`).
-- `script.js`, `styles-default.css`, `favicon.svg`, `serve.py`, `404.html` og selve `/html-guide`
-  ligger i claude4bc-submodulet. Projektets brandede `.website/styles.css` oprettes med `/create-css`.
+- `script.js`, `styles-default.css`, `favicon.svg`, `serve.py`, `404.html` og selve `/website-build`
+  ligger i claude4bc-submodulet. Projektets brandede `.website/styles.css` oprettes med `/website-create-css`.
   Kun `favicon.svg`, `serve.py` og `404.html` kopieres herfra til `.website/`; resten oprettes ikke her.
 - `404.html` ligger i **roden af `.website/`** og deles af alle sprog. På en case-følsom host
   (GitHub Pages) sender den en forespørgsel på fx `/da-dk/…` videre til den korrekte
@@ -366,7 +366,7 @@ sender videre til standardsproget.
 
 ### Opdatér et eksisterende site (retro-fit)
 
-`/init-website` er idempotent og **overskriver ikke** eksisterende filer, så et site oprettet
+`/website-init` er idempotent og **overskriver ikke** eksisterende filer, så et site oprettet
 før `serve.py` blev indført, skal opdateres manuelt for at få no-cache-serveren:
 
 1. Kopiér `serve.py` fra submodulets `html-guide/serve.py` til projektets `.website/serve.py`.
