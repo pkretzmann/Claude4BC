@@ -12,7 +12,7 @@ ind i `:root`-blokken øverst i projektets `.website/styles.css`. Bruges til at 
 ## Brug
 
 ```
-/website-create-css <website-url> [type]
+/website-create-css <website-url> [type] [--theme <tema>]
 ```
 
 - `<website-url>` — virksomhedens hjemmeside, fx `https://www.eksempel.dk`.
@@ -22,11 +22,17 @@ ind i `:root`-blokken øverst i projektets `.website/styles.css`. Bruges til at 
   - **Consulting** — afdæmpet corporate navy, diskret accent.
   - **Wine Retail** — bordeaux/burgundy som primær, varm guld-accent.
   - (andet/ukendt) — neutral, afbalanceret palette ud fra de fundne farver.
+- `--theme <tema>` (valgfri) — det **layout/skin** stylesheetet skal bygge på, fx
+  `classic`, `minimal`, `editorial`, `bold`, `landing`. Standard er `classic`. Temaet bestemmer
+  *udseendet* (typografi, header, kort, struktur); `[type]`/url'en bestemmer kun *farverne*.
+  Vælg/skift tema senere med `/website-theme`. Gyldige navne læses fra
+  `${CLAUDE_PLUGIN_ROOT}/html-guide/themes/`.
 
 Eksempler:
 - `/website-create-css https://www.eksempel.dk`
 - `/website-create-css https://www.vingaarden.dk "Wine Retail"`
 - `/website-create-css https://www.fabrik.dk Production`
+- `/website-create-css https://www.eksempel.dk --theme editorial`
 
 ## Hvad kommandoen gør
 
@@ -62,10 +68,17 @@ Eksempler:
    `--brand-mid`, `--brand-light`, `--brand-pale`, `--brand-subtle`, `--accent`) og linjen
    `Company:` i toppen af `.website/styles.css`. Rør **ikke** ved de neutrale tokens
    eller komponent-CSS længere nede.
-   - Findes `.website/styles.css` **ikke**, så **kopiér først** det fulde kanoniske stylesheet
-     `${CLAUDE_PLUGIN_ROOT}/html-guide/styles-default.css` til `.website/styles.css`, og sæt derefter
-     brandfarverne i `:root`. Så får projektet et komplet stylesheet (komponenter + neutrale tokens)
-     med sine egne brandfarver.
+   - Findes `.website/styles.css` **ikke**, så **kopiér først** det valgte temas fulde stylesheet
+     `${CLAUDE_PLUGIN_ROOT}/html-guide/themes/<tema>/styles.css` (standard `classic`) til
+     `.website/styles.css`, og sæt derefter brandfarverne i `:root`. Så får projektet et komplet
+     stylesheet (komponenter + neutrale tokens) i det valgte tema med sine egne brandfarver. Sæt
+     samtidig `Theme: <tema>` i header-kommentaren.
+     - **Struktur-tema:** findes `${CLAUDE_PLUGIN_ROOT}/html-guide/themes/<tema>/portal.html`
+       (fx `landing`), så kopiér den til `<.website>/.portal-template.html`, så `/website-update-index`
+       bruger temaets portal-struktur. Mangler den (sidebar-tema), så slet et evt. eksisterende
+       `<.website>/.portal-template.html` (fald-tilbage til den delte portal).
+   - Findes `.website/styles.css` **allerede**, opdateres kun brandfarverne (temaet røres ikke —
+     skift tema med `/website-theme`). Et eksplicit `--theme` her ignoreres da, og det nævnes i rapporten.
    - Findes `.website/`-mappen ikke, så bed brugeren køre `/website-init` først.
 
 5. **Afslut** med en kort opsummering og forslag om at køre `/website-build` for at se resultatet.
@@ -74,6 +87,6 @@ Eksempler:
 
 - Farveudtræk er best-effort. Hjemmesider eksponerer ikke altid rene brandfarver — `:root`-blokken
   er derfor altid håndredigerbar bagefter.
-- Kommandoen ændrer kun farver. Layout og komponenter er låst i resten af `.website/styles.css` og
-  påvirkes ikke.
+- Kommandoen ændrer kun **farver**. Layout, typografi og komponenter bestemmes af det valgte
+  **tema** (resten af `.website/styles.css`) — skift layout/skin med `/website-theme <tema>`.
 - Sproget i selve vejledningerne styres af `/website-build`, ikke her.

@@ -82,7 +82,15 @@ Generér JavaScript med **2-mellemrums indrykning**, præcis dette format:
     `../favicon.svg`, så rør den ikke.
 
 **Hvis portalen ikke findes (første gang for dette sprog):**
-- Læs den kanoniske skabelon `${CLAUDE_PLUGIN_ROOT}/html-guide/portal.html`.
+- **Vælg portal-skabelon (tema-bevidst):** findes en projekt-ejet skabelon
+  `<.website-rod>/.portal-template.html` (lagt der af et struktur-tema via `/website-theme`),
+  så brug **den**. Ellers brug den delte, kanoniske `${CLAUDE_PLUGIN_ROOT}/html-guide/portal.html`.
+  - Begge skabeloner eksponerer de samme markører (`BRAND`, `NAV`, `LOCALES`) og pladsholdere
+    (`{{SITE_TITLE}}`, `{{SITE_BADGE}}`), så resten af trinnene nedenfor er ens uanset skabelon.
+  - **Bemærk:** skifter man tema med `/website-theme`, ændres portalens *struktur* kun for nye
+    eller gendannede portaler. For at en eksisterende portal får den nye struktur (fx skift
+    mellem sidebar og top-nav), så **slet** `.website/<sprog>/index.html` og kør kommandoen igen
+    (NAV genopbygges fra siderne). Et rent farve-/brand-skift kræver ikke sletning.
 - Erstat pladsholderne:
   - `{{SITE_TITLE}}` → projektets titel for dette sprog. Brug `$ARGUMENTS` hvis det ligner en titel,
     ellers et fornuftigt standardnavn (fx `"<Firmanavn> Dokumentation"` udledt af repoet, eller
@@ -167,8 +175,10 @@ mangler).
 ## Vigtigt
 
 - Hver portals **NAV-liste er et genereret artefakt** — rediger den ikke i hånden; kør kommandoen igen.
-- Portalens *layout/opførsel* (sidebar-struktur, søgning, routing) ændres i skabelonen
-  `${CLAUDE_PLUGIN_ROOT}/html-guide/portal.html`, ikke i den enkelte `index.html`.
+- Portalens *layout/opførsel* (sidebar-struktur, søgning, routing) ændres i skabelonen —
+  projekt-ejet `<.website>/.portal-template.html` hvis den findes (lagt af et struktur-tema via
+  `/website-theme`), ellers den delte `${CLAUDE_PLUGIN_ROOT}/html-guide/portal.html` — **ikke** i
+  den enkelte `index.html`.
 - Portalens **brandfarver** er ligeledes et genereret artefakt (BRAND-blokken mellem markørerne) —
   rediger dem ikke i hånden. De afledes af projektets `.website/styles.css`; skift farver med
   `/website-create-css` og kør derefter `/website-update-index` igen. Skabelonens egne BRAND-farver er kun en

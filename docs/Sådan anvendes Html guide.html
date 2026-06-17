@@ -566,7 +566,7 @@ pre { position: relative; }   /* anchor for the copy button */
       <li><a href="#submodul-plugin">2 · Submodul vs. plugin — forklaret</a></li>
       <li><a href="#brug">3 · Sådan kalder du kommandoerne</a></li>
       <li><a href="#kom-i-gang">4 · Kom i gang i et nyt projekt</a></li>
-      <li><a href="#design">5 · Design og farver</a></li>
+      <li><a href="#design">5 · Design, farver og temaer</a></li>
       <li><a href="#interaktivitet">6 · Interaktivitet</a></li>
     </ol>
   </nav>
@@ -579,7 +579,7 @@ pre { position: relative; }   /* anchor for the copy button */
     </div>
     <p>Værktøjet hører til <strong>c4bc</strong> — et delt bundt af kommandoer til Claude Code. Kommandoen <code>/c4bc:website-build</code> konverterer en markdown-brugervejledning til en professionel, selvstændig HTML-fil med projektets farvepalette og designsystem. Selve kommandoen er beskrevet i pluginnets <code>commands/website-build.md</code>, som indeholder designreglerne og en tabel over, hvordan markdown-elementer bliver til HTML-komponenter.</p>
     <p>c4bc er installeret som et <strong>plugin</strong>, så kommandoerne dukker automatisk op i listen over slash-kommandoer — du skal ikke installere eller kopiere noget manuelt for at bruge dem.</p>
-    <div class="info-box"><strong>Kommandoerne i bundtet:</strong> <code>/c4bc:website-build</code>, <code>/c4bc:website-create-css</code>, <code>/c4bc:website-init</code>, <code>/c4bc:website-update-index</code> og <code>/c4bc:al-update-translations</code>.</div>
+    <div class="info-box"><strong>Kommandoerne i bundtet:</strong> <code>/c4bc:website-build</code>, <code>/c4bc:website-create-css</code>, <code>/c4bc:website-theme</code>, <code>/c4bc:website-init</code>, <code>/c4bc:website-update-index</code> og <code>/c4bc:al-update-translations</code>.</div>
   </div>
 
   <!-- ── 2 Submodul vs plugin ── -->
@@ -646,7 +646,8 @@ pre { position: relative; }   /* anchor for the copy button */
       </li>
       <li><strong>Genstart Claude Code.</strong> Mappen indeholder en <code>plugin.json</code>, så den loades automatisk som pluginnet <code>c4bc</code> — og kommandoerne <code>/c4bc:…</code> dukker op.</li>
       <li>Kør <code>/c4bc:website-init</code> <strong>én gang</strong> for at initialisere dokumentationssitet — den opretter <code>.website/</code> med sprogmapper (<code>da-DK</code>, <code>en-US</code>), rod-redirect, kildemateriale-mapper, start-script og preview-konfigurationen <code>.claude/launch.json</code>.</li>
-      <li>Kør <code>/c4bc:website-create-css &lt;hjemmeside-url&gt; [type]</code> for at hente kundens brandfarver og oprette projektets eget <code>.website/styles.css</code>.</li>
+      <li>Kør <code>/c4bc:website-create-css &lt;hjemmeside-url&gt; [type] [--theme &lt;tema&gt;]</code> for at hente kundens brandfarver og oprette projektets eget <code>.website/styles.css</code>. Tilføj <code>--theme</code> for at vælge et bestemt layout fra start (standard er <strong>classic</strong>).</li>
+      <li><em>(Valgfrit)</em> Vil du skifte layout/tema senere, så kør <code>/c4bc:website-theme &lt;tema&gt;</code> — fx <code>editorial</code> eller <code>landing</code>. Se afsnit 5 for de tilgængelige temaer.</li>
       <li>Kør <code>/c4bc:website-build</code> på dine markdown-vejledninger — de får automatisk projektets design.</li>
       <li>Kør <code>/c4bc:website-update-index</code> for at bygge sprogenes portal-menu, så de nye sider dukker op i dokumentationssitet.</li>
     </ol>
@@ -657,12 +658,32 @@ pre { position: relative; }   /* anchor for the copy button */
   <div class="section" id="design">
     <div class="section-header">
       <div class="section-icon">🎨</div>
-      <h2>5 · Design og farver</h2>
+      <h2>5 · Design, farver og temaer</h2>
     </div>
-    <p>Hele designsystemet — farvepalette <strong>og</strong> alle komponenter — ligger i pluginnets <code>html-guide/styles-default.css</code>. Kommandoen lægger filens indhold direkte ind i hver genereret HTML, så hver vejledning er selvstændig og kan deles, printes og åbnes uden internet.</p>
-    <p>Vil du give et bestemt projekt sine egne brandfarver, opretter du <code>.website/styles.css</code> i projektet — den bruges automatisk frem for standarden. Det nemmeste er kommandoen <code>/c4bc:website-create-css</code>, der henter brandfarver fra en hjemmeside og laver filen for dig:</p>
+    <p>Designet styres af to ting, du kan ændre uafhængigt: <strong>farverne</strong> (kundens brand) og <strong>temaet</strong> (selve layoutet/stilen). Alle vejledninger er stadig selvstændige HTML-filer, der kan deles, printes og åbnes uden internet — kommandoen lægger det valgte stylesheet direkte ind i hver side.</p>
+
+    <h3>Farver</h3>
+    <p>Vil du give et projekt kundens egne brandfarver, opretter du <code>.website/styles.css</code> — det nemmeste er <code>/c4bc:website-create-css</code>, der henter farverne fra en hjemmeside og laver filen for dig:</p>
     <pre><code>/c4bc:website-create-css https://www.kunde.dk "Wine Retail"</code></pre>
-    <div class="note"><strong>Tip:</strong> Brandfarverne styres af <code>--brand-*</code>-variablerne øverst i stylesheetet. <code>/c4bc:website-create-css</code> opdaterer kun dem — resten af designet er låst, så layoutet altid ser ensartet ud, uanset farvevalg.</div>
+    <div class="note"><strong>Tip:</strong> Brandfarverne styres af <code>--brand-*</code>-variablerne øverst i stylesheetet. <code>/c4bc:website-create-css</code> opdaterer <strong>kun</strong> farverne — selve layoutet bestemmes af temaet (se nedenfor), så et farveskift ændrer ikke stilen.</div>
+
+    <h3>Temaer (layouts)</h3>
+    <p>Et <strong>tema</strong> er en komplet stil — typografi, header, kort, afstande og evt. selve opbygningen — mens indholdet er præcis det samme. Du skifter tema med:</p>
+    <pre><code>/c4bc:website-theme editorial</code></pre>
+    <p>Kør <code>/c4bc:website-theme</code> uden noget for at se listen og det aktive tema, eller <code>/c4bc:website-theme &lt;tema&gt; --preview</code> for at se et tema på prøve, før du skifter. De medfølgende temaer er:</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Tema</th><th>Type</th><th>Stil</th></tr></thead>
+        <tbody>
+          <tr><td><strong>classic</strong></td><td>Sidebar</td><td>Den oprindelige blå stil med hvide afrundede kort. Standard.</td></tr>
+          <tr><td><strong>minimal</strong></td><td>Sidebar</td><td>Monokrom og tæt med hårfine streger — rolig dokumentations-stil.</td></tr>
+          <tr><td><strong>editorial</strong></td><td>Sidebar</td><td>Serif-overskrifter, papir-baggrund og god luft — magasin-følelse.</td></tr>
+          <tr><td><strong>bold</strong></td><td>Sidebar</td><td>Stort farvebånd, runde knapper og høj kontrast — markedsførings-look.</td></tr>
+          <tr><td><strong>landing</strong></td><td>Top-nav</td><td>Anderledes opbygning: forside med store kort og en menulinje øverst i stedet for sidebjælke.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="note"><strong>Husk:</strong> Når du har skiftet tema med <code>/c4bc:website-theme</code>, så kør <code>/c4bc:website-update-index</code> og <code>/c4bc:website-build</code> igen, så portalen og siderne får det nye udseende. Dine brandfarver bevares automatisk på tværs af tema-skift.</div>
   </div>
 
   <!-- ── 6 Interaktivitet ── -->

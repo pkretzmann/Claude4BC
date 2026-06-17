@@ -350,9 +350,14 @@ sender videre til standardsproget.
 - `favicon.svg` ligger i **roden af `.website/`** og deles af alle sprog. Sider i en sprogmappe
   peger relativt tilbage til roden (fx `../favicon.svg` for en portal, `../../favicon.svg` for en
   side i `<sprog>/<emne>/`).
-- `script.js`, `styles-default.css`, `favicon.svg`, `serve.py`, `404.html` og selve `/website-build`
-  ligger i claude4bc-submodulet. Projektets brandede `.website/styles.css` oprettes med `/website-create-css`.
-  Kun `favicon.svg`, `serve.py` og `404.html` kopieres herfra til `.website/`; resten oprettes ikke her.
+- `script.js`, `styles-default.css`, `favicon.svg`, `serve.py`, `404.html`, tema-kataloget
+  `html-guide/themes/` og selve `/website-build` ligger i claude4bc-submodulet. Projektets brandede
+  `.website/styles.css` oprettes med `/website-create-css`. Kun `favicon.svg`, `serve.py` og `404.html`
+  kopieres herfra til `.website/`; resten oprettes ikke her.
+- **Typisk flow for et nyt site:** `/website-init` → `/website-create-css <url> [--theme <tema>]`
+  (farver + valgfrit start-tema) → `/website-build <kilde> → .website/<sprog>` (sider) →
+  `/website-update-index` (portal). Skift layout/skin når som helst med `/website-theme <tema>`
+  (kør derefter `/website-update-index` + `/website-build` igen).
 - `404.html` ligger i **roden af `.website/`** og deles af alle sprog. På en case-følsom host
   (GitHub Pages) sender den en forespørgsel på fx `/da-dk/…` videre til den korrekte
   `/da-DK/…`-sti, så links med forkert bogstavstørrelse stadig rammer rigtigt.

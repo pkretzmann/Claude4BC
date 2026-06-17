@@ -1,0 +1,15 @@
+{
+  "name": "landing",
+  "label": "Landing / top-nav",
+  "description": "Struktur-variant: i stedet for sidebar-portalen får sitet en hero-forside med gruppe-kort og en vandret top-nav med dropdown-menuer; valgte sider loades i en iframe under top-baren. Ren, moderne SaaS-stil (teal). Leverer sin EGEN portal.html (struktur) + content-styles.css.",
+  "structure": "top-nav",
+  "preview": "Hero-forside + gruppe-kort · vandret top-nav m. dropdowns · teal SaaS-look",
+  "brandDefaults": {
+    "--brand-dark": "#0F766E",
+    "--brand-mid": "#14B8A6",
+    "--brand-light": "#2DD4BF",
+    "--brand-pale": "#CCFBF1",
+    "--brand-subtle": "#F0FDFA",
+    "--accent": "#14B8A6"
+  }
+}

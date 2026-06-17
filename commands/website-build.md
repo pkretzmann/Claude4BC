@@ -119,6 +119,12 @@ udgave er `.website/styles.css`; findes den ikke, bruges den fulde, neutralt-bra
 - **Brandfarver** ændres kun i `:root`-BRAND-blokken øverst i `.website/styles.css` (variablerne
   `--brand-dark`, `--brand-mid`, `--brand-light`, `--brand-pale`, `--brand-subtle`, `--accent`).
   Resten af filen (neutrale tokens og komponent-CSS) røres normalt ikke.
+- **Tema/layout.** Sidens *udseende* bestemmes af, hvilket tema der er aktivt i `.website/styles.css`
+  (se `Theme:`-linjen). `/website-build` er **tema-agnostisk**: den inliner blot det aktive
+  stylesheet ordret, så det samme side-skelet (header/`.container`/`nav.toc`/`.section`/`footer`)
+  og de samme class-navne giver vidt forskellige looks alt efter tema. Skift tema med
+  `/website-theme <tema>`; selve struktur-forskelle (fx top-nav) ligger i portalen
+  (`/website-update-index`), ikke her. Du behøver **ikke** ændre noget i denne kommando for at skifte tema.
 - Class-navnene nedenfor (`.section`, `.steps`, `.note`, `.fc-node` osv.) matcher klasserne i
   stylesheetet — brug dem uændret.
 

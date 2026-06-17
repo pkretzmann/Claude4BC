@@ -1,0 +1,15 @@
+{
+  "name": "classic",
+  "label": "Classic",
+  "description": "Den oprindelige html-guide-stil: blå gradient-header, hvide afrundede sektionskort, sidebar-portal med iframe. Den sikre, neutrale baseline alle projekter kan falde tilbage på.",
+  "structure": "sidebar",
+  "preview": "Blå gradient-header · hvide kort · 300px sidebar-portal",
+  "brandDefaults": {
+    "--brand-dark": "#243B53",
+    "--brand-mid": "#3A6EA5",
+    "--brand-light": "#5B9BD5",
+    "--brand-pale": "#E8F0F8",
+    "--brand-subtle": "#F4F8FC",
+    "--accent": "#5B9BD5"
+  }
+}

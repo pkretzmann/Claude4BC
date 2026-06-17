@@ -1,0 +1,127 @@
+<header>
+  <span class="header-badge">Kundeportal</span>
+  <h1>Kom godt i gang med Kundeportalen</h1>
+  <p>En kort vejledning til at logge ind, finde dine oplysninger og komme i gang i hverdagen. Denne side bruges som demo-indhold til at sammenligne temaer — den rammer med vilje alle komponenter.</p>
+  <div class="header-pills">
+    <span class="pill">Login</span>
+    <span class="pill">Sager</span>
+    <span class="pill">Dokumenter</span>
+  </div>
+</header>
+
+<div class="container">
+  <nav class="toc">
+    <h2>På denne side</h2>
+    <ol>
+      <li><a href="#login">Log ind første gang</a></li>
+      <li><a href="#oplysninger">Find dine oplysninger</a></li>
+      <li><a href="#status">Overblik over status</a></li>
+      <li><a href="#flow">Sådan flyder en sag</a></li>
+      <li><a href="#faq">Ofte stillede spørgsmål</a></li>
+    </ol>
+  </nav>
+
+  <div class="section" id="login">
+    <div class="section-header">
+      <div class="section-icon">1</div>
+      <h2>Log ind første gang</h2>
+    </div>
+    <p>Følg disse trin for at komme i gang:</p>
+    <ol class="steps">
+      <li>Åbn portalen i din browser via det link, du har fået tilsendt.</li>
+      <li>Indtast dit <strong>brugernavn</strong> og din <strong>adgangskode</strong>.</li>
+      <li>Vælg <strong>Log ind</strong>.</li>
+      <li>Skift din adgangskode, hvis du bliver bedt om det.</li>
+    </ol>
+    <div class="note"><strong>Vigtigt:</strong> Del aldrig din adgangskode med andre. Får du brug for hjælp, så kontakt din administrator i stedet for at låne andres login.</div>
+    <p>Når du er logget ind, lander du på <strong>Forsiden</strong>, hvor du ser et overblik over dine seneste aktiviteter.</p>
+  </div>
+
+  <div class="section" id="oplysninger">
+    <div class="section-header">
+      <div class="section-icon">2</div>
+      <h2>Find dine oplysninger</h2>
+    </div>
+    <p>På forsiden finder du tre hovedområder:</p>
+    <ul class="bullets">
+      <li><strong>Mine sager</strong> — alt det, du arbejder med lige nu.</li>
+      <li><strong>Dokumenter</strong> — filer der er delt med dig.</li>
+      <li><strong>Beskeder</strong> — nyt fra din kontaktperson.</li>
+    </ul>
+    <div class="info-box">Du kan til enhver tid vende tilbage til forsiden ved at vælge logoet øverst til venstre.</div>
+    <h3>Sådan søger du</h3>
+    <p>Brug søgefeltet øverst til at finde en bestemt sag eller et dokument. Skriv et par bogstaver fra titlen, så filtreres listen automatisk. Tip: et nyt dokument er typisk klar <span class="day-tag">samme dag</span>.</p>
+  </div>
+
+  <div class="section" id="status">
+    <div class="section-header">
+      <div class="section-icon">3</div>
+      <h2>Overblik over status</h2>
+    </div>
+    <p>Hver sag har en status, der fortæller, hvor langt den er:</p>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Status</th><th>Betydning</th><th>Hvad gør du</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><span class="status-tag">Ny</span></td><td>Sagen er oprettet, men ikke behandlet</td><td>Afvent svar</td></tr>
+          <tr><td><span class="status-tag">I gang</span></td><td>Vi arbejder på sagen</td><td>Følg med i Beskeder</td></tr>
+          <tr><td><span class="status-tag">Afventer dig</span></td><td>Vi mangler noget fra dig</td><td>Upload det efterspurgte</td></tr>
+          <tr><td><span class="badge-ok">Afsluttet</span></td><td>Sagen er færdig</td><td>Ingenting — den er lukket</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="section" id="flow">
+    <div class="section-header">
+      <div class="section-icon">4</div>
+      <h2>Sådan flyder en sag</h2>
+    </div>
+    <p>Diagrammet viser den typiske vej, en sag tager fra start til slut.</p>
+    <div class="flowchart">
+      <div class="fc-node start">Sag oprettet</div>
+      <div class="fc-arrow">↓</div>
+      <div class="fc-node">Vi gennemgår sagen<span class="fc-status">Behandling</span></div>
+      <div class="fc-arrow">↓</div>
+      <div class="fc-node decision">Mangler vi noget fra dig?</div>
+      <div class="fc-arrow">↓</div>
+      <div class="fc-node action">Du uploader dokument<span class="fc-status">Handling</span></div>
+      <div class="fc-arrow">↓</div>
+      <div class="fc-node end">Sag afsluttet</div>
+    </div>
+    <p>Undervejs udveksles oplysninger mellem dig og os:</p>
+    <div class="sysflow" aria-hidden="true">
+      <div class="sysflow-node">Dig<span class="sysflow-sub">uploader dokumenter</span></div>
+      <div class="sysflow-wires">
+        <div class="sysflow-wire to-right"><span class="sysflow-label">Dokumenter ▶</span><i class="dot"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i></div>
+        <div class="sysflow-wire to-left"><span class="sysflow-label">◀ Beskeder</span><i class="dot"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i></div>
+      </div>
+      <div class="sysflow-node">Os<span class="sysflow-sub">behandler sagen</span></div>
+    </div>
+  </div>
+
+  <div class="section" id="faq">
+    <div class="section-header">
+      <div class="section-icon">5</div>
+      <h2>Ofte stillede spørgsmål</h2>
+    </div>
+    <details>
+      <summary>Hvad gør jeg, hvis jeg har glemt min adgangskode?</summary>
+      <p>Vælg <strong>Glemt adgangskode</strong> på login-siden, og følg vejledningen i den mail, du modtager.</p>
+    </details>
+    <details>
+      <summary>Kan jeg bruge portalen på min telefon?</summary>
+      <p>Ja. Portalen tilpasser sig automatisk til mobil, tablet og computer.</p>
+    </details>
+    <details>
+      <summary>Hvem kan se mine dokumenter?</summary>
+      <p>Kun dig og de medarbejdere hos os, der arbejder på din sag.</p>
+    </details>
+  </div>
+</div>
+
+<footer>
+  <strong>Kundeportal</strong> · Demo-indhold til tema-galleri · 2026
+</footer>

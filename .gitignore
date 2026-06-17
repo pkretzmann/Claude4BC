@@ -1,1 +1,7 @@
 html-guide/styles.css
+
+# Throwaway tema-galleri/-preview (genereres af build_gallery.py og /website-theme --preview)
+.theme-gallery/
+.theme-preview/
+# Lokal preview-konfiguration (peger på throwaway-galleri)
+.claude/launch.json

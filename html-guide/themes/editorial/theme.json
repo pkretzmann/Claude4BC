@@ -1,0 +1,15 @@
+{
+  "name": "editorial",
+  "label": "Editorial / Magasin",
+  "description": "Redaktionel magasin-stil: Playfair Display serif-overskrifter, Source Serif 4 brødtekst, varm papir-baggrund, smal læsebredde og store typografiske spring. Henter serif-fonte via @import. Bruger den delte sidebar-portal (re-farvet).",
+  "structure": "sidebar",
+  "preview": "Serif display-overskrifter · papir-baggrund · smal læsespalte · meget luft",
+  "brandDefaults": {
+    "--brand-dark": "#2A2521",
+    "--brand-mid": "#8A6A4B",
+    "--brand-light": "#B5732E",
+    "--brand-pale": "#F2E8DC",
+    "--brand-subtle": "#FBF6EF",
+    "--accent": "#B5732E"
+  }
+}

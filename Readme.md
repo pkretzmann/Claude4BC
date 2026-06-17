@@ -10,6 +10,7 @@ Claude4BC/
     plugin.json            ← Plugin-manifest (gør bundtet til et in-place plugin)
   commands/
     website-create-css.md  ← Generér brandfarver fra en hjemmeside
+    website-theme.md       ← Vælg/skift visuelt tema (layout/skin) for sitet
     website-build.md       ← Konverter markdown til HTML-brugervejledning
     website-init.md        ← Initialisér dokumentationssitet (.website)
     website-update-index.md ← Synkronisér portalens NAV med .website/-sider
@@ -25,9 +26,10 @@ Claude4BC/
     serve.py               ← Lokal no-cache dokumentationsserver (kopieres til .website/)
     portal.html            ← Kanonisk skabelon til dokumentationsportalen (index.html)
     build_pages.py         ← Hjælpescript til multi-side-tilstand (wrapper bodies → selvstændige sider)
+    themes/                ← Tema-katalog: layouts/skins (classic, minimal, editorial, bold, landing)
   docs/
     bc-dev-setup-guide.html ← Komplet guide til opsætning af BC-udviklingsmiljø
-    Sådan anvendes Html guide.html ← Sådan bruges /claude4bc:website-build-kommandoen
+    Sådan anvendes Html guide.html ← Sådan bruges website-kommandoerne (build, create-css, theme, init, update-index) + temaer
   .mcp.json                ← MCP-konfiguration (BC MCP Server m.fl.)
   CLAUDE.md                ← Fælles Claude Code kontekst
   update-claude4bc.ps1     ← Opdatér submodulet til seneste version (PowerShell)
@@ -35,7 +37,7 @@ Claude4BC/
 
 ## Kom godt i gang
 
-> 🚀 **Start her — komplet miljøopsætning:** [BC Dev Setup Guide](docs/bc-dev-setup-guide.html) er en omfattende guide til at sætte hele BC-udviklingsmiljøet op (MCP-servere, AL-LSP, BC MCP OAuth, hooks, Claude Code i AL-Go-pipelines og token-optimering) — med interaktivt vars-panel og setup-checkliste. `docs/Sådan anvendes Html guide.html` dækker derimod kun selve `/claude4bc:website-build`-kommandoen.
+> 🚀 **Start her — komplet miljøopsætning:** [BC Dev Setup Guide](docs/bc-dev-setup-guide.html) er en omfattende guide til at sætte hele BC-udviklingsmiljøet op (MCP-servere, AL-LSP, BC MCP OAuth, hooks, Claude Code i AL-Go-pipelines og token-optimering) — med interaktivt vars-panel og setup-checkliste. `docs/Sådan anvendes Html guide.html` dækker derimod website-kommandoerne (`website-build`, `website-create-css`, `website-theme`, `website-init`, `website-update-index`) — herunder hvordan du vælger tema/layout.
 
 Værktøjet er et delt git-submodul, der virker som et **Claude Code-plugin** — du skal derfor **ikke kopiere filer manuelt**. Følg de to trin herunder, så er du i gang; resten af opsætningen (initialisér site, brandfarver, byg guides) er beskrevet i den fulde vejledning.
 

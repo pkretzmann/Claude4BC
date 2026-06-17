@@ -1,0 +1,15 @@
+{
+  "name": "minimal",
+  "label": "Minimal / Docs",
+  "description": "Stram, monokrom dokumentations-look (Stripe/Linear-stil): flad lille header, hårfine streger, ingen kortskygger, tæt typografi. Brandfarven bruges sparsomt som accent. Bruger den delte sidebar-portal (re-farvet).",
+  "structure": "sidebar",
+  "preview": "Flad header · hårfine sektioner · monokrom · accent-farve sparsomt",
+  "brandDefaults": {
+    "--brand-dark": "#111827",
+    "--brand-mid": "#374151",
+    "--brand-light": "#2563EB",
+    "--brand-pale": "#EEF2F7",
+    "--brand-subtle": "#F7F8FA",
+    "--accent": "#2563EB"
+  }
+}

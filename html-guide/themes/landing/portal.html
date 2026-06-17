@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>{{SITE_TITLE}}</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    /* === BRAND:START — auto-genereret af /website-update-index fra .website/styles.css. Rediger ikke manuelt. === */
+    --brand-dark:#0F766E; --brand-mid:#14B8A6; --brand-light:#2DD4BF;
+    --brand-pale:#CCFBF1; --brand-subtle:#F0FDFA; --accent:#14B8A6;
+    /* === BRAND:END === */
+    --white:#FFFFFF; --gray-100:#F6F8F8; --gray-200:#E2E8E7;
+    --gray-400:#94A3A0; --gray-700:#475A57; --text:#16241F;
+    --topbar-h:64px;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+    color:var(--text); background:var(--gray-100); min-height:100vh;
+  }
+
+  /* ── Top navigation bar ── */
+  .topnav{
+    position:sticky; top:0; z-index:30; height:var(--topbar-h);
+    display:flex; align-items:center; gap:18px; padding:0 26px;
+    background:rgba(255,255,255,.92); backdrop-filter:saturate(180%) blur(10px);
+    border-bottom:1px solid var(--gray-200);
+  }
+  .brand{display:flex; align-items:center; gap:10px; font-weight:800; font-size:16px; color:var(--brand-dark); text-decoration:none; cursor:pointer; white-space:nowrap}
+  .brand .dot{width:22px; height:22px; border-radius:7px; background:linear-gradient(135deg,var(--brand-mid),var(--brand-light)); flex:0 0 22px}
+  .topnav-groups{display:flex; align-items:center; gap:4px; flex:1; min-width:0; overflow:visible}
+  .navgrp{position:relative}
+  .navgrp > button{
+    display:inline-flex; align-items:center; gap:6px; background:none; border:0; cursor:pointer;
+    font-family:inherit; font-size:13.5px; font-weight:600; color:var(--gray-700);
+    padding:8px 12px; border-radius:9px; transition:background .12s,color .12s;
+  }
+  .navgrp > button:hover, .navgrp.open > button{background:var(--brand-subtle); color:var(--brand-dark)}
+  .navgrp svg{display:block}
+  .navgrp-menu{
+    display:none; position:absolute; top:calc(100% + 8px); left:0; z-index:40;
+    min-width:240px; max-height:60vh; overflow-y:auto; padding:7px;
+    background:var(--white); border:1px solid var(--gray-200); border-radius:12px;
+    box-shadow:0 14px 40px rgba(15,118,110,.16);
+  }
+  .navgrp.open .navgrp-menu{display:block}
+  .navgrp-menu a{
+    display:block; padding:9px 12px; border-radius:8px; font-size:13.5px; font-weight:500;
+    color:var(--gray-700); text-decoration:none; cursor:pointer; line-height:1.35;
+  }
+  .navgrp-menu a:hover{background:var(--brand-subtle); color:var(--brand-dark)}
+  .navgrp-menu a.active{background:var(--brand-pale); color:var(--brand-dark); font-weight:600}
+
+  .topnav-search{position:relative; margin-left:auto}
+  .topnav-search input{
+    width:200px; max-width:38vw; padding:8px 12px 8px 32px; font-size:13px; font-family:inherit;
+    border:1px solid var(--gray-200); border-radius:30px; background:var(--gray-100);
+    color:var(--text); outline:none; transition:border-color .15s,background .15s,width .15s;
+  }
+  .topnav-search input:focus{border-color:var(--brand-light); background:var(--white); width:240px}
+  .topnav-search svg{position:absolute; left:11px; top:50%; transform:translateY(-50%); color:var(--gray-400)}
+
+  /* ── Sprogvælger ── */
+  .langpick{position:relative}
+  .langpick-btn{display:inline-flex; align-items:center; gap:6px; font-size:12.5px; font-weight:600; color:var(--gray-700); background:none; border:1px solid var(--gray-200); border-radius:30px; padding:7px 12px; cursor:pointer; font-family:inherit; transition:all .12s}
+  .langpick-btn:hover{background:var(--brand-subtle); border-color:var(--brand-light); color:var(--brand-dark)}
+  .langpick-btn svg{display:block}
+  .langpick-menu{display:none; position:absolute; top:calc(100% + 6px); right:0; z-index:40; min-width:160px; padding:6px; background:var(--white); border:1px solid var(--gray-200); border-radius:10px; box-shadow:0 8px 28px rgba(15,118,110,.16)}
+  .langpick.open .langpick-menu{display:block}
+  .langpick-menu button{display:flex; align-items:center; gap:8px; width:100%; text-align:left; padding:8px 10px; border:0; border-radius:7px; background:none; cursor:pointer; font-family:inherit; font-size:13px; color:var(--gray-700)}
+  .langpick-menu button:hover{background:var(--brand-subtle); color:var(--brand-dark)}
+  .langpick-menu button.current{background:var(--brand-pale); color:var(--brand-dark); font-weight:600}
+
+  /* ── Hero (front page) ── */
+  .hero{
+    display:block; padding:84px 26px 64px; text-align:center; position:relative; overflow:hidden;
+    background:linear-gradient(135deg,var(--brand-dark) 0%,var(--brand-mid) 70%,var(--brand-light) 120%);
+    color:#fff;
+  }
+  .hero::before{content:''; position:absolute; top:-120px; right:-80px; width:380px; height:380px; border-radius:50%; background:rgba(255,255,255,.08)}
+  .hero-badge{display:inline-block; background:rgba(255,255,255,.18); border:1px solid rgba(255,255,255,.3); border-radius:30px; padding:6px 16px; font-size:12px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; margin-bottom:20px; position:relative; z-index:1}
+  .hero h1{font-size:46px; font-weight:800; letter-spacing:-.025em; line-height:1.08; max-width:16ch; margin:0 auto 16px; position:relative; z-index:1}
+  .hero p{font-size:18px; opacity:.92; max-width:54ch; margin:0 auto; position:relative; z-index:1}
+
+  .home-wrap{max-width:1040px; margin:0 auto; padding:44px 26px 80px}
+  .home-wrap h2{font-size:14px; font-weight:700; text-transform:uppercase; letter-spacing:.09em; color:var(--brand-dark); margin-bottom:18px}
+  .card-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:18px}
+  .group-card{background:var(--white); border:1px solid var(--gray-200); border-radius:16px; padding:22px 24px; box-shadow:0 6px 20px rgba(15,118,110,.05)}
+  .group-card h3{font-size:16px; font-weight:800; color:var(--brand-dark); margin-bottom:12px; display:flex; align-items:center; gap:9px}
+  .group-card h3 .gi{width:30px; height:30px; border-radius:9px; background:var(--brand-pale); color:var(--brand-dark); display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:800; flex:0 0 30px}
+  .group-card a{display:block; padding:7px 0; font-size:13.5px; font-weight:500; color:var(--gray-700); text-decoration:none; border-top:1px solid var(--gray-200); cursor:pointer}
+  .group-card a:first-of-type{border-top:0}
+  .group-card a:hover{color:var(--accent)}
+  .home-empty{padding:20px; color:var(--gray-400); font-size:14px}
+
+  /* ── Content view (selected page) ── */
+  .content{display:none; height:calc(100vh - var(--topbar-h)); flex-direction:column}
+  body.reading .content{display:flex}
+  body.reading .hero, body.reading .home-wrap{display:none}
+  .content-bar{display:flex; align-items:center; gap:12px; padding:0 22px; height:50px; flex:0 0 50px; background:var(--white); border-bottom:1px solid var(--gray-200)}
+  .back-home{display:inline-flex; align-items:center; gap:7px; font-size:13px; font-weight:600; color:var(--brand-mid); background:none; border:1px solid var(--gray-200); border-radius:30px; padding:6px 14px; cursor:pointer; font-family:inherit}
+  .back-home:hover{background:var(--brand-subtle); color:var(--brand-dark); border-color:var(--brand-light)}
+  .crumb{font-size:14px; font-weight:600; color:var(--text); flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  .crumb .grp{color:var(--gray-400); font-weight:500}
+  .open-ext{display:inline-flex; align-items:center; gap:6px; font-size:12.5px; font-weight:600; color:var(--brand-mid); text-decoration:none; padding:7px 12px; border-radius:30px; border:1px solid var(--gray-200); white-space:nowrap}
+  .open-ext:hover{background:var(--brand-subtle); border-color:var(--brand-light); color:var(--brand-dark)}
+  .frame-wrap{flex:1; min-height:0; background:var(--gray-100)}
+  iframe{width:100%; height:100%; border:0; display:block; background:var(--white)}
+
+  @media (max-width:760px){
+    .topnav-groups{display:none}
+    .hero h1{font-size:34px}
+    .topnav-search input{width:140px}
+  }
+</style>
+</head>
+<body>
+
+  <header class="topnav">
+    <a class="brand" id="brandHome"><span class="dot"></span><span>{{SITE_TITLE}}</span></a>
+    <nav class="topnav-groups" id="topnavGroups"></nav>
+    <div class="topnav-search">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      <input type="search" id="search" placeholder="Søg…" autocomplete="off" />
+    </div>
+    <div class="langpick" id="langpick" hidden>
+      <button class="langpick-btn" id="langpickBtn" aria-haspopup="true" aria-expanded="false" aria-label="Skift sprog" title="Skift sprog">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        <span id="langpickCur"></span>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
+      <div class="langpick-menu" id="langpickMenu" role="menu"></div>
+    </div>
+  </header>
+
+  <!-- Hero / front page -->
+  <section class="hero" id="hero">
+    <span class="hero-badge">{{SITE_BADGE}}</span>
+    <h1>{{SITE_TITLE}}</h1>
+    <p>Vælg et emne nedenfor for at komme i gang.</p>
+  </section>
+  <div class="home-wrap" id="home">
+    <h2>Indhold</h2>
+    <div class="card-grid" id="cardGrid"></div>
+  </div>
+
+  <!-- Content view (selected page) -->
+  <div class="content">
+    <div class="content-bar">
+      <button class="back-home" id="backHome">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+        Forside
+      </button>
+      <div class="crumb" id="crumb">Vælg en side</div>
+      <a class="open-ext" id="openExt" href="#" target="_blank" rel="noopener" title="Åbn siden i ny fane">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/></svg>
+        Åbn i ny fane
+      </a>
+    </div>
+    <div class="frame-wrap">
+      <iframe id="frame" title="Dokumentation" referrerpolicy="no-referrer"></iframe>
+    </div>
+  </div>
+
+<script>
+/* ──────────────────────────────────────────────
+   Navigation. NAV-listen genereres af /website-update-index
+   ud fra HTML-filerne i .website/. Rediger ikke
+   indholdet mellem NAV:START og NAV:END manuelt —
+   kør /website-update-index igen i stedet.
+   path = relativ sti fra denne index.html.
+─────────────────────────────────────────────── */
+const NAV = [
+  // === NAV:START — auto-genereret af /update-website. Rediger ikke manuelt. ===
+  // (ingen sider endnu — generér sider med /website-build og kør /website-update-index)
+  // === NAV:END ===
+];
+
+/* Tilgængelige sprog. Udfyldes af /website-update-index ud fra sprogmapperne i .website/.
+   Rediger ikke indholdet mellem LOCALES:START og LOCALES:END manuelt. */
+const LOCALES = [
+  // === LOCALES:START — auto-genereret af /update-website. Rediger ikke manuelt. ===
+  // (udfyldes af /website-update-index ud fra sprogmapperne i .website/)
+  // === LOCALES:END ===
+];
+
+const groupsEl = document.getElementById('topnavGroups');
+const cardGrid = document.getElementById('cardGrid');
+const frame    = document.getElementById('frame');
+const crumb    = document.getElementById('crumb');
+const openExt  = document.getElementById('openExt');
+const search   = document.getElementById('search');
+const body     = document.body;
+
+const flat = [];
+NAV.forEach(g => g.items.forEach(it => flat.push({ ...it, group: g.group })));
+
+function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+
+/* Build top-nav dropdown groups */
+NAV.forEach(g => {
+  const grp = document.createElement('div');
+  grp.className = 'navgrp';
+  grp.dataset.group = g.group;
+  const btn = document.createElement('button');
+  btn.innerHTML = esc(g.group) + '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>';
+  const menu = document.createElement('div');
+  menu.className = 'navgrp-menu';
+  g.items.forEach(it => {
+    const a = document.createElement('a');
+    a.textContent = it.title;
+    a.dataset.path = it.path;
+    a.href = '#' + encodeURIComponent(it.path);
+    menu.appendChild(a);
+  });
+  grp.appendChild(btn); grp.appendChild(menu);
+  btn.addEventListener('click', e => {
+    e.stopPropagation();
+    const wasOpen = grp.classList.contains('open');
+    document.querySelectorAll('.navgrp.open').forEach(n => n.classList.remove('open'));
+    grp.classList.toggle('open', !wasOpen);
+  });
+  groupsEl.appendChild(grp);
+});
+document.addEventListener('click', () =>
+  document.querySelectorAll('.navgrp.open').forEach(n => n.classList.remove('open')));
+
+/* Build front-page group cards */
+function buildCards() {
+  cardGrid.innerHTML = '';
+  let shown = 0;
+  NAV.forEach((g, i) => {
+    const items = g.items.filter(it => it._show !== false);
+    if (!items.length) return;
+    shown++;
+    const card = document.createElement('div');
+    card.className = 'group-card';
+    const h3 = document.createElement('h3');
+    h3.innerHTML = '<span class="gi">' + (i + 1) + '</span>' + esc(g.group);
+    card.appendChild(h3);
+    items.forEach(it => {
+      const a = document.createElement('a');
+      a.textContent = it.title;
+      a.dataset.path = it.path;
+      a.href = '#' + encodeURIComponent(it.path);
+      card.appendChild(a);
+    });
+    cardGrid.appendChild(card);
+  });
+  if (!shown) {
+    cardGrid.innerHTML = '<div class="home-empty">Ingen sider matcher søgningen.</div>';
+  }
+}
+
+/* Routing */
+function show(path, push) {
+  const entry = flat.find(f => f.path === path);
+  if (!entry) { goHome(push); return; }
+  frame.src = encodeURI(entry.path);
+  crumb.innerHTML = '<span class="grp">' + esc(entry.group) + '</span> &nbsp;›&nbsp; ' + esc(entry.title);
+  openExt.href = encodeURI(entry.path);
+  document.title = entry.title + ' · {{SITE_TITLE}}';
+  body.classList.add('reading');
+  document.querySelectorAll('.navgrp-menu a').forEach(a =>
+    a.classList.toggle('active', a.dataset.path === entry.path));
+  if (push && location.hash.slice(1) !== encodeURIComponent(entry.path))
+    location.hash = encodeURIComponent(entry.path);
+  window.scrollTo(0, 0);
+}
+function goHome(push) {
+  body.classList.remove('reading');
+  document.title = '{{SITE_TITLE}}';
+  document.querySelectorAll('.navgrp-menu a.active').forEach(a => a.classList.remove('active'));
+  if (push && location.hash) history.pushState('', document.title, location.pathname + location.search);
+}
+
+function routeFromHash() {
+  const h = decodeURIComponent(location.hash.slice(1));
+  if (h && flat.some(f => f.path === h)) show(h, false);
+  else goHome(false);
+}
+window.addEventListener('hashchange', routeFromHash);
+
+document.getElementById('brandHome').addEventListener('click', e => { e.preventDefault(); location.hash = ''; goHome(false); });
+document.getElementById('backHome').addEventListener('click', () => { location.hash = ''; goHome(false); });
+
+/* Click a link anywhere (cards or dropdowns) */
+document.addEventListener('click', e => {
+  const a = e.target.closest('a[data-path]');
+  if (!a) return;
+  e.preventDefault();
+  show(a.dataset.path, true);
+});
+
+/* ── Fuldtekst-indeks (samme tilgang som sidebar-portalen) ──
+   Bygges dovent via fetch. Virker over http(s); under file:// falder
+   søgningen tilbage til kun sidetitler. */
+let contentIndex = null, indexPromise = null, building = false;
+function buildIndex() {
+  if (indexPromise) return indexPromise;
+  building = true;
+  indexPromise = Promise.all(flat.map(entry =>
+    fetch(encodeURI(entry.path))
+      .then(r => { if (!r.ok) throw new Error(r.status); return r.text(); })
+      .then(html => {
+        const doc = new DOMParser().parseFromString(html, 'text/html');
+        doc.querySelectorAll('script,style').forEach(n => n.remove());
+        const text = (doc.body ? doc.body.textContent : '').replace(/\s+/g, ' ').toLowerCase();
+        return { path: entry.path, text };
+      })
+      .catch(() => ({ path: entry.path, text: null }))
+  )).then(results => {
+    contentIndex = {};
+    results.forEach(r => { contentIndex[r.path] = r.text; });
+    building = false;
+    return contentIndex;
+  });
+  return indexPromise;
+}
+function applyFilter(q) {
+  flat.forEach(f => { f._show = true; });
+  NAV.forEach(g => g.items.forEach(it => {
+    const hay = (g.group + ' ' + it.title).toLowerCase();
+    const inTitle = !q || hay.includes(q);
+    const txt = q && contentIndex ? contentIndex[it.path] : null;
+    const inContent = txt ? txt.includes(q) : false;
+    it._show = inTitle || inContent;
+  }));
+  buildCards();
+}
+search.addEventListener('input', () => {
+  const q = search.value.trim().toLowerCase();
+  applyFilter(q);
+  if (q && !contentIndex) buildIndex().then(() => applyFilter(search.value.trim().toLowerCase()));
+});
+if ('requestIdleCallback' in window) requestIdleCallback(() => buildIndex());
+else setTimeout(buildIndex, 1500);
+
+/* ── Sprogvælger ── */
+(function () {
+  var wrap = document.getElementById('langpick');
+  if (!wrap || !Array.isArray(LOCALES) || LOCALES.length < 2) return;
+  var btn = document.getElementById('langpickBtn');
+  var cur = document.getElementById('langpickCur');
+  var menu = document.getElementById('langpickMenu');
+  var segs = location.pathname.replace(/\/index\.html?$/i, '').split('/').filter(Boolean);
+  var current = segs.length ? segs[segs.length - 1] : '';
+  function label(code) {
+    try { var dn = new Intl.DisplayNames([code], { type: 'language' }); var s = dn.of(code.split('-')[0]); return s ? s.charAt(0).toUpperCase() + s.slice(1) : code; }
+    catch (e) { return code; }
+  }
+  cur.textContent = label(current) || current || 'Sprog';
+  LOCALES.forEach(function (code) {
+    var b = document.createElement('button');
+    b.type = 'button'; b.setAttribute('role', 'menuitem'); b.textContent = label(code);
+    if (code === current) b.className = 'current';
+    b.addEventListener('click', function () {
+      try { localStorage.setItem('docs.locale', code); } catch (e) {}
+      location.href = '../' + code + '/index.html';
+    });
+    menu.appendChild(b);
+  });
+  function close() { wrap.classList.remove('open'); btn.setAttribute('aria-expanded', 'false'); }
+  btn.addEventListener('click', function (e) { e.stopPropagation(); var open = wrap.classList.toggle('open'); btn.setAttribute('aria-expanded', open ? 'true' : 'false'); });
+  document.addEventListener('click', close);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+  menu.addEventListener('click', function (e) { e.stopPropagation(); });
+  wrap.hidden = false;
+})();
+
+/* Init */
+buildCards();
+routeFromHash();
+</script>
+</body>
+</html>

@@ -342,6 +342,57 @@ pre { position: relative; }
 }
 .to-top-btn.visible { opacity: 1; visibility: visible; }
 .to-top-btn:hover { background: var(--brand-dark); }
+.config-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px 24px;
+  margin: 8px 0 4px;
+}
+.config-field { display: flex; flex-direction: column; gap: 5px; }
+.config-field.full { grid-column: 1 / -1; }
+.config-field label {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--gray-700);
+  letter-spacing: 0.2px;
+}
+.config-field label span {
+  font-weight: 400;
+  color: var(--gray-400);
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 11.5px;
+}
+.config-field input {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 13px;
+  padding: 9px 12px;
+  border: 1px solid var(--gray-200);
+  border-radius: 6px;
+  background: var(--brand-subtle);
+  color: var(--brand-dark);
+  transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+}
+.config-field input:focus {
+  outline: none;
+  border-color: var(--brand-light);
+  box-shadow: 0 0 0 3px rgba(0,174,239,0.15);
+  background: var(--white);
+}
+.config-actions { margin-top: 18px; display: flex; gap: 10px; }
+.btn-reset {
+  background: var(--white);
+  color: var(--brand-mid);
+  border: 1px solid var(--brand-mid);
+  border-radius: 6px;
+  padding: 7px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'Inter', -apple-system, sans-serif;
+}
+.btn-reset:hover { background: var(--brand-pale); }
+@media (max-width: 640px) { .config-grid { grid-template-columns: 1fr; } }
+@media print { .config-actions { display: none !important; } }
 @media print {
   body { background: white; font-size: 13px; }
   .section { box-shadow: none; border: 1px solid #ccc; page-break-inside: avoid; }
@@ -354,43 +405,39 @@ pre { position: relative; }
 <body>
 
 <script>
-  // ── Konfiguration — ret disse variabler til dit projekt ──
-  const CONFIG = {
+  // ── Standard-værdier — generiske pladsholdere. Ret dem i Konfiguration-sektionen øverst. ──
+  const DEFAULTS = {
     // Hoved-repo: stien til den mappe du vil synkronisere (relativ til repo-roden)
-    sourceFolder:        'Toggl/.website',
+    sourceFolder:   'Project_Name/.website',
 
     // Mirror repo: dit GitHub username og repo-navn
-    githubUsername:      'pkretzmann',
-    mirrorRepo:          'Toggl-Web-Site',
+    githubUsername: 'pkretzmann',
+    mirrorRepo:     'Project_Name-Web-Site',
 
     // Den branch der pushes fra og til
-    sourceBranch:        'main',
-    targetBranch:        'main',
+    sourceBranch:   'main',
+    targetBranch:   'main',
 
     // Navnet på den GitHub Secret du oprettede
-    secretName:          'TOGGL_WEBSITE_SECRET',
+    secretName:     'PROJECT_NAME_WEBSITE_SECRET',
 
     // Footer-tekst
-    footerText:          'Kretzmann ApS · GitHub Sync-vejledning · Opdateret juni 2026',
+    footerText:     'Kretzmann ApS · GitHub Sync-vejledning · Opdateret juni 2026',
   };
 
-  // Udfyld alle steder i dokumentet med CONFIG-værdierne
-  document.addEventListener('DOMContentLoaded', function () {
-    document.querySelectorAll('[data-cfg]').forEach(function (el) {
-      var key = el.getAttribute('data-cfg');
-      if (CONFIG[key] !== undefined) el.textContent = CONFIG[key];
-    });
-    document.getElementById('page-title').textContent =
-      'GitHub Sync · ' + CONFIG.sourceFolder + ' → ' + CONFIG.mirrorRepo;
-    document.getElementById('header-title').textContent =
-      'Synkronisering af ' + CONFIG.sourceFolder;
-    document.getElementById('header-sub').innerHTML =
-      'Automatisk kopiering af <code style="background:rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.3);border-radius:4px;padding:1px 6px;font-family:\'JetBrains Mono\',monospace;font-size:13px">'
-      + CONFIG.sourceFolder + '</code> til <strong>' + CONFIG.mirrorRepo + '</strong> via GitHub Actions.';
+  const STORAGE_KEY = 'github-sync-config';
+  let CONFIG = Object.assign({}, DEFAULTS);
 
-    // Indsæt workflow-yaml dynamisk
-    document.getElementById('workflow-yaml').textContent =
-`name: Sync ${CONFIG.sourceFolder} to mirror repo
+  // Indlæs evt. gemte værdier fra browserens localStorage
+  try {
+    var saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+    Object.keys(DEFAULTS).forEach(function (k) {
+      if (typeof saved[k] === 'string') CONFIG[k] = saved[k];
+    });
+  } catch (e) { /* ignorér ugyldig storage */ }
+
+  function buildWorkflowYaml() {
+    return `name: Sync ${CONFIG.sourceFolder} to mirror repo
 
 on:
   push:
@@ -418,9 +465,55 @@ jobs:
           destination-repository-name: ${CONFIG.mirrorRepo}
           target-branch: ${CONFIG.targetBranch}
           commit-message: "Sync from main repo: \${{ github.sha }}"`;
+  }
 
-    // Footer
+  // Udfyld alle steder i dokumentet med CONFIG-værdierne
+  function render() {
+    document.querySelectorAll('[data-cfg]').forEach(function (el) {
+      var key = el.getAttribute('data-cfg');
+      if (CONFIG[key] !== undefined) el.textContent = CONFIG[key];
+    });
+    document.getElementById('page-title').textContent =
+      'GitHub Sync · ' + CONFIG.sourceFolder + ' → ' + CONFIG.mirrorRepo;
+    document.getElementById('header-title').textContent =
+      'Synkronisering af ' + CONFIG.sourceFolder;
+    document.getElementById('header-sub').innerHTML =
+      'Automatisk kopiering af <code style="background:rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.3);border-radius:4px;padding:1px 6px;font-family:\'JetBrains Mono\',monospace;font-size:13px">'
+      + CONFIG.sourceFolder + '</code> til <strong>' + CONFIG.mirrorRepo + '</strong> via GitHub Actions.';
+    document.getElementById('workflow-yaml').textContent = buildWorkflowYaml();
     document.getElementById('footer-text').textContent = CONFIG.footerText;
+  }
+
+  function saveConfig() {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(CONFIG)); } catch (e) { /* no-op */ }
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    // Bind input-felter i Konfiguration-sektionen til CONFIG
+    document.querySelectorAll('[data-field]').forEach(function (input) {
+      var key = input.getAttribute('data-field');
+      input.value = CONFIG[key];
+      input.addEventListener('input', function () {
+        CONFIG[key] = input.value;
+        render();
+        saveConfig();
+      });
+    });
+
+    // Nulstil til standard-værdier
+    var resetBtn = document.getElementById('reset-config');
+    if (resetBtn) {
+      resetBtn.addEventListener('click', function () {
+        CONFIG = Object.assign({}, DEFAULTS);
+        document.querySelectorAll('[data-field]').forEach(function (input) {
+          input.value = CONFIG[input.getAttribute('data-field')];
+        });
+        render();
+        saveConfig();
+      });
+    }
+
+    render();
   });
 </script>
 
@@ -441,6 +534,7 @@ jobs:
   <nav class="toc">
     <h2>Indholdsfortegnelse</h2>
     <ol>
+      <li><a href="#konfiguration">⚙ Konfiguration · dine variabler</a></li>
       <li><a href="#overblik">1 · Overblik</a></li>
       <li><a href="#mirror-repo">2 · Opret mirror repository</a></li>
       <li><a href="#pat">3 · Opret Personal Access Token</a></li>
@@ -449,6 +543,52 @@ jobs:
       <li><a href="#404">6 · Case-insensitiv 404-redirect</a></li>
     </ol>
   </nav>
+
+  <!-- ── 0 Konfiguration ── -->
+  <div class="section" id="konfiguration">
+    <div class="section-header">
+      <div class="section-icon">⚙️</div>
+      <h2>Konfiguration · dine variabler</h2>
+    </div>
+    <p>Udfyld felterne herunder med dit eget projekts værdier. Hele vejledningen — inklusive workflow-filen og alle kodestykker — opdateres <strong>automatisk</strong> mens du skriver. Værdierne gemmes lokalt i din browser, så de huskes næste gang du åbner siden.</p>
+
+    <div class="config-grid">
+      <div class="config-field">
+        <label>Kilde-mappe <span>sourceFolder</span></label>
+        <input type="text" data-field="sourceFolder" autocomplete="off" spellcheck="false" />
+      </div>
+      <div class="config-field">
+        <label>GitHub brugernavn <span>githubUsername</span></label>
+        <input type="text" data-field="githubUsername" autocomplete="off" spellcheck="false" />
+      </div>
+      <div class="config-field">
+        <label>Mirror repository <span>mirrorRepo</span></label>
+        <input type="text" data-field="mirrorRepo" autocomplete="off" spellcheck="false" />
+      </div>
+      <div class="config-field">
+        <label>Secret-navn <span>secretName</span></label>
+        <input type="text" data-field="secretName" autocomplete="off" spellcheck="false" />
+      </div>
+      <div class="config-field">
+        <label>Source branch <span>sourceBranch</span></label>
+        <input type="text" data-field="sourceBranch" autocomplete="off" spellcheck="false" />
+      </div>
+      <div class="config-field">
+        <label>Target branch <span>targetBranch</span></label>
+        <input type="text" data-field="targetBranch" autocomplete="off" spellcheck="false" />
+      </div>
+      <div class="config-field full">
+        <label>Footer-tekst <span>footerText</span></label>
+        <input type="text" data-field="footerText" autocomplete="off" spellcheck="false" />
+      </div>
+    </div>
+
+    <div class="config-actions">
+      <button type="button" class="btn-reset" id="reset-config">Nulstil til standard</button>
+    </div>
+
+    <div class="info-box"><strong>Tip:</strong> Erstat <code>Project_Name</code> overalt med dit eget projektnavn — fx <code>Toggl</code>, <code>Acme</code> eller hvad dit projekt hedder.</div>
+  </div>
 
   <!-- ── 1 Overblik ── -->
   <div class="section" id="overblik">
@@ -497,17 +637,22 @@ jobs:
       <div class="section-icon">🔑</div>
       <h2>3 · Opret Personal Access Token (PAT)</h2>
     </div>
-    <p>GitHub Actions skal have tilladelse til at skrive til mirror-repo'et. Det gives via et Personal Access Token (PAT) med <code>repo</code>-scope.</p>
+    <p>Workflow'et kører i <strong>hoved-repo'et</strong>, men skal kunne <strong>skrive til mirror-repo'et</strong> — altså det <strong>nye</strong> repository <code><span data-cfg="githubUsername"></span>/<span data-cfg="mirrorRepo"></span></code> du oprettede i trin 2. Den adgang gives via et Personal Access Token (PAT) med <code>repo</code>-scope.</p>
+
+    <div class="info-box"><strong>Hvilket repo gælder tokenet?</strong> En classic PAT oprettes på <strong>din GitHub-konto</strong> (under Developer settings), ikke inde i et bestemt repo. Med <code>repo</code>-scope giver den skriveadgang til <strong>alle dine repositories</strong> — herunder mirror-repo'et <code><span data-cfg="mirrorRepo"></span></code>, som er det eneste workflow'et faktisk skriver til.</div>
+
     <ol class="steps">
       <li>Gå til din GitHub-profil → <strong>Settings</strong> (øverst til højre under dit avatar).</li>
       <li>Venstre menu, helt nederst → <strong>Developer settings</strong>.</li>
       <li>Vælg <strong>Personal access tokens</strong> → <strong>Tokens (classic)</strong>.</li>
       <li>Klik <strong>Generate new token (classic)</strong>.</li>
-      <li>Giv token et navn, fx <code>website-sync</code>, og vælg en udløbsdato.</li>
-      <li>Sæt scope: ✅ <strong>repo</strong> (hele blokken — giver læse- og skriveadgang til repositories).</li>
+      <li>Giv token et navn, fx <code>sync-til-<span data-cfg="mirrorRepo"></span></code>, og vælg en udløbsdato.</li>
+      <li>Sæt scope: ✅ <strong>repo</strong> (hele blokken — giver læse- og skriveadgang til repositories, inkl. mirror-repo'et <code><span data-cfg="mirrorRepo"></span></code>).</li>
       <li>Klik <strong>Generate token</strong> — <strong>kopiér token med det samme</strong>, det vises kun én gang.</li>
     </ol>
+
     <div class="note"><strong>⚠ Gem token et sikkert sted</strong> — fx i en password manager. Hvis du mister det, skal du generere et nyt og opdatere secret'en i trin 4.</div>
+    <div class="info-box"><strong>Vil du være mere restriktiv?</strong> Brug i stedet en <strong>fine-grained</strong> PAT: under <em>Repository access</em> vælg <em>Only select repositories</em> → <code><span data-cfg="mirrorRepo"></span></code>, og giv <strong>Contents: Read and write</strong>. Så har tokenet kun adgang til det nye repo og intet andet.</div>
   </div>
 
   <!-- ── 4 Secret ── -->

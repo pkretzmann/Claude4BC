@@ -1,0 +1,15 @@
+{
+  "name": "bold",
+  "label": "Bold / Marketing",
+  "description": "Selvsikker marketing-stil: stort gradient-hero-bånd, stærke farveflader, runde pills og knapper, store afrundede kort med dybe skygger og høj kontrast. Bygger på Inter i tunge vægte. Bruger den delte sidebar-portal (re-farvet).",
+  "structure": "sidebar",
+  "preview": "Gradient-hero · runde knapper · store kort m. skygge · høj kontrast",
+  "brandDefaults": {
+    "--brand-dark": "#4C1D95",
+    "--brand-mid": "#7C3AED",
+    "--brand-light": "#F59E0B",
+    "--brand-pale": "#EDE9FE",
+    "--brand-subtle": "#F5F3FF",
+    "--accent": "#F59E0B"
+  }
+}
