@@ -17,6 +17,9 @@ Claude4BC/
     website-github-init-deploy.md ← Publicér .website til GitHub Pages via GitHub Actions
     pdf-build.md           ← Saml .website-sitet til én PDF-brugervejledning pr. sprog
     al-update-translations.md ← Opdatér XLIFF-oversættelsesfiler
+    al-sort-usings.md      ← Sortér using-direktiver alfabetisk i alle .al-filer
+    al-userdocs.md         ← AL-kildemappe → dansk slutbruger-dokumentation (.md, uden kode)
+    al-techdocs.md         ← AL-kildemappe (+ evt. spec) → teknisk dansk dokumentation (.md, med kode/layouts)
   html-guide/
   pdf-build/
     build-pdf.mjs          ← Generator: .website-HTML → samlet PDF (Playwright + pdf-lib)
@@ -94,6 +97,32 @@ Opdaterer projektets XLIFF-oversættelsesfiler (`.xlf`) så alle trans-units er 
 ```
 
 Behandler alle `.xlf`-filer i projektet og sætter oversatte units til `state="translated"`. Afslutter med `COMPLETE` når alle filer og sprog er fuldt oversat.
+
+---
+
+### `/al-userdocs <AL-kildemappe>`
+Læser en AL-kildemappe og skriver **dansk slutbruger-dokumentation** (`.md`) — *hvad* funktionaliteten gør og *hvordan* den bruges, **uden** kode, objekt-ID'er eller feltnumre. Emneopdelt (én fil pr. emne), klar til `/website-build` + `/website-update-index`.
+
+**Eksempler:**
+```
+/al-userdocs src/Inventory/Item
+/al-userdocs src/Manufacturing/NiceLabel
+```
+
+Gemmer som regel i `Ressourcer/<Modul>/`. Beskriver automatikker som *adfærd* ("når X sker, gør systemet Y") frem for teknik.
+
+---
+
+### `/al-techdocs <AL-kildemappe> [spec-fil]`
+Det **tekniske modstykke** til `/al-userdocs`: læser en AL-kildemappe (og evt. en leverandør-/interface-spec, fx en PDF) og skriver **teknisk dansk dokumentation** (`.md`) — handlinger, filformater/record-layouts med felt-positioner, statusforløb, flow-/sekvensdiagrammer (Mermaid) og en objekt-tabel. Her er kode, ID'er og layouts netop pointen.
+
+**Eksempler:**
+```
+/al-techdocs src/Warehouse/Jungheinrich
+/al-techdocs src/Warehouse/Jungheinrich "Ressourcer/.../Interface_Host_WMS.pdf"
+```
+
+Krydsreferér kode mod specen (bekræfter layouts; gør afvigelser eksplicitte). En teknisk side bygges **ikke** med `/website-build` (den stripper kode) — følg i stedet kommandoens *Teknisk HTML*-opskrift (inline `styles.css`/`script.js` ordret, Mermaid → `.fc-node`) og kør derefter `/website-update-index`.
 
 ---
 
