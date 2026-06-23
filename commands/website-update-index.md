@@ -144,6 +144,25 @@ portalens `const LOCALES = [ … ]` mellem markørerne `// === LOCALES:START …
 Dette gælder **både** ved oprettelse fra skabelonen (trin 6) og ved opdatering af en eksisterende
 portal — så sproglisten holdes i sync med sprogmapperne ved hver kørsel.
 
+### 6d. Sidebar-accordion (sammenfoldelige grupper) — til/fra-valg
+Portalen kan vise NAV-grupperne som **accordion**: klik på en gruppetitel for at folde gruppen
+ud/sammen (kun gruppen med den aktive side er udfoldet ved indlæsning; søgning udfolder midlertidigt
+alle grupper med træffere). Det styres af `const SIDEBAR_ACCORDION = …;` mellem markørerne
+`// === ACCORDION:START …` og `// === ACCORDION:END ===` i portalen — værdien er enten `true` (til)
+eller `false` (fra).
+
+- **Standard er `false`** (Nej) — alle grupper vises altid udfoldet (det hidtidige udseende).
+- **Ny portal fra skabelonen:** behold skabelonens standard `false`, medmindre brugeren
+  **udtrykkeligt** beder om accordion (sæt da linjen mellem markørerne til `true;`).
+- **Eksisterende portal:** **bevar** den nuværende værdi mellem markørerne — sæt den *ikke* tilbage
+  til standard. Bruger portalen allerede accordion (`true`), forbliver den `true`, medmindre brugeren
+  udtrykkeligt beder om at slå den fra.
+- **Findes markørerne ikke** (ældre portal fra før accordion-valget): spring over og bemærk i
+  rapporten, at valget kræver, at portalen gendannes fra skabelonen (slet `.website/<sprog>/index.html`
+  og kør igen) — det er en layout-/skabelon-ændring, ikke en NAV-ændring.
+
+Dette gælder **både** ved oprettelse og opdatering, så valget holdes konsistent på tværs af kørsler.
+
 ### 7. Opdatér rod-redirecten `.website/index.html`
 Hold redirect-sidens sprogliste i sync med de sprogmapper, der faktisk findes i `.website/`.
 - **Find alle sprogmapper** i `.website/` (umiddelbare undermapper hvis navn ikke starter med `.`),
@@ -170,7 +189,8 @@ rod-redirectens sprogliste blev opdateret (og til hvilke sprog/standardsprog), o
 sprogvælger-liste (`LOCALES`) blev synkroniseret (og for hvilke portaler markørerne manglede, så de
 skal gendannes fra skabelonen), og om portalernes brandfarver blev synkroniseret fra
 `.website/styles.css` (eller om der blev brugt neutrale standardfarver, fordi `.website/styles.css`
-mangler).
+mangler). Nævn også hver portals accordion-tilstand (`SIDEBAR_ACCORDION` = til/fra), og om en portal
+manglede markørerne, så valget ikke kunne sættes.
 
 ## Vigtigt
 
@@ -186,6 +206,11 @@ mangler).
 - Portalens **sprogliste** (`LOCALES`-blokken mellem markørerne) er også et genereret artefakt —
   rediger den ikke i hånden. Den afspejler sprogmapperne i `.website/` og holdes i sync ved hver
   kørsel. Sprogvælgeren skjules automatisk, hvis der kun findes ét sprog.
+- Portalens **accordion-valg** (`SIDEBAR_ACCORDION` mellem `ACCORDION:START`/`END`) er et **bevaret
+  valg** (ikke et genereret artefakt): standard er `false` (Nej), og en eksisterende portals værdi
+  bevares ved opdatering. Slå til/fra ved at sætte linjen til `true;`/`false;` mellem markørerne
+  (eller bed Claude om det). Accordion-CSS/JS ligger altid i skabelonen og er inaktiv, når valget er
+  `false`.
 - Sti-værdier i `NAV` skal være **relative til portalen** (dvs. til sprogmappen `.website/<sprog>/`),
   så portalen kan loade siderne i sin iframe og fuldtekst-søgningen kan `fetch`'e dem. Hold derfor
   hver sides kildemateriale og færdige HTML i **samme** sprogmappe.
