@@ -78,9 +78,12 @@ Regler (forskelle fra "ét dokument"):
   `<footer>`, og en **per-side `<nav class="toc">`** der linker til sidens egne `##`-sektioner).
 - **Placering:** `.website/<sprog>/<gruppe>/<emne>.html`. Læg hver side i en **gruppemappe** der
   afspejler dokumentets dele (fx "Opsætning", "Daglig brug", "Reference").
-- **Gruppe-rækkefølge:** `/website-update-index` sorterer grupper **alfabetisk** og bruger mappenavnet som
-  menu-overskrift. Skal grupperne vises i en bestemt læse-rækkefølge, så **nummer-præfiks** mappenavnet
-  (fx `1. Kom godt i gang`, `2. Opsætning`, `3. Daglig brug`).
+- **Gruppe-rækkefølge:** `/website-update-index` bruger mappenavnet som menu-overskrift og sorterer
+  grupper **alfabetisk**, medmindre rækkefølgen er styret eksplicit. Skal grupperne vises i en
+  bestemt læse-rækkefølge, så **anbefalet:** skriv gruppemappenavnene i ønsket rækkefølge i
+  `.website/<sprog>/.nav-order` (én pr. linje; ikke-nævnte grupper følger alfabetisk efter).
+  Alternativt kan mappenavnet **nummer-præfikses** (fx `1. Kom godt i gang`, `2. Opsætning`) —
+  præfikset styrer sorteringen, men strippes fra menu-overskriften.
 - **Filnavne:** korte og helst ascii. Brug nummer-præfiks (`1-…`, `2-…`) for at styre rækkefølgen
   **inden for** en gruppe (siderne sorteres naturligt).
 - **Favicon:** siderne ligger to mappeniveauer under `.website/`, så `href="../../favicon.svg"`
