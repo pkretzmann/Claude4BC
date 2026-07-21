@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cronus Base App — App Name</title>
+<!-- Embedded favicon (favicon.svg, inlined as data-URI) -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Cdefs%3E%3ClinearGradient%20id='g'%20x1='0'%20y1='0'%20x2='1'%20y2='1'%3E%3Cstop%20offset='0'%20stop-color='%23003F7F'/%3E%3Cstop%20offset='0.6'%20stop-color='%230069B4'/%3E%3Cstop%20offset='1'%20stop-color='%2300AEEF'/%3E%3C/linearGradient%3E%3Cg%20id='arm'%20stroke='%23ffffff'%20stroke-width='3.4'%20stroke-linecap='round'%3E%3Cline%20x1='32'%20y1='33'%20x2='32'%20y2='8'/%3E%3Cline%20x1='32'%20y1='15'%20x2='25.5'%20y2='9.5'/%3E%3Cline%20x1='32'%20y1='15'%20x2='38.5'%20y2='9.5'/%3E%3Cline%20x1='32'%20y1='22'%20x2='26.5'%20y2='17.5'/%3E%3Cline%20x1='32'%20y1='22'%20x2='37.5'%20y2='17.5'/%3E%3C/g%3E%3C/defs%3E%3Crect%20width='64'%20height='64'%20rx='14'%20fill='url(%23g)'/%3E%3Cuse%20href='%23arm'/%3E%3Cuse%20href='%23arm'%20transform='rotate(60%2032%2032)'/%3E%3Cuse%20href='%23arm'%20transform='rotate(120%2032%2032)'/%3E%3Cuse%20href='%23arm'%20transform='rotate(180%2032%2032)'/%3E%3Cuse%20href='%23arm'%20transform='rotate(240%2032%2032)'/%3E%3Cuse%20href='%23arm'%20transform='rotate(300%2032%2032)'/%3E%3Ccircle%20cx='32'%20cy='32'%20r='3.1'%20fill='%23ffffff'/%3E%3C/svg%3E">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap');
+/* ============================================================
+   THEME — "editorial" (Editorial / Magasin)
+   Playfair Display serif headings, Source Serif 4 body, warm
+   paper canvas, narrow reading measure, hairline dividers,
+   terracotta accent — a reading-first, magazine feel.
+   ============================================================ */
+:root {
+  --brand-dark:    #2A2521;   /* ink — headings, primary        */
+  --brand-mid:     #8A6A4B;   /* warm brown — links, table head */
+  --brand-light:   #B5732E;   /* terracotta — accents, badges   */
+  --brand-pale:    #F2E8DC;   /* hover, decision boxes          */
+  --brand-subtle:  #FBF6EF;   /* step backgrounds               */
+  --accent:        #B5732E;   /* general accent                 */
+
+  --white:        #FFFFFF;
+  --gray-100:     #FBFAF7;   /* page background (warm paper) */
+  --gray-200:     #E7E0D5;   /* borders          */
+  --gray-400:     #B0A795;
+  --gray-700:     #5C5346;   /* secondary text   */
+  --text:         #2B2620;   /* primary text     */
+  --note-bg:      #FCF4E2;
+  --note-border:  #D29A2E;
+  --success:      #4F7A3A;
+  --success-bg:   #EEF4E6;
+  --code-bg:      #2A2521;
+  --code-text:    #EDE6DA;
+
+  --p1:           #A23B2E;   /* P1 — høj prioritet (muted brick) */
+  --p1-bg:        #F6E3DE;
+  --p2:           #9A6614;   /* P2 — meningsfuld (ochre)         */
+  --p2-bg:        #FBF0DC;
+  --p3:           #5C5346;   /* P3 — oprydning (ink/brown)       */
+  --p3-bg:        #EEE8DD;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+  font-size: 17px;
+  line-height: 1.85;
+  color: var(--text);
+  background: var(--gray-100);
+}
+
+/* ── Header — paper, large serif display, no gradient ── */
+header {
+  background: var(--gray-100);
+  color: var(--text);
+  padding: 76px 28px 40px;
+  border-bottom: 2px solid var(--brand-dark);
+  text-align: left;
+}
+.hero-inner { max-width: 760px; margin: 0 auto; }
+.header-badge {
+  display: inline-flex; align-items: center; gap: 9px;
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: 12px; font-weight: 600;
+  letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--brand-light);
+  margin-bottom: 12px;
+}
+.header-badge svg { width: 16px; height: 16px; }
+header h1 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 50px; font-weight: 800;
+  line-height: 1.08; letter-spacing: -0.01em;
+  margin-bottom: 14px; color: var(--brand-dark);
+}
+header p.lead { font-size: 19px; color: var(--gray-700); font-style: italic; font-weight: 400; max-width: 60ch; }
+.header-pills { display: flex; gap: 10px; margin-top: 24px; flex-wrap: wrap; }
+.pill { background: transparent; border: 1px solid var(--gray-200); border-radius: 2px; padding: 4px 12px; font-size: 13px; font-weight: 600; letter-spacing: 0.04em; color: var(--gray-700); }
+
+/* ── Stat strip — serif figures with hairline separators ── */
+.stats { display: flex; flex-wrap: wrap; gap: 0; margin-top: 32px; border-top: 1px solid var(--gray-200); border-bottom: 1px solid var(--gray-200); }
+.stat { flex: 1 1 130px; padding: 18px 22px 18px 0; border-right: 1px solid var(--gray-200); }
+.stat:last-child { border-right: none; }
+.stat .num { font-family: 'Playfair Display', Georgia, serif; font-size: 38px; font-weight: 700; line-height: 1; color: var(--brand-dark); }
+.stat .lbl { font-size: 13px; font-style: italic; color: var(--gray-700); margin-top: 8px; }
+
+/* ── Layout — narrow measure for reading ── */
+.container { max-width: 760px; margin: 0 auto; padding: 48px 28px 80px; }
+
+/* ── How-to-read legend ── */
+.legend { display: grid; grid-template-columns: 1fr; gap: 0; margin-bottom: 44px; border-top: 1px solid var(--gray-200); }
+.legend-card { padding: 18px 0; border-bottom: 1px solid var(--gray-200); }
+.legend-card h4 { font-size: 12px; text-transform: uppercase; letter-spacing: 0.18em; color: var(--brand-light); margin-bottom: 8px; font-weight: 600; }
+.legend-card p { font-size: 15.5px; color: var(--gray-700); margin: 0; }
+
+/* ── Table of contents — restrained, italic ── */
+.toc { background: transparent; border: none; border-top: 1px solid var(--gray-200); border-bottom: 1px solid var(--gray-200); border-radius: 0; padding: 22px 0; margin-bottom: 48px; }
+.toc h2 { font-family: 'Source Serif 4', Georgia, serif; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.18em; color: var(--brand-light); margin-bottom: 14px; }
+.toc ul { list-style: none; padding-left: 0; column-count: 2; column-gap: 36px; }
+.toc li { margin-bottom: 7px; break-inside: avoid; }
+.toc a { color: var(--brand-dark); text-decoration: none; font-size: 16px; font-style: italic; transition: color 0.15s; }
+.toc a:hover, .toc a.active { color: var(--accent); }
+
+/* ── Section — article block, hairline divider, no card ── */
+.section { background: transparent; border: none; border-radius: 0; padding: 16px 0 44px; margin-bottom: 16px; box-shadow: none; border-bottom: 1px solid var(--gray-200); }
+.section-header { display: flex; align-items: baseline; gap: 14px; margin-bottom: 18px; padding-bottom: 0; border-bottom: none; }
+.section-icon { width: auto; height: auto; border-radius: 0; background: transparent; display: inline-flex; align-items: baseline; font-family: 'Playfair Display', Georgia, serif; font-size: 26px; font-weight: 700; color: var(--accent); flex-shrink: 0; }
+h2 { font-family: 'Playfair Display', Georgia, serif; font-size: 30px; font-weight: 700; color: var(--brand-dark); letter-spacing: -0.01em; line-height: 1.2; }
+.section > p { margin-bottom: 18px; }
+.section > p.intro { font-size: 17.5px; color: var(--text); }
+strong { font-weight: 600; }
+
+/* ── Finding — editorial entry, terracotta rule on the left ── */
+.finding { padding: 14px 0 14px 20px; margin: 10px 0; border-left: 2px solid var(--gray-200); transition: border-color 0.2s; }
+.finding:hover { border-left-color: var(--accent); }
+.finding-top { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; margin-bottom: 6px; }
+.finding-title { font-family: 'Playfair Display', Georgia, serif; font-size: 19px; font-weight: 600; color: var(--brand-dark); flex: 1 1 auto; line-height: 1.3; }
+.finding-body { font-size: 16.5px; color: var(--text); }
+.finding-body p { margin-bottom: 8px; }
+
+/* ── Priority + status tags — squared editorial badges ── */
+.tag { display: inline-block; border-radius: 2px; padding: 1px 9px; font-size: 12px; font-weight: 700; white-space: nowrap; letter-spacing: 0.06em; font-family: 'Source Serif 4', Georgia, serif; }
+.tag.p1 { background: var(--p1-bg); color: var(--p1); border: 1px solid #E3C3BB; }
+.tag.p2 { background: var(--p2-bg); color: var(--p2); border: 1px solid #DDB158; }
+.tag.p3 { background: var(--p3-bg); color: var(--p3); border: 1px solid var(--gray-200); }
+.status-tag { display: inline-block; background: var(--brand-pale); color: var(--brand-dark); border: 1px solid var(--gray-200); border-radius: 2px; padding: 1px 8px; font-size: 12.5px; font-weight: 600; font-style: italic; white-space: nowrap; }
+.status-tag.todo { background: #FBF0DC; color: #9A6614; border-color: #DDB158; }
+.status-tag.pattern { background: var(--brand-subtle); color: var(--brand-mid); }
+
+/* ── Executive summary ── */
+.exec { background: var(--brand-subtle); border: 1px solid var(--gray-200); border-left: 3px solid var(--accent); border-radius: 0; padding: 30px 34px; margin-bottom: 46px; }
+.exec .exec-eyebrow { font-size: 12px; text-transform: uppercase; letter-spacing: 0.2em; color: var(--brand-light); font-weight: 600; margin-bottom: 12px; }
+.exec h2 { font-family: 'Playfair Display', Georgia, serif; font-size: 30px; font-weight: 700; color: var(--brand-dark); line-height: 1.2; margin-bottom: 18px; }
+.exec p { margin-bottom: 14px; font-size: 17px; }
+.exec h3 { font-family: 'Playfair Display', Georgia, serif; font-size: 20px; font-weight: 600; color: var(--brand-dark); margin: 22px 0 8px; }
+.exec ul { margin: 6px 0 14px 22px; }
+.exec li { margin-bottom: 7px; }
+.exec .verdict { background: var(--note-bg); border-left: 3px solid var(--note-border); padding: 16px 20px; margin-top: 20px; font-size: 16.5px; }
+.exec .verdict strong { color: #9A6614; }
+@media (max-width: 640px) { .exec { padding: 24px 22px; } }
+
+/* ── Inline code ── */
+code { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px; background: var(--brand-subtle); border: 1px solid var(--gray-200); border-radius: 3px; padding: 1px 6px; color: var(--brand-dark); overflow-wrap: break-word; }
+
+/* ── Accordion (technical details) — <details>/<summary> ── */
+details.tech { margin-top: 12px; border-top: 1px solid var(--gray-200); background: transparent; }
+details.tech > summary { cursor: pointer; list-style: none; padding: 9px 0; font-family: 'Source Serif 4', Georgia, serif; font-size: 13px; font-weight: 600; font-style: italic; color: var(--brand-light); letter-spacing: 0.04em; display: flex; align-items: center; gap: 9px; user-select: none; }
+details.tech > summary::-webkit-details-marker { display: none; }
+details.tech > summary::before { content: '＋'; font-size: 14px; font-weight: 700; font-style: normal; color: var(--accent); line-height: 1; }
+details.tech[open] > summary::before { content: '−'; }
+details.tech > summary:hover { color: var(--brand-dark); }
+.tech-body { padding: 2px 0 14px; font-size: 15.5px; color: var(--gray-700); animation: tech-open 0.25s ease; }
+.tech-body ul { margin: 8px 0 8px 20px; }
+.tech-body li { margin-bottom: 5px; }
+.tech-body p { margin-bottom: 8px; }
+@keyframes tech-open { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+
+/* ── Recommendation / note box — pull-quote feel ── */
+.note { background: var(--note-bg); border-left: 3px solid var(--note-border); border-radius: 0; padding: 16px 20px; margin: 24px 0 4px; font-size: 16.5px; }
+.note strong { color: #9A6614; }
+
+/* ── Order list (Foreslået rækkefølge) ── */
+.order { counter-reset: ord; list-style: none; padding: 0; display: flex; flex-direction: column; gap: 16px; }
+.order > li { counter-increment: ord; position: relative; padding: 4px 0 4px 48px; font-size: 17px; }
+.order > li::before { content: counter(ord); position: absolute; left: 0; top: -4px; font-family: 'Playfair Display', Georgia, serif; font-size: 28px; font-weight: 700; line-height: 1; color: var(--accent); }
+
+/* ── Footer — paper, small caps ── */
+footer { background: var(--gray-100); color: var(--gray-700); text-align: center; padding: 32px 20px; font-size: 13px; letter-spacing: 0.08em; margin-top: 48px; border-top: 2px solid var(--brand-dark); }
+footer strong { color: var(--brand-dark); }
+
+/* ── Buttons injected by JS ── */
+.expand-all-btn { display: inline-block; margin-bottom: 20px; background: transparent; color: var(--brand-dark); border: 1px solid var(--brand-dark); border-radius: 2px; padding: 7px 18px; font-size: 13px; font-weight: 600; letter-spacing: 0.04em; cursor: pointer; font-family: 'Source Serif 4', Georgia, serif; transition: background 0.15s, color 0.15s; }
+.expand-all-btn:hover { background: var(--brand-dark); color: #fff; }
+.to-top-btn { position: fixed; bottom: 24px; right: 24px; width: 46px; height: 46px; border-radius: 50%; background: var(--brand-dark); color: #fff; border: none; font-size: 20px; line-height: 1; cursor: pointer; box-shadow: 0 3px 10px rgba(42,37,33,0.22); opacity: 0; visibility: hidden; transition: opacity 0.2s, visibility 0.2s, background 0.15s; z-index: 50; }
+.to-top-btn.visible { opacity: 1; visibility: visible; }
+.to-top-btn:hover { background: var(--accent); }
+.reading-progress { position: fixed; top: 0; left: 0; height: 3px; width: 0; background: var(--accent); z-index: 60; transition: width 0.1s ease-out; }
+
+/* ── Scroll-reveal — only active under .js-fx ── */
+.js-fx .section, .js-fx .legend, .js-fx .toc { opacity: 0; transform: translateY(18px); transition: opacity 0.6s ease, transform 0.6s ease; will-change: opacity, transform; }
+.js-fx .section.in-view, .js-fx .legend.in-view, .js-fx .toc.in-view { opacity: 1; transform: none; }
+
+/* ── Motion safety ── */
+@media (prefers-reduced-motion: reduce) {
+  .js-fx .section, .js-fx .legend, .js-fx .toc { opacity: 1; transform: none; transition: none; }
+}
+
+/* ── Responsive ── */
+@media (max-width: 640px) {
+  header { padding: 56px 24px 36px; }
+  header h1 { font-size: 36px; }
+  .toc ul { column-count: 1; }
+  .stat { flex-basis: 45%; }
+}
+
+/* ── Print ── */
+@media print {
+  body { background: #fff; font-size: 13px; }
+  .to-top-btn, .expand-all-btn, .reading-progress { display: none !important; }
+  .section { box-shadow: none; border-bottom: 1px solid #ccc; page-break-inside: avoid; }
+  header { border-bottom: 2px solid #333; }
+  details.tech[open] .tech-body { display: block; }
+  .js-fx .section, .js-fx .legend, .js-fx .toc { opacity: 1 !important; transform: none !important; }
+}
+</style>
+</head>
+<body class="fx">
+
+<header>
+  <div class="hero-inner">
+    <span class="header-badge">
+      <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><g stroke="#B5732E" stroke-width="4" stroke-linecap="round"><line x1="32" y1="33" x2="32" y2="8"/><line x1="32" y1="15" x2="25.5" y2="9.5"/><line x1="32" y1="15" x2="38.5" y2="9.5"/></g><circle cx="32" cy="32" r="3.5" fill="#B5732E"/></svg>
+      Cronus Base App
+    </span>
+    <h1>Forbedrings&shy;anbefalinger</h1>
+    <p class="lead">Prioriteret backlog af korrektheds-, robustheds- og vedligeholdelsesforbedringer for Cronus-udvidelsen — baseret på en fuld gennemgang af alle 563&nbsp;AL-objekter i kodebasen.</p>
+    <div class="header-pills">
+      <span class="pill">App v27.0.0.10</span>
+      <span class="pill">BC Cloud · Platform 25</span>
+      <span class="pill">Runtime 16</span>
+      <span class="pill">ID 50000–50149</span>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="num" data-countup="563">0</div><div class="lbl">AL-objekter gennemgået</div></div>
+      <div class="stat"><div class="num" data-countup="9">0</div><div class="lbl">moduler</div></div>
+      <div class="stat"><div class="num" data-countup="10">0</div><div class="lbl">indsatsområder</div></div>
+      <div class="stat"><div class="num" data-countup="43">0</div><div class="lbl">konkrete fund</div></div>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- TOC -->
+  <nav class="toc">
+    <h2>Indholdsfortegnelse</h2>
+    <ul>
+      <li><a href="#exec">Executive Summary — anbefaling til ledelsen</a></li>
+      <li><a href="#s1">1. Korrekthedsfejl i Operation LINJE-A-objekter</a></li>
+      <li><a href="#s2">2. Defensiv håndtering af Get() og FindFirst()</a></li>
+      <li><a href="#s3">3. Hardcodede templates, batches og posting-grupper</a></li>
+      <li><a href="#s4">4. Integrationsrobusthed — WMS, EDI, OEE-tjenesten, LabelApp, Azure</a></li>
+      <li><a href="#s5">5. Baggrunds-/Job Queue-sikkerhed</a></li>
+      <li><a href="#s6">6. Nummerserier &amp; samtidighed</a></li>
+      <li><a href="#s7">7. Performance</a></li>
+      <li><a href="#s8">8. Lokalisering &amp; UX</a></li>
+      <li><a href="#s9">9. Teknisk gæld — dødt/obsolet kode</a></li>
+      <li><a href="#s10">10. Datamodel &amp; dokumentation</a></li>
+      <li><a href="#order">Foreslået rækkefølge</a></li>
+    </ul>
+  </nav>
+
+  <!-- ============ EXECUTIVE SUMMARY ============ -->
+  <div class="exec" id="exec">
+    <div class="exec-eyebrow">Executive Summary — anbefaling til ledelsen</div>
+    <h2>Solidt fundament — ret de arvede korrekthedsfejl og gør integrationerne robuste</h2>
+
+    <p>Cronus-udvidelsen til Business Central (563 AL-objekter, cloud-klar, app-version 27) er løftet af den gamle NAV-løsning til en moderne platform, og fundamentet er sundt: koden er modulopdelt med namespaces, kompilerer rent og dækker de samme forretningskritiske flows som før — produktion, sporbarhed, scanning, lagerrobot (RoboStore), labels (LabelApp) og EDI. I modsætning til NAV-forgængeren er der her tale om en vedligeholdbar kodebase, hvor forbedringer kan laves som afgrænsede rettelser.</p>
+
+    <p>Gennemgangen har fundet <strong>43 konkrete forbedringspunkter</strong>. De alvorligste er <strong>arvet direkte fra NAV-løsningen</strong> og handler om data-korrekthed: LINJE-A's driftrapportering læser, skriver og sletter i LINJE-B's tabeller. Dernæst følger en række robusthedshuller i integrationerne og et gennemgående mønster af "stille fejl", hvor manglende opsætning eller data ikke opdages.</p>
+
+    <h3>De tre vigtigste risici lige nu</h3>
+    <ul>
+      <li><strong>Data-integritet i produktionsrapportering (§1):</strong> LINJE-A-objekterne er kopieret fra LINJE-B-pendanterne uden at alle tabelreferencer blev rettet. Nye registreringer oprettes i den forkerte produktionslinjes tabeller, sletning rydder op det forkerte sted, og kontroltjek kigger i den forkerte tabel. Der vises ingen fejl — data lander bare stille forkert. Alle fund er krydstjekket mod NAV-originalen: fejlene er <em>arvet 1:1</em>, ikke opstået i konverteringen, og har formentlig påvirket produktionsdata i årevis.</li>
+      <li><strong>Integrationsrobusthed (§4):</strong> Én ukendt fil kan stoppe Azure-importen og efterlade resten ubehandlet; en fejlet postering rydder alligevel op bagefter, som om den lykkedes; et HTTP-fejlsvar fra OEE-tjenesten behandles som succes. Fejl opdages sent — eller aldrig.</li>
+      <li><strong>Stille fejl-mønstret (§2):</strong> Opsætnings- og varedata læses mange steder uden tjek af, om opslaget lykkedes. Konsekvensen er tomme eller forkerte tal uden fejlmeddelelse — dyrt at fejlsøge og svært at stole på.</li>
+    </ul>
+
+    <h3>Hvad ledelsen bør beslutte</h3>
+    <ul>
+      <li><strong>På kort sigt (uger):</strong> Ret LINJE-A/LINJE-B-referencerne (§1) — en lille, isoleret rettelse med direkte data-integritetsgevinst — og de konkrete integrationsfejl i §4. Afklar samtidig, om historiske LINJE-A-registreringer, der ligger i LINJE-B-tabellerne (også i data konverteret med fra NAV), skal flyttes eller renses.</li>
+      <li><strong>På mellemlangt sigt (kvartaler):</strong> Gennemfør de systematiske oprydninger: defensive <code>Get()</code>-tjek (slå analyzer-reglen til), flyt hardcodede kladde- og gruppenavne til opsætning, gør baggrundsflows Job Queue-sikre, og luk den markerede TODO-gæld.</li>
+      <li><strong>Fasthold god praksis:</strong> Kodebasen har allerede TODO-disciplin, ruleset og oversættelsesfiler. Suppler med kodegennemgang målrettet de mønstre, rapporten udpeger, så nye fund af samme type ikke opstår.</li>
+    </ul>
+
+    <div class="verdict"><strong>Samlet vurdering:</strong> Løsningen står på et moderne, vedligeholdbart fundament og er markant bedre stillet end NAV-forgængeren. Ingen af fundene kræver re-arkitektur — det er afgrænsede rettelser og systematiske oprydninger. Prioritér korrekthedsfejlene i §1 (data lander i forkerte tabeller <em>i dag</em>) og integrationsrobustheden i §4; resten kan køres som løbende forbedringsspor.</div>
+  </div>
+
+  <!-- Legend -->
+  <div class="legend">
+    <div class="legend-card">
+      <h4>Prioriteter</h4>
+      <p><span class="tag p1">P1</span> høj effekt på korrekthed/stabilitet — gøres først. <span class="tag p2">P2</span> meningsfuld forbedring. <span class="tag p3">P3</span> oprydning / nice-to-have.</p>
+    </div>
+    <div class="legend-card">
+      <h4>Status på fund</h4>
+      <p><span class="status-tag">verificeret</span> læst og bekræftet i koden. <span class="status-tag pattern">gennemgående</span> mønster mange steder. <span class="status-tag todo">TODO i kode</span> allerede markeret i kildekoden.</p>
+    </div>
+    <div class="legend-card">
+      <h4>Teknisk detalje</h4>
+      <p>De tekniske afsnit (objekt-, felt- og linjereferencer) er foldet ind. Klik <strong>“Vis teknisk detalje”</strong> hvis du ønsker mere information.</p>
+    </div>
+  </div>
+
+  <!-- ============ SECTION 1 ============ -->
+  <section class="section" id="s1">
+    <div class="section-header"><div class="section-icon">1</div><h2>Korrekthedsfejl i Operation LINJE-A-objekter</h2></div>
+    <p class="intro">Operation-modulet har parallelle objektsæt for produktionslinjerne <strong>LINJE-B</strong> og <strong>LINJE-A</strong>. Flere LINJE-A-objekter er tydeligvis kopieret fra LINJE-B-versionen uden at rette tabelreferencerne, så LINJE-A-logik læser og <strong>skriver</strong> i LINJE-B-tabeller. Dette er den alvorligste klynge af fund: en stille data-integritetsfejl — der kastes ingen fejl, men data ender i de forkerte tabeller.</p>
+
+    <div class="finding">
+      <div class="finding-top"><span class="tag p1">P1</span><span class="status-tag">verificeret</span><span class="finding-title">LINJE-A-rapport indsætter børneposter i LINJE-B-tabeller</span></div>
+      <div class="finding-body"><p>LINJE-A-operationsrapporten gemmer vand- og færdigvareregistreringer i LINJE-B-tabellerne i stedet for LINJE-A-tabellerne. Resultatet er forkert rapportering og forurenede LINJE-B-data.</p></div>
+      <details class="tech"><summary>Vis teknisk detalje</summary><div class="tech-body">
+        <p>I <code>OperationReportLINJE-A.Table.al:29-32</code> deklarerer <code>OnValidate</code> på feltet <code>"Production Order"</code> lokale records af typen <code>Record "Finished Good LINJE-B"</code> og <code>Record "Water Accounting LINJE-B"</code> og indsætter i dem (linje 52-80). Da objektet er LINJE-A-rapporten, bør det bruge <code>"Finished Good LINJE-A"</code> (table 50041) og <code>"Water Accounting LINJE-A"</code> (table 50043).</p>
+      </div></details>
+    </div>
+
+    <div class="finding">
+      <div class="finding-top"><span class="tag p1">P1</span><span class="status-tag">verificeret</span><span class="finding-title">Sletning af en LINJE-A-rapport rydder op i LINJE-B-tabellerne</span></div>
+      <div class="finding-body"><p>Sletter man en LINJE-A-driftrapport, slettes underliggende poster i <strong>alle fem LINJE-B-undertabeller</strong> i stedet for LINJE-A-tabellerne. Dobbelt konsekvens: LINJE-A-rapportens egne underposter efterlades forældreløse — og LINJE-B-poster med samme løbenummer slettes fejlagtigt.</p></div>
+      <details class="tech"><summary>Vis teknisk detalje</summary><div class="tech-body">
+        <p><code>OperationReportLINJE-A.Table.al:465-490</code>: <code>OnDelete</code> deklarerer <code>Record "Comments LINJE-B"</code>, <code>"Finished Good LINJE-B"</code>, <code>"Raw Material/Pack LINJE-B"</code>, <code>"Start/Stop-Snail LINJE-B"</code> og <code>"Water Accounting LINJE-B"</code> (linje 467-471) og kører <code>SetRange("Operation Report Entry No.", "Entry No.") + DeleteAll(true)</code> på dem alle (linje 480-489). Bør bruge LINJE-A-tabellerne (50041-50045). <em>Fundet ved krydstjek mod NAV-originalen — arvet 1:1.</em></p>
+      </div></details>
+    </div>
+
+    <div class="finding">
+      <div class="finding-top"><span class="tag p1">P1</span><span class="status-tag">verificeret</span><span class="finding-title">LINJE-A-kortets luk-kontrol tjekker LINJE-B-sneglen</span></div>
+      <div class="finding-body"><p>Når LINJE-A-driftrapportkortet lukkes, kontrolleres det, at alle snegle-registreringer har starttid — men mod <strong>LINJE-B-tabellen</strong>. Kontrollen fanger derfor aldrig manglende starttider på LINJE-A-registreringer, og kan omvendt fejlagtigt blokere lukning, hvis en LINJE-B-post deler løbenummer.</p></div>
+      <details class="tech"><summary>Vis teknisk detalje</summary><div class="tech-body">
+        <p><code>OperationReportLINJE-A.Page.al:505-516</code>: <code>OnQueryClosePage</code> bruger den globale variabel <code>Snail: Record "Start/Stop-Snail LINJE-B"</code> (linje 516) til at finde poster med <code>StartTime = 0T</code> og kaste fejl. Bør bruge <code>"Start/Stop-Snail LINJE-A"</code> (table 50044). <em>Fundet ved krydstjek mod NAV-originalen — arvet 1:1.</em></p>
+      </div></details>
+    </div>
+
+    <div class="finding">
+      <div class="finding-top"><span class="tag p1">P1</span><span class="status-tag">verificeret</span><span class="finding-title">Start/Stop-Snail LINJE-A slår op i LINJE-B-rapporten</span></div>
+      <div class="finding-body"><p>Opslaget for at finde linjenummer sker mod LINJE-B-tabellen, selvom feltets relation korrekt peger på LINJE-A-rapporten.</p></div>
+      <details class="tech"><summary>Vis teknisk detalje</summary><div class="tech-body">
+        <p>I <code>StartStopSnailLINJE-A.Table.al:26</code> bruger <code>OnValidate</code> på <code>"Operation Report Entry No."</code> en <code>Record "Operation Report LINJE-B"</code> (linje 26-29) til at finde <code>LineNo</code>, selvom feltets <code>TableRelation</code> (linje 21) korrekt peger på <code>"Operation Report LINJE-A"</code>. Opslaget bør ske mod <code>"Operation Report LINJE-A"</code>.</p>
+      </div></details>
+    </div>
+
+    <div class="finding">
+      <div class="finding-top"><span class="tag p1">P1</span><span class="status-tag">verificeret</span><span class="finding-title">FindEntryNo finder max Entry No. i LINJE-B-tabellen</span></div>
+      <div class="finding-body"><p>Næste <code>Entry No.</code> beregnes ud fra LINJE-B-tabellen i stedet for LINJE-A-tabellen, hvilket kan give dublerede eller springende nøgler i LINJE-A.</p></div>
+      <details class="tech"><summary>Vis teknisk detalje</summary><div class="tech-body">
+        <p><code>StartStopSnailLINJE-A.Table.al:155</code> deklarerer <code>Snail: Record "Start/Stop-Snail LINJE-B"</code> og beregner næste <code>Entry No.</code> ud fra LINJE-B-tabellen (linje 153-170) i stedet for LINJE-A-tabellen.</p>
+      </div></details>
+    </div>
+
+    <div class="finding">
+      <div class="finding-top"><span class="tag p2">P2</span><span class="status-tag">verificeret</span><span class="finding-title">Comments-markøren viser LINJE-B-kommentarer</span></div>
+      <div class="finding-body"><p>Feltet der viser, om en LINJE-A-driftrapport har kommentarer, tjekker <strong>LINJE-B's</strong> kommentartabel. Markøren kan derfor både mangle (LINJE-A-kommentarer findes, men vises ikke) og lyse fejlagtigt (en LINJE-B-rapport med samme løbenummer har kommentarer).</p></div>
+      <details class="tech"><summary>Vis teknisk detalje</summary><div class="tech-body">
+        <p><code>OperationReportLINJE-A.Table.al:390-396</code>, felt 535 <code>Comments</code>: FlowField med <code>CalcFormula = exist("Comments LINJE-B" where("Operation Report Entry No." = field("Entry No.")))</code> (linje 392). Bør pege på <code>"Comments LINJE-A"</code> (table 50045). <em>Fundet ved krydstjek mod NAV-originalen — arvet 1:1.</em></p>
+      </div></details>
+    </div>
+
+    <div class="finding">
+      <div class="finding-top"><span class="tag p2">P2</span><span class="status-tag">verificeret</span><span class="finding-title">Felt "Item No." har forkert type/formel</span></div>
+      <div class="finding-body"><p>Et felt der hedder <code>"Item No."</code> slår reelt op i et linjenummer og bruger en for bred datatype. Enten er navnet eller formlen forkert — intentionen bør afklares.</p></div>
+      <details class="tech"><summary>Vis teknisk detalje</summary><div class="tech-body">
+        <p><code>StartStopSnailLINJE-A.Table.al:72-77</code>: feltet hedder <code>"Item No."</code> men har <code>CalcFormula = lookup("Operation Report LINJE-A"."Line No." …)</code> og typen <code>Code[100]</code> (standard Item No. er <code>Code[20]</code>). Afklar intentionen og ret type/formel.</p>
+      </div></details>
+    </div>
+
+    <div class="finding">
+      <div class="finding-top"><span class="tag p3">P3</span><span class="status-tag">verificeret</span><span class="finding-title">Reason-option har caption/member-mismatch</span></div>
+      <div class="finding-body"><p>Caption og medlem for en option-værdi stemmer ikke overens, hvilket skaber forvirring i UI og i kode.</p></div>
+      <details class="tech"><summary>Vis teknisk detalje</summary><div class="tech-body">
+        <p>På både <code>StartStopSnailLINJE-A.Table.al:55-60</code> og <code>StartStopSnailLINJE-B.Table.al</code> har <code>OptionCaption</code> værdien <code>…,TEST</code> mens <code>OptionMembers</code> har <code>…,Maintainance</code>. De bør stemme overens.</p>
+      </div></details>
+    </div>
+
+    <div class="note"><strong>Anbefaling og NAV-krydstjek (juli 2026):</strong> Alle fund i dette afsnit er verificeret mod NAV-originalen (objekt-eksporten, se NAV-analysens afsnit 7): de genfindes <em>ordret</em> i C/AL-koden og er dermed <strong>arvet ved konverteringen, ikke opstået i den</strong> — fejlene har formentlig påvirket produktionsdata i NAV i årevis, så også <em>konverterede historiske data</em> bør efterses. NAV havde ét LINJE-B-opslag mere (<code>ValidateStart</code> i Start/Stop-Snegl), som allerede er fjernet i BC. Den omvendte retning er kontrolleret: LINJE-B-objekterne refererer ikke LINJE-A-tabeller. Gennemgå alligevel <strong>hele</strong> LINJE-A-mappen (<code>src/Operation/LINJE-A</code>) systematisk mod LINJE-B-pendanten som sidste kontrol, og ret alle referencer i samme ombæring.</div>
+  </section>
+
+  <!-- ============ SECTION 2 ============ -->
+  <section class="section" id="s2">
+    <div class="section-header"><div class="section-icon">2</div><h2>Defensiv håndtering af Get() og FindFirst()</h2></div>
+    <p class="intro">Gennem hele kodebasen kaldes <code>Get()</code> på setup- og master-tabeller (og <code>FindFirst()</code> på filtrerede sæt) uden at returværdien tjekkes, hvorefter felter læses fra en evt. tom record. Resultatet er stille fejl: tomme felter skrives videre, eller en validering fejler med en kryptisk besked langt fra årsagen. Dette er det mest udbredte enkeltmønster i gennemgangen.</p>
+
+    <div class="finding">
+      <div class="finding-top"><span class="tag p1">P1</span><span class="status-tag pattern">gennemgående</span><span class="finding-title">Ubeskyttede Setup.Get() før feltadgang</span></div>
+      <div class="finding-body"><p>Setup-tabeller hentes uden tjek, og felter læses derefter — selv hvis opsætningen mangler. Bør give en klar fejl med navigation til opsætningssiden.</p></div>
+      <details class="tech"><summary>Vis teknisk detalje</summary><div class="tech-body">
+        <p>Repræsentative steder: <code>SalesHeader.TableExt.al:132</code> (<code>ManualWhseSetup.Get()</code>), <code>SalesLineSubscribers.Codeunit.al:98,123</code> (<code>RoboStoreSetup.Get()</code>), <code>PurchaseHeaderSubscribers.Codeunit.al:88</code> (<code>OrderAddr.Get()</code>), <code>ItemJnlPostEventFunctions.Codeunit.al:116</code> (<code>ManufacturingSetup.Get()</code>), <code>ItemJournalLineEvents.Codeunit.al:156</code> (<code>WarehouseSetup.Get()</code>).</p>
+        <p>Mønster: <code>if not X.Get() then</code> → klar <code>Error</code>/<code>ErrorInfo</code> med navigation til opsætningssiden, eller <code>TestField</code>-stil validering tidligt.</p>
+      </div></details>
+    </div>
+
+    <div class="finding">
+      <div class="finding-top"><span class="tag p1">P1</span><span class="status-tag pattern">gennemgående</span><span class="finding-title">Ubeskyttede Item.Get() før beregning</span></div>
+      <div class="finding-body"><p>Pallet- og mængdeberegninger læser Item-felter uden at varen er hentet, hvilket giver 0 eller forkerte tal uden fejl.</p></div>
+      <details class="tech"><summary>Vis teknisk detalje</summary><div class="tech-body">
+        <p>Fx <code>PurchaseLineEvents.Codeunit.al:21</code>, <code>SalesPostHelper.Codeunit.al:185</code>, <code>LabelAppPostProduction.Codeunit.al:142</code> (felterne <code>"Kg. Per Bag"</code>/<code>"Bag Per Pallet"</code> bruges uden at <code>Item</code> er hentet).</p>
+      </div></details>
+    </div>
+
+    <div class="finding">
+      <div class="finding-top"><span class="tag p2">P2</span><span class="status-tag pattern">gennemgående</span><span class="finding-title">FindFirst() uden returtjek, derefter feltadgang</span></div>
+      <div class="finding-body"><p>Felter læses efter et <code>FindFirst()</code> uden at tjekke om der overhovedet blev fundet en post.</p></div>
+      <details class="tech"><summary>Vis teknisk detalje</summary><div class="tech-body">
+        <p>Fx <code>OperationListProduction.Page.al:1378</code>, <code>OperationListPlanClosed.Page.al:340</code>, <code>ProdOrderLineEvents.Codeunit.al:76</code>. Tilføj <code>if … FindFirst() then</code> omkring feltadgangen.</p>
+      </div></details>
+    </div>
+
+    <div class="finding">
+      <div class="finding-top"><span class="tag p2">P2</span><span class="status-tag pattern">gennemgående</span><span class="finding-title">if X.Get(...) then; med tomt body skjuler fejl</span></div>
+      <div class="finding-body"><p>Et tomt <code>then;</code> gør at en manglende post stille ignoreres — i løkker genbruges en forældet record, hvilket fx giver forkert pallet-optælling.</p></div>
+      <details class="tech"><summary>Vis teknisk detalje</summary><div class="tech-body">
+        <p>Fx <code>ItemReferenceMgtHelper.Codeunit.al:20</code>, <code>SingleInstanceLotNoInfo.Codeunit.al:50</code>, <code>OperationListProduction.Page.al:1235,1255,1285</code> (stale <code>ItemLocal</code> genbruges mellem løkke-iterationer). Beslut eksplicit not-found-adfærd (clear/exit/default) i stedet for tomt <code>then;</code>.</p>
+      </div></details>
+    </div>
+
+    <div class="finding">
+      <div class="finding-top"><span class="tag p3">P3</span><span class="status-tag">verificeret</span><span class="finding-title">Kompleks short-circuit and med sideeffekter</span></div>
+      <div class="finding-body"><p>Flere <code>Get()</code>-kald samles i én lang betingelse, hvilket er svært at læse og afhænger af evalueringsrækkefølge.</p></div>
+      <details class="tech"><summary>Vis teknisk detalje</summary><div class="tech-body">
+        <p><code>BarcodeManagement.Codeunit.al:156,222,580</code> samler <code>Item.Get(...) and (… or (LocalLotNoInfo.Get(...) …))</code> i én betingelse. Opdel i separate <code>if</code>-trin.</p>
+      </div></details>
+    </div>
+
+    <div class="note"><strong>Anbefaling:</strong> Slå AL-reglen for ubeskyttet <code>Get</code> til i <code>custom.ruleset.json</code> (rule <strong>AA0175</strong>) og gennemfør en samlet oprydning. En lille hjælpe-codeunit med <code>GetSalesSetup()</code>/<code>GetManufacturingSetup()</code> der laver <code>Get()</code> + <code>ErrorInfo</code> ét sted, fjerner gentagelsen.</div>
+  </section>
+
+  <!-- ============ SECTION 3 ============ -->
+  <section class="section" id="s3">
+    <div class="section-header"><div class="section-icon">3</div><h2>Hardcodede templates, batches og posting-grupper</h2></div>
+    <p class="intro">En række kritiske flows vælger journal-template/batch eller posting-grupper via hardcodede strenge. Flere er allerede markeret med <code>// TODO DEV-1: Hardcoded values</code>. Hvis en opsætning omdøbes, fejler flowet stille eller med en uklar fejl. Værdierne bør flyttes til en setup-tabel (fx en udvidelse af <code>Manufacturing Setup</code> / <code>Inventory Setup</code> eller en ny <code>Cronus Setup</code>).</p>
+
+    <div class="finding">
+      <div class="finding-top"><span class="tag p1">P1</span><span class="status-tag todo">TODO i kode</span><span class="finding-title">Sample-postering bruger hardcodede kladdenavne</span></div>
+      <div class="finding-body"><p>Journalnavne er skrevet direkte i koden uden validering af at batchen findes.</p></div>
+      <details class="tech"><summary>Vis teknisk detalje</summary><div class="tech-body">
+        <p><code>SampleScanning.Page.al:144-145,184-185</code>: <code>'OMPOSTER'</code>/<code>'SAMPLE'</code> og <code>'VARE'</code>/<code>'SAMPLE'</code>. Flyt til setup og <code>TestField</code> før brug.</p>
+      </div></details>
+    </div>
+
+    <div class="finding">
+      <div class="finding-top"><span class="tag p1">P1</span><span class="status-tag todo">TODO i kode</span><span class="finding-title">WMS-overflytning bruger hardcodet item-journal-template</span></div>
+      <div class="finding-body"><p>Templaten er hardcodet, og logikken til at vælge template/bilagsnr. er udkommenteret.</p></div>
+      <details class="tech"><summary>Vis teknisk detalje</summary><div class="tech-body">
+        <p><code>ProcessWMSImport.Codeunit.al:552-553</code>: <code>ItemTemplate := 'OVERFLYTNI';</code> med kommentar <code>// TODO - Find Template and Document No.</code> og udkommenteret <code>SelectItemTemplateForTransfer()</code>. Implementér template-/bilagsnr.-valg og validér eksistens.</p>
+      </div></details>
+    </div>
+
+    <div class="finding">
+      <div class="finding-top"><span class="tag p1">P1</span><span class="status-tag todo">TODO i kode</span><span class="finding-title">Handle Lot. No-regulering bruger hardcodet 'VARE'/'STANDARD'</span></div>
+      <div class="finding-body"><p>Samme behov som ovenfor: flyt værdierne til setup og validér eksistens.</p></div>
+      <details class="tech"><summary>Vis teknisk detalje</summary><div class="tech-body">
+        <p><code>HandleLotNo.Report.al:82,189-190</code> (<code>// TODO DEV-1: Hard-coded values</code>, linje 188).</p>
+      </div></details>
+    </div>
+
+    <div class="finding">
+      <div class="finding-top"><span class="tag p2">P2</span><span class="status-tag todo">TODO i kode</span><span class="finding-title">Purchase Line."No." udelukker hardcodet posting-gruppe</span></div>
+      <div class="finding-body"><p>Forretningslogik i en <code>filter(&lt;&gt; 'SALGVARE')</code> i en TableRelation er svær at vedligeholde.</p></div>
+      <details class="tech"><summary>Vis teknisk detalje</summary><div class="tech-body">
+        <p><code>PurchaseLine.TableExt.al:14-22</code> (<code>// TODO DEV-1: Hardcoded values</code>). Flyt udelukkede grupper til en setup-tabel.</p>
+      </div></details>
+    </div>
+
+    <div class="finding">
+      <div class="finding-top"><span class="tag p2">P2</span><span class="status-tag todo">TODO i kode</span><span class="finding-title">Øvrige hardcodede TODO-steder</span></div>
+      <div class="finding-body"><p>Flere steder med samme mønster bør samles i samme setup-oprydning.</p></div>
+      <details class="tech"><summary>Vis teknisk detalje</summary><div class="tech-body">
+        <p><code>CreateNewLotNos.Codeunit.al:40,109,188</code>, <code>UpdateInvPostingGroups.Report.al:23</code>, <code>LabelAppItemFile(BC).Report.al:23</code>.</p>
+      </div></details>
+    </div>
+  </section>
+
+  <!-- ============ SECTION 4 ============ -->
+  <section class="section" id="s4">
+    <div class="section-header"><div class="section-icon">4</div><h2>Integrationsrobusthed — WMS, EDI, OEE-tjenesten, LabelApp, Azure</h2></div>
+    <p class="intro">De eksterne integrationer er kernen i løsningen, men flere mangler ensartet fejlhåndtering, logning og oprydning. Et enkelt uventet svar eller en låst fil kan i dag efterlade systemet i en inkonsistent tilstand eller stoppe en Job Queue.</p>
+
+    <div class="finding">
+      <div class="finding-top"><span class="tag p1">P1</span><span class="status-tag">verificeret</span><span class="finding-title">foreach med exit springer Azure-filsletning over</span></div>
+      <div class="finding-body"><p>Et <code>exit</code> inde i fil-løkken hopper ud af hele løkken og springer commit og filsletning over. Én ukendt fil efterlader alle resterende filer uimporteret og uslettet i Azure.</p></div>
+      <details class="tech"><summary>Vis teknisk detalje</summary><div class="tech-body">
+        <p><code>ManualWhseImportFunction.Codeunit.al:44-50</code>: flere <code>exit</code> inde i fil-løkken springer <code>Commit()</code> + filsletning (linje 68-70) over. Brug <code>continue</code> pr. fil; reservér <code>exit</code> til kritisk stop.</p>
+      </div></details>
+    </div>
+
+    <div class="finding">
+      <div class="finding-top"><span class="tag p1">P1</span><span class="status-tag">verificeret</span><span class="finding-title">CODEUNIT.Run af posteringsbatch uden fejltjek</span></div>
+      <div class="finding-body"><p>Posteringen kører uden at resultatet tjekkes, og batchen slettes uanset — en fejlet postering medfører at data slettes alligevel.</p></div>
+      <details class="tech"><summary>Vis teknisk detalje</summary><div class="tech-body">
+        <p><code>ProcessWMSImport.Codeunit.al:587</code>: <code>CODEUNIT.Run(… Item Jnl.-Post Batch …)</code> uden returtjek; batch-sletning (linje 591) sker uanset. Tjek resultatet før oprydning.</p>
+      </div></details>
+    </div>
+
+    <div class="finding">
+      <div class="finding-top"><span class="tag p1">P1</span><span class="status-tag">verificeret</span><span class="finding-title">Uhåndteret HTTP-status i OEE-kald</span></div>
+      <div class="finding-body"><p>Et HTTP-kald skelner ikke succes fra fejl — en HTTP 500 behandles som "complete".</p></div>
+      <details class="tech"><summary>Vis teknisk detalje</summary><div class="tech-body">
+        <p><code>OEEProdOrderService.Codeunit.al:36-38</code>: <code>Client.Post()</code> lagrer status/indhold men skelner ikke 2xx fra 4xx/5xx. Parse <code>Response.HttpStatusCode()</code> og rejs fejl ved ikke-2xx.</p>
+      </div></details>
+    </div>
+
+    <div class="finding">
+      <div class="finding-top"><span class="tag p1">P1</span><span class="status-tag">verificeret</span><span class="finding-title">Manglende fejl når intet dokument findes</span></div>
+      <div class="finding-body"><p>Ved picking/status-import forsøges først salgsordre og dernæst overflytning; hvis begge mangler, fortsætter koden uden fejl, og WMS-status opdateres aldrig.</p></div>
+      <details class="tech"><summary>Vis teknisk detalje</summary><div class="tech-body">
+        <p><code>ProcessWMSImport.Codeunit.al:164-169</code> og <code>:505-517</code>: <code>SalesHeader.Get</code> derefter <code>TransferHeader.Get</code>; hvis begge fejler, fortsætter koden. Tilføj eksplicit <code>Error</code>/log når intet dokument matcher.</p>
+      </div></details>
+    </div>
+
+    <div class="finding">
+      <div class="finding-top"><span class="tag p2">P2</span><span class="status-tag">verificeret</span><span class="finding-title">EDI-parsing i ColdStore er skrøbelig og uden grænsetjek</span></div>
+      <div class="finding-body"><p>Felter skrives i et fast array uden tjek for overløb, og indsamlede importfejl vises eller logges aldrig.</p></div>
+      <details class="tech"><summary>Vis teknisk detalje</summary><div class="tech-body">
+        <p><code>ImportEDIColdStore.Report.al:399-409</code> (<code>SplitString</code>) skriver i <code>array[10]</code> uden at tjekke at antallet af felter ≤ 10. Indsamlede fejl (<code>ErrorList</code>/<code>SendError</code>, linje 177-215) bruges aldrig. Tilføj grænsetjek + log importfejl.</p>
+      </div></details>
+    </div>
+
+    <div class="finding">
+      <div class="finding-top"><span class="tag p2">P2</span><span class="status-tag">verificeret</span><span class="finding-title">Azure-upload-fejl efterlader status uændret</span></div>
+      <div class="finding-body"><p>Ved upload-fejl rejses en fejl uden at sætte dokumentets WMS-status til en fejltilstand → genforsøg kan ikke skelnes.</p></div>
+      <details class="tech"><summary>Vis teknisk detalje</summary><div class="tech-body">
+        <p><code>RoboStoreExportFunctions.Codeunit.al:75-79</code>: <code>error(GetLastErrorText())</code> uden at sætte <code>WMS Status</code>. Sæt status til "Failed"/lignende før fejlen rejses, og overvej retry/backoff.</p>
+      </div></details>
+    </div>
+
+    <div class="finding">
+      <div class="finding-top"><span class="tag p2">P2</span><span class="status-tag">verificeret</span><span class="finding-title">Lot-opslag på SSCC antager første match</span></div>
+      <div class="finding-body"><p>Ved blank lotnummer vælges det første lot blindt, selv hvis flere lots matcher samme SSCC.</p></div>
+      <details class="tech"><summary>Vis teknisk detalje</summary><div class="tech-body">
+        <p><code>ProcessWMSImport.Codeunit.al:488</code>: <code>LotNoInformation.FindFirst()</code> på Item+SSCC. Sikr unik SSCC→Lot-mapping og log tvetydige tilfælde.</p>
+      </div></details>
+    </div>
+
+    <div class="finding">
+      <div class="finding-top"><span class="tag p2">P2</span><span class="status-tag">verificeret</span><span class="finding-title">Silo-/sample-postering sluger fejl pr. linje</span></div>
+      <div class="finding-body"><p>Fejl pr. linje vises kun som en besked (eller slet ikke) og logges ikke vedvarende, så delvise fejl ikke kan fejlsøges.</p></div>
+      <details class="tech"><summary>Vis teknisk detalje</summary><div class="tech-body">
+        <p><code>SiloConsumptionMgt.Codeunit.al:240-243</code> og <code>LabelAppImportPallet.Codeunit.al:169</code> (<code>if not …Insert(true) then;</code>). Log til en fejltabel med kontekst (item, lot, ordre).</p>
+      </div></details>
+    </div>
+  </section>
+
+  <!-- ============ SECTION 5 ============ -->
+  <section class="section" id="s5">
+    <div class="section-header"><div class="section-icon">5</div><h2>Baggrunds-/Job Queue-sikkerhed</h2></div>
+    <p class="intro">Flere integrations- og posteringsstier kan køre fra Job Queue, webhook eller anden ikke-GUI-kontekst, men indeholder <code>Message()</code>/<code>Confirm()</code>/<code>Sleep()</code>. <code>Message</code>/<code>Confirm</code> uden <code>GuiAllowed()</code>-guard fejler eller hænger i baggrunden.</p>
+
+    <div class="finding">
+      <div class="finding-top"><span class="tag p2">P2</span><span class="status-tag pattern">gennemgående</span><span class="finding-title">Message/Confirm uden GuiAllowed() i baggrundskode</span></div>
+      <div class="finding-body"><p>Brugerdialog i kode der kan køre i baggrunden bør pakkes i et GUI-tjek eller erstattes med logning.</p></div>
+      <details class="tech"><summary>Vis teknisk detalje</summary><div class="tech-body">
+        <p>Fx <code>ReleaseSalesDocSubscribers.Codeunit.al:29</code>, <code>OEEProdOrderService</code> (<code>StoreResult</code>), dele af <code>ManualWhseImportFunction</code>. Wrap i <code>if GuiAllowed() then …</code> eller erstat med <code>ErrorInfo</code>/logning. Bemærk: <code>SiloConsumptionMgt.Codeunit.al:242</code> gør det allerede korrekt — brug som mønster.</p>
+      </div></details>
+    </div>
+
+    <div class="finding">
+      <div class="finding-top"><span class="tag p2">P2</span><span class="status-tag">verificeret</span><span class="finding-title">Sleep(1000) i forretningslogik</span></div>
+      <div class="finding-body"><p>En hardcodet pause mellem e-mail-afsendelser blokerer brugeren og fejler i batch.</p></div>
+      <details class="tech"><summary>Vis teknisk detalje</summary><div class="tech-body">
+        <p><code>ShippingAgentReportMgt.Codeunit.al:83,179</code>. Fjern <code>Sleep</code> og stol på asynkron afsendelse, eller brug en kø-/event-mekanisme.</p>
+      </div></details>
+    </div>
+  </section>
+
+  <!-- ============ SECTION 6 ============ -->
+  <section class="section" id="s6">
+    <div class="section-header"><div class="section-icon">6</div><h2>Nummerserier &amp; samtidighed</h2></div>
+    <p class="intro">Flere steder allokeres nye nøgler/numre via <code>FindLast() + 1</code> i stedet for <code>No. Series</code>. Det er ikke samtidighedssikkert (to brugere kan få samme nummer) og omgår standard-nummerserie-logikken.</p>
+
+    <div class="finding">
+      <div class="finding-top"><span class="tag p2">P2</span><span class="status-tag">verificeret</span><span class="finding-title">SSCC-reservationspost allokerer Entry No. via FindLast()+1</span></div>
+      <div class="finding-body"><p>Trods tabel-lås er der race mellem <code>FindLast()</code> og <code>Insert()</code>.</p></div>
+      <details class="tech"><summary>Vis teknisk detalje</summary><div class="tech-body">
+        <p><code>SSCCPickRegistration.Page.al:130-133</code>. Brug en <code>No. Series</code> eller sikr korrekt isolation.</p>
+      </div></details>
+    </div>
+
+    <div class="finding">
+      <div class="finding-top"><span class="tag p2">P2</span><span class="status-tag">verificeret</span><span class="finding-title">Modtagelseskontrol-nr. via FindLast()+1 uden dubletkontrol</span></div>
+      <div class="finding-body"><p>Inkrementerer uden at tjekke om der allerede findes en modtagelse for indkøbsordren → muligt dublet.</p></div>
+      <details class="tech"><summary>Vis teknisk detalje</summary><div class="tech-body">
+        <p><code>ReceivingManagement.Codeunit.al:17-31</code> (<code>CreateModtagelsesKontrol</code>). Brug nummerserie + eksistenstjek.</p>
+      </div></details>
+    </div>
+
+    <div class="finding">
+      <div class="finding-top"><span class="tag p3">P3</span><span class="status-tag">verificeret</span><span class="finding-title">CreateLots kaldes uafhængigt af lot-styring</span></div>
+      <div class="finding-body"><p>Lot-poster oprettes uden at tjekke om varen er lot-styret, så ikke-lot-varer får spurious lots.</p></div>
+      <details class="tech"><summary>Vis teknisk detalje</summary><div class="tech-body">
+        <p><code>ReceivingManagement.Codeunit.al:35-45</code>: tjek <code>Item</code> lot-tracking-opsætning før der oprettes lot-poster.</p>
+      </div></details>
+    </div>
+  </section>
+
+  <!-- ============ SECTION 7 ============ -->
+  <section class="section" id="s7">
+    <div class="section-header"><div class="section-icon">7</div><h2>Performance</h2></div>
+    <p class="intro">Mindre, men nemme gevinster. Ingen er kritiske, men de optimerer hyppigt kørende stier.</p>
+
+    <div class="finding">
+      <div class="finding-top"><span class="tag p3">P3</span><span class="status-tag pattern">gennemgående</span><span class="finding-title">Manglende/forkert SetLoadFields</span></div>
+      <div class="finding-body"><p>Inkonsistent brug af <code>SetLoadFields</code>. Bemærk: påstande om at koden ikke kompilerer her er afvist ved verifikation — det er en stilistisk inkonsistens.</p></div>
+      <details class="tech"><summary>Vis teknisk detalje</summary><div class="tech-body">
+        <p>Fx <code>SalesLineSubscribers.Codeunit.al:166</code>. <code>SetLoadFields("Kg. Per Bag", Item."Bag Per Pallet")</code> i <code>OutputJnlExplRouteEvents.Codeunit.al:78</code> er gyldigt — bland blot ikke streng-feltnavn og kvalificeret feltreference.</p>
+      </div></details>
+    </div>
+
+    <div class="finding">
+      <div class="finding-top"><span class="tag p3">P3</span><span class="status-tag pattern">gennemgående</span><span class="finding-title">CalcFields i løkke / redundant CalcFields</span></div>
+      <div class="finding-body"><p>FlowFields beregnes unødigt inde i løkker eller gentages. Beregn uden for løkken eller fjern hvor unødvendigt.</p></div>
+      <details class="tech"><summary>Vis teknisk detalje</summary><div class="tech-body">
+        <p>Fx <code>ReplanProdOrder.Report.al:27,34</code>, <code>BarcodeManagement.Codeunit.al:540-543,554-557</code>, <code>StartStopSnail.Table.al:39</code> (redundant <code>CalcFields</code> på FlowFields i <code>OnValidate</code>). Brug <code>SetLoadFields</code> hvor felter alligevel læses enkeltvis.</p>
+      </div></details>
+    </div>
+  </section>
+
+  <!-- ============ SECTION 8 ============ -->
+  <section class="section" id="s8">
+    <div class="section-header"><div class="section-icon">8</div><h2>Lokalisering &amp; UX</h2></div>
+    <p class="intro">Brugervendte tekster og fejlbeskeder bør være konsistente, oversættbare og kontekstrige.</p>
+
+    <div class="finding">
+      <div class="finding-top"><span class="tag p2">P2</span><span class="status-tag pattern">gennemgående</span><span class="finding-title">Hardcodede danske brugervendte strenge</span></div>
+      <div class="finding-body"><p>Labels ligger direkte i koden i stedet for som oversættbare <code>Label</code>s.</p></div>
+      <details class="tech"><summary>Vis teknisk detalje</summary><div class="tech-body">
+        <p>Fx i Truck-siderne (<code>TrucktoTransferOrder.Page.al</code>, <code>TrucktoSalesOrder.Page.al</code>): <code>'Vil du flytte hentet antal (%1) ?'</code>. Sørg for at alle tekster er <code>Label</code>s og dækket i <code>Translations/Cronus.da-DK.xlf</code> (kør <code>/claude4bc:update-translations</code>).</p>
+      </div></details>
+    </div>
+
+    <div class="finding">
+      <div class="finding-top"><span class="tag p2">P2</span><span class="status-tag pattern">gennemgående</span><span class="finding-title">Fejl uden kontekst eller navigation</span></div>
+      <div class="finding-body"><p>Mange fejl mangler hvilken record der fejlede. Brug <code>ErrorInfo</code> med record-nr. og evt. navigationshandling.</p></div>
+      <details class="tech"><summary>Vis teknisk detalje</summary><div class="tech-body">
+        <p>Fx <code>OperationListProduction.Page.al:529,552</code>, operations-rapport-tabellernes <code>Error5000xLbl</code>-serie. Brug <code>ErrorInfo</code> med <code>AddNavigationAction</code> (mønster som i demoens <code>TogglUser.GetFromUserID</code>).</p>
+      </div></details>
+    </div>
+
+    <div class="finding">
+      <div class="finding-top"><span class="tag p3">P3</span><span class="status-tag pattern">gennemgående</span><span class="finding-title">Manglende ToolTip på custom-felter</span></div>
+      <div class="finding-body"><p>Mange custom-felter mangler <code>ToolTip</code>/<code>Caption</code> for konsistent brugerhjælp.</p></div>
+      <details class="tech"><summary>Vis teknisk detalje</summary><div class="tech-body">
+        <p>Mange felter på <code>SalesHeader.TableExt.al</code> / <code>SalesLine.TableExt.al</code> (50000-serien) og <code>RawMaterialPackLINJE-B.Table.al</code>.</p>
+      </div></details>
+    </div>
+
+    <div class="finding">
+      <div class="finding-top"><span class="tag p3">P3</span><span class="status-tag">verificeret</span><span class="finding-title">Stavefejl i tekster</span></div>
+      <div class="finding-body"><p>Flere brugervendte tekster har stavefejl. Ret labels og opdatér XLIFF.</p></div>
+      <details class="tech"><summary>Vis teknisk detalje</summary><div class="tech-body">
+        <p><code>UserSetup.TableExt.al:18,25,32,39,44</code> (<code>'Specfies …'</code> → <code>'Specifies …'</code>), <code>PurchaseLine.TableExt.al:91</code> (<code>'… must be orderes …'</code> → <code>'… ordered …'</code>), <code>SalesLine.TableExt.al:49</code> (<code>'%2is'</code> → <code>'%2 is'</code>).</p>
+      </div></details>
+    </div>
+  </section>
+
+  <!-- ============ SECTION 9 ============ -->
+  <section class="section" id="s9">
+    <div class="section-header"><div class="section-icon">9</div><h2>Teknisk gæld — dødt/obsolet kode</h2></div>
+    <p class="intro">Markeret-til-sletning kode er stadig aktivt, og der mangler enkelte namespaces og en samlet plan for refaktor-TODO'er.</p>
+
+    <div class="finding">
+      <div class="finding-top"><span class="tag p2">P2</span><span class="status-tag todo">TODO i kode</span><span class="finding-title">Obsolet kode markeret til sletning er stadig aktivt</span></div>
+      <div class="finding-body"><p>Flere objekter er markeret som "slet dette" men kører stadig. Beslut: fjern (med <code>[Obsolete]</code>/upgrade-step) eller fjern TODO'en med begrundelse.</p></div>
+      <details class="tech"><summary>Vis teknisk detalje</summary><div class="tech-body">
+        <p><code>AdjustOutputMgt.Codeunit.al:3</code> + <code>AdjustOutputWizard.Page.al:8</code>, <code>CreateOutputPallet.XmlPort.al:10</code>, <code>ItemVendor.TableExt.al:1</code>, <code>Item.TableExt.al:87</code>.</p>
+      </div></details>
+    </div>
+
+    <div class="finding">
+      <div class="finding-top"><span class="tag p2">P2</span><span class="status-tag">verificeret</span><span class="finding-title">Manglende namespace-deklaration</span></div>
+      <div class="finding-body"><p>Et objekt mangler namespace i en ellers konsekvent navngivet kodebase.</p></div>
+      <details class="tech"><summary>Vis teknisk detalje</summary><div class="tech-body">
+        <p><code>UndoSalesShptLineEvents.Codeunit.al:1</code>. Tilføj for konsistens og at undgå navnekonflikter.</p>
+      </div></details>
+    </div>
+
+    <div class="finding">
+      <div class="finding-top"><span class="tag p3">P3</span><span class="status-tag todo">TODO i kode</span><span class="finding-title">Udbredt refactor-TODO + pragma warning disable</span></div>
+      <div class="finding-body"><p>Næsten alle layout-rapporter undertrykker advarsler med en refaktor-TODO. Lav ét fælles oprydningsspor.</p></div>
+      <details class="tech"><summary>Vis teknisk detalje</summary><div class="tech-body">
+        <p><code>SalesInvoiceCronus</code>, <code>SalesCreditMemoCronus</code>, <code>ReminderCronus</code>, <code>BSOrderConfirmation</code>, <code>PurchaseOrder</code>, <code>FinanceChargeMemo</code>, <code>StatementCronus</code>, <code>SalesQuoteCronus</code> undertrykker <code>AL0667</code>/<code>AA0206</code>.</p>
+      </div></details>
+    </div>
+
+    <div class="finding">
+      <div class="finding-top"><span class="tag p3">P3</span><span class="status-tag todo">TODO i kode</span><span class="finding-title">"Ping Pong DLL"-TODO'er i ledger-/liste-sider</span></div>
+      <div class="finding-body"><p>Referencer til en legacy DotNet-løsning der ikke kan køre i Cloud. Afklar om de er døde eller skal erstattes.</p></div>
+      <details class="tech"><summary>Vis teknisk detalje</summary><div class="tech-body">
+        <p>Fx <code>ConsumptionProdOrder.Page.al:26</code>, <code>ProducedItemLots2LINJE-A/LINJE-B/LINJE-C.Page.al</code>, <code>ConsumedItemsFilter1/2/3.Page.al</code>, <code>LINJE-BList.Page.al:20</code>, <code>LINJE-CList.Page.al:15</code>, <code>LINJE-DList.Page.al:12</code>, <code>BSBooking.Report.al:572</code>.</p>
+      </div></details>
+    </div>
+
+    <div class="finding">
+      <div class="finding-top"><span class="tag p3">P3</span><span class="status-tag todo">TODO i kode</span><span class="finding-title">Udkommenteret kode og uafklarede TODO-spørgsmål</span></div>
+      <div class="finding-body"><p>Flere uafklarede TODO-spørgsmål og udkommenteret kode bør afklares eller fjernes.</p></div>
+      <details class="tech"><summary>Vis teknisk detalje</summary><div class="tech-body">
+        <p><code>TrucktoTransferOrder.Page.al:139</code> (<code>//TODO: hvad skal der ske her?</code>), <code>SalesOrderSubform.PageExt.al:214</code>, <code>PostedTransferCMR.Report.al:92-458</code> (udkommenterede kolonner/sprogvalg), <code>ReceiveLines.Table.al:994,1034</code>.</p>
+      </div></details>
+    </div>
+  </section>
+
+  <!-- ============ SECTION 10 ============ -->
+  <section class="section" id="s10">
+    <div class="section-header"><div class="section-icon">10</div><h2>Datamodel &amp; dokumentation</h2></div>
+    <p class="intro">Mindre konsistensforbedringer i datamodellen for compliance-klarhed og vedligeholdelse.</p>
+
+    <div class="finding">
+      <div class="finding-top"><span class="tag p3">P3</span><span class="status-tag">verificeret</span><span class="finding-title">Manglende DataClassification på felter</span></div>
+      <div class="finding-body"><p>Flere felter mangler eksplicit <code>DataClassification</code> selvom tabel-headeren sætter den — tilføj pr. felt for GDPR/compliance-klarhed.</p></div>
+      <details class="tech"><summary>Vis teknisk detalje</summary><div class="tech-body">
+        <p><code>RawMaterialPackLINJE-B.Table.al</code> (felter 8-88).</p>
+      </div></details>
+    </div>
+
+    <div class="finding">
+      <div class="finding-top"><span class="tag p3">P3</span><span class="status-tag">verificeret</span><span class="finding-title">Inkonsistent felt-/parameternavngivning</span></div>
+      <div class="finding-body"><p>Snail-tabellerne bruger skiftevis forskellige navne for samme begreb. Standardisér på tværs af Operation-modulet.</p></div>
+      <details class="tech"><summary>Vis teknisk detalje</summary><div class="tech-body">
+        <p>Snart <code>Start</code>, snart <code>StartTime</code> for felt 80; parametre hedder skiftevis <code>pLineNo</code>/<code>LineNumber</code>/<code>inLineNo</code>.</p>
+      </div></details>
+    </div>
+  </section>
+
+  <!-- ============ ORDER ============ -->
+  <section class="section" id="order">
+    <div class="section-header"><div class="section-icon">★</div><h2>Foreslået rækkefølge (quick wins først)</h2></div>
+    <ol class="order">
+      <li><strong>Operation LINJE-A-fejl (§1)</strong> — højeste korrekthedsrisiko, isolerede rettelser. Verificér hele LINJE-A-mappen.</li>
+      <li><strong>Integrationsrobusthed (§4)</strong> — <code>exit</code>→<code>continue</code> i Azure-import, fejltjek på posterings-<code>Run</code>, OEE-tjenesten HTTP-status, EDI-grænsetjek. Forhindrer datatab og hængende jobs.</li>
+      <li><strong>Defensiv Get()/FindFirst() (§2)</strong> — slå AA0175 til, ryd op via fælles setup-getters.</li>
+      <li><strong>Hardcodede templates/grupper (§3)</strong> — flyt til setup-tabel; rydder samtidig en stor del af <code>// TODO DEV-1</code>-gælden.</li>
+      <li><strong>Baggrundssikkerhed &amp; nummerserier (§5, §6)</strong> — gør integrationsstier Job Queue-sikre.</li>
+      <li><strong>Lokalisering, UX, teknisk gæld (§7–§10)</strong> — løbende oprydning; kør <code>/claude4bc:update-translations</code> til sidst.</li>
+    </ol>
+    <div class="note"><strong>Metodenote:</strong> Fundene stammer fra en modulopdelt gennemgang af alle 563 <code>.al</code>-filer. <span class="status-tag">verificeret</span> = læst direkte i koden. <span class="status-tag pattern">gennemgående</span> = mønstre med flere forekomster, hvor de nævnte linjer er repræsentative. Flere automatisk rapporterede "kompilerer ikke"-påstande blev <strong>afvist ved verifikation</strong> og er udeladt; appen kompilerer.</div>
+  </section>
+
+</div>
+
+<footer>
+  <strong>Cronus Base App v27.0.0.10</strong> — Forbedringsanbefalinger udarbejdet juni 2026 · opdateret juli 2026 · Fuld gennemgang af 563 AL-objekter
+</footer>
+
+<script>
+(function () {
+  'use strict';
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ── Smooth in-page scrolling ── */
+  document.querySelectorAll('a[href^="#"]').forEach(function (link) {
+    link.addEventListener('click', function (e) {
+      var id = link.getAttribute('href').slice(1);
+      var target = id && document.getElementById(id);
+      if (!target) return;
+      e.preventDefault();
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if (history.replaceState) history.replaceState(null, '', '#' + id);
+    });
+  });
+
+  /* ── Scroll-spy: highlight current section in TOC ── */
+  var tocLinks = Array.prototype.slice.call(document.querySelectorAll('.toc a[href^="#"]'));
+  if (tocLinks.length && 'IntersectionObserver' in window) {
+    var byId = {};
+    tocLinks.forEach(function (l) { byId[l.getAttribute('href').slice(1)] = l; });
+    var spy = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        var link = byId[entry.target.id];
+        if (link && entry.isIntersecting) {
+          tocLinks.forEach(function (l) { l.classList.remove('active'); });
+          link.classList.add('active');
+        }
+      });
+    }, { rootMargin: '0px 0px -75% 0px', threshold: 0 });
+    tocLinks.forEach(function (l) {
+      var sec = document.getElementById(l.getAttribute('href').slice(1));
+      if (sec) spy.observe(sec);
+    });
+  }
+
+  /* ── Expand / collapse all accordions ── */
+  var details = Array.prototype.slice.call(document.querySelectorAll('details.tech'));
+  if (details.length > 1) {
+    var container = document.querySelector('.container');
+    var toc = document.querySelector('.toc');
+    var allOpen = false;
+    var toggle = document.createElement('button');
+    toggle.type = 'button';
+    toggle.className = 'expand-all-btn';
+    toggle.textContent = 'Fold alle tekniske detaljer ud';
+    toggle.addEventListener('click', function () {
+      allOpen = !allOpen;
+      details.forEach(function (d) { d.open = allOpen; });
+      toggle.textContent = allOpen ? 'Fold alle tekniske detaljer ind' : 'Fold alle tekniske detaljer ud';
+    });
+    var firstSection = document.querySelector('.section');
+    if (firstSection) container.insertBefore(toggle, firstSection);
+    else if (toc && toc.nextSibling) container.insertBefore(toggle, toc.nextSibling);
+  }
+
+  /* ── Back-to-top button ── */
+  var toTop = document.createElement('button');
+  toTop.type = 'button';
+  toTop.className = 'to-top-btn';
+  toTop.setAttribute('aria-label', 'Til toppen');
+  toTop.textContent = '↑';
+  toTop.addEventListener('click', function () { window.scrollTo({ top: 0, behavior: 'smooth' }); });
+  document.body.appendChild(toTop);
+  window.addEventListener('scroll', function () {
+    toTop.classList.toggle('visible', window.scrollY > 400);
+  }, { passive: true });
+
+  /* ── Reading-progress bar ── */
+  var progress = document.createElement('div');
+  progress.className = 'reading-progress';
+  document.body.appendChild(progress);
+  function updateProgress() {
+    var docEl = document.documentElement;
+    var scrolled = docEl.scrollTop || document.body.scrollTop;
+    var height = docEl.scrollHeight - docEl.clientHeight;
+    progress.style.width = (height > 0 ? (scrolled / height) * 100 : 0) + '%';
+  }
+  window.addEventListener('scroll', updateProgress, { passive: true });
+  updateProgress();
+
+  /* ── Scroll-reveal + count-up (opt-in via <body class="fx">) ── */
+  var wantsFx = document.body.classList.contains('fx');
+
+  function countUp(el) {
+    var target = parseFloat(el.getAttribute('data-countup'));
+    if (isNaN(target)) return;
+    var dur = 1100, start = null;
+    function step(ts) {
+      if (start === null) start = ts;
+      var p = Math.min((ts - start) / dur, 1);
+      el.textContent = String(Math.round(target * p));
+      if (p < 1) requestAnimationFrame(step); else el.textContent = String(target);
+    }
+    requestAnimationFrame(step);
+  }
+
+  if (wantsFx && !reduceMotion && 'IntersectionObserver' in window) {
+    document.body.classList.add('js-fx');
+    var revObserver = new IntersectionObserver(function (entries, obs) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add('in-view');
+        obs.unobserve(entry.target);
+        var counters = entry.target.querySelectorAll('[data-countup]');
+        for (var i = 0; i < counters.length; i++) countUp(counters[i]);
+      });
+    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
+    document.querySelectorAll('.section, .legend, .toc').forEach(function (s) { revObserver.observe(s); });
+  } else {
+    document.querySelectorAll('[data-countup]').forEach(function (el) {
+      el.textContent = el.getAttribute('data-countup');
+    });
+  }
+
+  /* Header stats are above the fold — count them up on load */
+  if (!reduceMotion) {
+    document.querySelectorAll('header [data-countup]').forEach(countUp);
+  }
+})();
+</script>
+
+</body>
+</html>
