@@ -34,7 +34,7 @@ Claude4BC/
     themes/                ← Tema-katalog: layouts/skins (classic, minimal, editorial, bold, landing)
   docs/
     bc-dev-setup-guide.html ← Komplet guide til opsætning af BC-udviklingsmiljø
-    Sådan anvendes Html guide.html ← Sådan bruges website-kommandoerne (build, create-css, theme, init, update-index) + temaer
+    Sådan anvendes Claude4BC.html ← Fuld brugerguide til alle kommandoer (website, AL-objekter, AL-analyse) + temaer
   .mcp.json                ← MCP-konfiguration (BC MCP Server m.fl.)
   CLAUDE.md                ← Fælles Claude Code kontekst
   update-claude4bc.ps1     ← Opdatér submodulet til seneste version (PowerShell)
@@ -42,7 +42,7 @@ Claude4BC/
 
 ## Kom godt i gang
 
-> 🚀 **Start her — komplet miljøopsætning:** [BC Dev Setup Guide](docs/bc-dev-setup-guide.html) er en omfattende guide til at sætte hele BC-udviklingsmiljøet op (MCP-servere, AL-LSP, BC MCP OAuth, hooks, Claude Code i AL-Go-pipelines og token-optimering) — med interaktivt vars-panel og setup-checkliste. `docs/Sådan anvendes Html guide.html` dækker derimod website-kommandoerne (`website-build`, `website-create-css`, `website-theme`, `website-init`, `website-update-index`) — herunder hvordan du vælger tema/layout.
+> 🚀 **Start her — komplet miljøopsætning:** [BC Dev Setup Guide](docs/bc-dev-setup-guide.html) er en omfattende guide til at sætte hele BC-udviklingsmiljøet op (MCP-servere, AL-LSP, BC MCP OAuth, hooks, Claude Code i AL-Go-pipelines og token-optimering) — med interaktivt vars-panel og setup-checkliste. `docs/Sådan anvendes Claude4BC.html` er derimod den fulde brugerguide til alle bundtets kommandoer — website/dokumentation, AL-objekter og AL-analyse — herunder hvordan du vælger tema/layout.
 
 Værktøjet er et delt git-submodul, der virker som et **Claude Code-plugin** — du skal derfor **ikke kopiere filer manuelt**. Følg de to trin herunder, så er du i gang; resten af opsætningen (initialisér site, brandfarver, byg guides) er beskrevet i den fulde vejledning.
 
@@ -54,7 +54,7 @@ Værktøjet er et delt git-submodul, der virker som et **Claude Code-plugin** �
 
 2. **Genstart Claude Code.** Mappen indeholder en `plugin.json`, så den loades automatisk som pluginnet `claude4bc`, og kommandoerne `/claude4bc:…` dukker op i listen over slash-kommandoer.
 
-> 📖 **Fuld vejledning:** Se [Sådan anvendes Html guide](docs/Sådan%20anvendes%20Html%20guide.html) — afsnit **»4 · Kom i gang i et nyt projekt«** gennemgår de resterende trin (`/website-init`, `/website-create-css`, `/website-build`, `/website-update-index`) samt forskellen på submodul og plugin.
+> 📖 **Fuld vejledning:** Se [Sådan anvendes Claude4BC](docs/Sådan%20anvendes%20Claude4BC.html) — afsnit **»3 · Kom i gang i et nyt projekt«** gennemgår de resterende trin (`/website-init`, `/website-create-css`, `/website-build`, `/website-update-index`) samt forskellen på submodul og plugin.
 
 ---
 
