@@ -59,9 +59,27 @@
   .nav{flex:1; overflow-y:auto; padding:6px 12px 24px}
   .nav-group{margin-top:14px}
   .nav-group-title{
-    font-size:11px; font-weight:700; letter-spacing:.07em; text-transform:uppercase;
+    width:100%; font-size:11px; font-weight:700; letter-spacing:.07em; text-transform:uppercase;
     color:var(--gray-400); padding:6px 12px 6px;
+    background:none; border:0; font-family:inherit; text-align:left;
   }
+  .nav-group-title .chev{display:none}
+  /* Accordion-tilstand — slås til via SIDEBAR_ACCORDION (tilføjer .acc til .nav) */
+  .nav.acc .nav-group{margin-top:4px}
+  .nav.acc .nav-group-title{
+    display:flex; align-items:center; gap:8px; padding:9px 12px;
+    color:var(--gray-700); cursor:pointer; user-select:none; border-radius:8px;
+    transition:background .12s,color .12s;
+  }
+  .nav.acc .nav-group-title:hover{background:var(--brand-subtle); color:var(--brand-dark)}
+  .nav.acc .nav-group-title .grp-label{flex:1; min-width:0}
+  .nav.acc .nav-group-title .chev{display:flex; flex:0 0 auto; color:var(--gray-400); transition:transform .18s ease}
+  .nav.acc .nav-group.open>.nav-group-title{color:var(--brand-dark)}
+  .nav.acc .nav-group.open>.nav-group-title .chev{transform:rotate(90deg); color:var(--brand-mid)}
+  .nav.acc .nav-group-items{display:none; padding-left:6px}
+  .nav.acc .nav-group.open>.nav-group-items{display:block}
+  .nav.acc.searching .nav-group-items{display:block}
+  .nav.acc.searching .nav-group-title .chev{transform:rotate(90deg)}
   .nav a{
     display:block; padding:9px 12px; margin:2px 0; border-radius:8px;
     font-size:13.5px; font-weight:500; color:var(--gray-700);
@@ -200,6 +218,14 @@ const LOCALES = [
   // === LOCALES:END ===
 ];
 
+/* Sidebar som accordion: grupper kan foldes sammen/ud.
+   false = alle grupper altid udfoldet (standard). true = sammenfoldelige grupper.
+   Værdien bevares af /website-update-index (sættes ikke tilbage til standard). */
+const SIDEBAR_ACCORDION =
+  // === ACCORDION:START — true/false; bevares af /website-update-index. ===
+  false;
+  // === ACCORDION:END ===
+
 const navEl   = document.getElementById('nav');
 const frame   = document.getElementById('frame');
 const crumb   = document.getElementById('crumb');
@@ -210,25 +236,42 @@ const body    = document.body;
 const flat = [];
 NAV.forEach(g => g.items.forEach(it => flat.push({ ...it, group: g.group })));
 
-/* Build sidebar */
+/* Build sidebar (samme DOM uanset tilstand; SIDEBAR_ACCORDION styrer adfærd via .acc) */
 NAV.forEach(g => {
   const grp = document.createElement('div');
   grp.className = 'nav-group';
   grp.dataset.group = g.group;
-  const t = document.createElement('div');
+  const t = document.createElement('button');
+  t.type = 'button';
   t.className = 'nav-group-title';
-  t.textContent = g.group;
+  t.setAttribute('aria-expanded', 'false');
+  const label = document.createElement('span');
+  label.className = 'grp-label';
+  label.textContent = g.group;
+  const chev = document.createElement('span');
+  chev.className = 'chev';
+  chev.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>';
+  t.appendChild(label);
+  t.appendChild(chev);
   grp.appendChild(t);
+  const itemsWrap = document.createElement('div');
+  itemsWrap.className = 'nav-group-items';
   g.items.forEach(it => {
     const a = document.createElement('a');
     a.textContent = it.title;
     a.dataset.path = it.path;
     a.dataset.search = (g.group + ' ' + it.title).toLowerCase();
     a.href = '#' + encodeURIComponent(it.path);
-    grp.appendChild(a);
+    itemsWrap.appendChild(a);
+  });
+  grp.appendChild(itemsWrap);
+  t.addEventListener('click', () => {
+    const open = grp.classList.toggle('open');
+    t.setAttribute('aria-expanded', open ? 'true' : 'false');
   });
   navEl.appendChild(grp);
 });
+if (SIDEBAR_ACCORDION) navEl.classList.add('acc');
 const emptyMsg = document.createElement('div');
 emptyMsg.className = 'empty';
 emptyMsg.textContent = 'Ingen sider matcher søgningen.';
@@ -245,6 +288,16 @@ function show(path, push) {
   document.title = entry.title + ' · {{SITE_TITLE}}';
   navEl.querySelectorAll('a').forEach(a =>
     a.classList.toggle('active', a.dataset.path === entry.path));
+  // udfold gruppen med den aktive side (kun synlig effekt i accordion-tilstand)
+  const activeLink = navEl.querySelector('a.active');
+  if (activeLink) {
+    const ag = activeLink.closest('.nav-group');
+    if (ag) {
+      ag.classList.add('open');
+      const bt = ag.querySelector('.nav-group-title');
+      if (bt) bt.setAttribute('aria-expanded', 'true');
+    }
+  }
   if (push && location.hash.slice(1) !== encodeURIComponent(entry.path))
     location.hash = encodeURIComponent(entry.path);
   if (body.classList.contains('nav-open')) closeNav();
@@ -295,6 +348,7 @@ function buildIndex() {
 }
 
 function applyFilter(q) {
+  navEl.classList.toggle('searching', !!q);
   let visible = 0;
   navEl.querySelectorAll('.nav-group').forEach(grp => {
     let groupHits = 0;
