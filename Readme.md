@@ -21,6 +21,8 @@ Claude4BC/
     al-userdocs.md         ← AL-kildemappe → dansk slutbruger-dokumentation (.md, uden kode)
     al-techdocs.md         ← AL-kildemappe (+ evt. spec) → teknisk dansk dokumentation (.md, med kode/layouts)
     al-analyse.md          ← AL-app-mappe (analyse-repo) → dansk kodekvalitets-analyse (Analyse-<AppNavn>.md)
+  bcquality-custom/
+    knowledge/             ← Egne (partner-/kunde-) kvalitetsregler; vinder over BCQuality-klonens community/microsoft-lag
     al-analyse-claude-init.md ← Analyse-repo (downloadet AL-kilde) → CLAUDE.md på engelsk til Claude Code
   html-guide/
   pdf-build/

@@ -44,10 +44,16 @@ ikke Claude Codes `SKILL.md`-format, og skal ikke ind i skill-auto-discovery).
    > **BCQuality** (Microsoft, MIT) ligger som submodule i `<sti>` — en
    > maskinlæsbar kvalitets-vidensbase for BC/AL. Ved code review og
    > kvalitetsanalyse (fx `/c4bc:al-analyse`): start i `<sti>/skills/entry.md`
-   > (dispatch til action-skills) og slå konkrete regler op i lagene
-   > `microsoft/` → `community/` → `custom/` (mest autoritative først).
+   > (dispatch til action-skills) og slå konkrete regler op med precedensen
+   > claude4bc-submodulets `bcquality-custom/knowledge/` → klonens `community/`
+   > → `microsoft/` (mest autoritative først).
 
    Findes ingen CLAUDE.md, udelades dette trin (nævn det i rapporten).
+
+   > ⚠️ **Egne politikker:** Læg partner-/kundespecifikke regler i
+   > **claude4bc-submodulets `bcquality-custom/knowledge/`** — IKKE i klonens
+   > `custom/`-mappe. Klonen skal holdes ren, så den kan følge Microsofts repo
+   > uden fork eller lokale ændringer.
 
 4. **Commit** ændringerne i værtsprojektet (`.gitmodules`, submodule-pointeren og
    evt. CLAUDE.md) med beskeden `Add BCQuality knowledge base as submodule` —
