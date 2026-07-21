@@ -612,6 +612,7 @@ body { display: block; }
     <div class="nav-group">
       <div class="nav-group-title">Website &amp; dokumentation</div>
       <a href="#website">Byg HTML-vejledninger</a>
+      <a class="sub" href="#website-flow">Arbejdsgangen</a>
       <a class="sub" href="#design">Design, farver og temaer</a>
       <a class="sub" href="#portal">Portal &amp; publicering</a>
       <a class="sub" href="#pdf">Saml til PDF</a>
@@ -748,7 +749,24 @@ body { display: block; }
       <div class="section-icon">🌐</div>
       <h2>4 · Website &amp; dokumentation</h2>
     </div>
-    <p>Kernen er <code>/c4bc:website-build</code>, der konverterer en markdown-brugervejledning til en professionel, selvstændig HTML-fil med projektets farvepalette og designsystem:</p>
+    <h3 id="website-flow">Arbejdsgangen — hvad kører jeg hvornår?</h3>
+    <p>Kommandoerne falder i to grupper: <strong>engangsopsætning</strong> af projektet og det <strong>gentagne flow</strong>, hver gang du har nyt eller ændret indhold. Rækkefølgen er:</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>&nbsp;</th><th>Trin</th><th>Kommando</th><th>Hvornår</th></tr></thead>
+        <tbody>
+          <tr><td rowspan="3"><strong>🔧 Opsætning</strong></td><td>1</td><td><code>/c4bc:website-init</code></td><td><strong>Én gang</strong> pr. projekt — opretter <code>.website/</code>-strukturen</td></tr>
+          <tr><td>2</td><td><code>/c4bc:website-create-css &lt;url&gt;</code></td><td><strong>Én gang</strong> — henter kundens brandfarver (tilføj evt. <code>--theme</code>)</td></tr>
+          <tr><td>3</td><td><code>/c4bc:website-theme</code> · <code>/c4bc:website-github-init-deploy</code></td><td><em>Valgfrit</em> — skift layout / opsæt GitHub Pages-publicering</td></tr>
+          <tr><td rowspan="3"><strong>🔁 Gentages</strong></td><td>4</td><td><code>/c4bc:website-build &lt;md&gt;</code></td><td><strong>Hver gang</strong> du har nye/ændrede markdown-vejledninger</td></tr>
+          <tr><td>5</td><td><code>/c4bc:website-update-index</code></td><td><strong>Hver gang</strong> efter build — opdaterer portal-menuen</td></tr>
+          <tr><td>6</td><td><code>/c4bc:pdf-build</code></td><td><em>Ved behov</em> — samler sitet til én PDF</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="info-box"><strong>Kort sagt:</strong> Du starter <em>ikke</em> med <code>/c4bc:website-build</code> — den forudsætter, at trin 1-2 er kørt én gang, så design og mappestruktur er på plads. Første gang i et nyt projekt? Følg trinnene i <a href="#kom-i-gang">afsnit 3 · Kom i gang</a>, som også dækker selve plugin-installationen.</div>
+
+    <p>Kernen i det gentagne flow er <code>/c4bc:website-build</code>, der konverterer en markdown-brugervejledning til en professionel, selvstændig HTML-fil med projektets farvepalette og designsystem:</p>
     <ul class="bullets">
       <li><code>/c4bc:website-build &lt;fil.md&gt;</code> — én fil bliver til én HTML i <strong>samme mappe</strong> med samme navn.</li>
       <li><code>/c4bc:website-build &lt;fil1.md&gt; &lt;fil2.md&gt; …</code> — flere filer samles til <strong>ét</strong> dokument (i den angivne rækkefølge).</li>
