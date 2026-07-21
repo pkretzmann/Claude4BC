@@ -20,6 +20,8 @@ Claude4BC/
     al-sort-usings.md      ← Sortér using-direktiver alfabetisk i alle .al-filer
     al-userdocs.md         ← AL-kildemappe → dansk slutbruger-dokumentation (.md, uden kode)
     al-techdocs.md         ← AL-kildemappe (+ evt. spec) → teknisk dansk dokumentation (.md, med kode/layouts)
+    al-analyse.md          ← AL-app-mappe (analyse-repo) → dansk kodekvalitets-analyse (Analyse-<AppNavn>.md)
+    al-analyse-claude-init.md ← Analyse-repo (downloadet AL-kilde) → CLAUDE.md på engelsk til Claude Code
   html-guide/
   pdf-build/
     build-pdf.mjs          ← Generator: .website-HTML → samlet PDF (Playwright + pdf-lib)
@@ -123,6 +125,34 @@ Det **tekniske modstykke** til `/al-userdocs`: læser en AL-kildemappe (og evt. 
 ```
 
 Krydsreferér kode mod specen (bekræfter layouts; gør afvigelser eksplicitte). En teknisk side bygges **ikke** med `/website-build` (den stripper kode) — følg i stedet kommandoens *Teknisk HTML*-opskrift (inline `styles.css`/`script.js` ordret, Mermaid → `.fc-node`) og kør derefter `/website-update-index`.
+
+---
+
+### `/al-analyse-claude-init [projektrod] ['per-app' [app-mapper…]]`
+Dan eller opdatér en **CLAUDE.md på engelsk** for et **analyse-repo** — en samling downloadet/dekompileret AL-kilde fra publicerede BC-apps (flade filer, underscore-navne, tom `.alpackages`). Udleder indholdet af `app.json`-filerne og koden: repo-type, app-oversigtstabel i afhængighedsorden, 3–6 hovedområder pr. app, eksterne afhængigheder, analyse-begrænsninger og konventioner — og afslutter med en `@`-import af submodulets fælles CLAUDE.md (husregler), så de loades på projektniveau. Med nøgleordet **`per-app`** dannes desuden lokale CLAUDE.md-filer i de store app-mapper.
+
+**Eksempler:**
+```
+/al-analyse-claude-init
+/al-analyse-claude-init C:\AL\Soya
+/al-analyse-claude-init C:\AL\Soya per-app
+```
+
+Idempotent — findes der en CLAUDE.md i forvejen, bevares håndskrevet prosa og kun udledelige fakta synkroniseres. Almindelige udviklingsprojekter er **ikke** kommandoens opgave (den advarer og stopper); de får senere deres egen variant.
+
+---
+
+### `/al-analyse [app-mappe] [sprog]`
+Dan eller opdatér en **kodekvalitets-analyse** (`Analyse-<AppNavn>.md` i projektroden) af én downloadet/dekompileret AL-app i et analyse-repo: hvad appen løser, filstruktur pr. funktionsområde, arkitektur-/dataflow-diagram, fund pr. fil på fast alvorlighedsskala (🔴/🟠/🟡) med linjereferencer og fix-forslag, samlet vurdering og prioriteret handlingsliste. Store apps analyseres områdevis af parallelle agenter; referencer til afhængige apps, hvis kilde ligger i repoet, efterprøves mod faktisk kode. Kører autonomt; output er dansk medmindre andet sprog angives.
+
+**Eksempler:**
+```
+/al-analyse "Soya Special Handling_twoday_1.0.20250625.3"
+/al-analyse "Twoday Shopify Extension_twoday_1.0.20260701.1" english
+/al-analyse
+```
+
+Uden argument analyseres alle app-mapper uden eksisterende `Analyse-*.md`, og eksisterende analyser opdateres idempotent (daterede rettelser, nye fund og et §6 "Efterprøvning mod nu tilgængelig kildekode").
 
 ---
 
