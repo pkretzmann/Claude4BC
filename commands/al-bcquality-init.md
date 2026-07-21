@@ -60,6 +60,10 @@ ikke Claude Codes `SKILL.md`-format, og skal ikke ind i skill-auto-discovery).
 
 ## Vedligehold
 
-Opdatering til nyeste BCQuality sker med **`/c4bc:al-bcquality-update`**, som
-trækker nyeste version, opsummerer hvad der er ændret i vidensbasen og committer
-den nye pointer.
+Opdatering til nyeste BCQuality sker med scriptet
+**`${CLAUDE_PLUGIN_ROOT}/update-bcquality.ps1`** (samme mønster som
+`update-claude4bc.ps1`): viser status og ændringerne siden din version
+(commit-liste + berørte filer pr. lag), spørger om bekræftelse og kører derefter
+`submodule update --remote` + commit + push. Kør det fra en terminal:
+`.\.claude\skills\claude4bc\update-bcquality.ps1` (evt. med
+`-SubmodulePath <sti>`, hvis submodulet ligger et andet sted).
