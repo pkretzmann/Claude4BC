@@ -30,11 +30,17 @@ Side-scriptet (`html-guide/script.js`) er **delt** og inlines uændret af `/webs
 
 Alle temaer skal style nøjagtigt de klasser `/website-build` udsender — uændrede navne:
 
-`header`/`.header-badge`/`.header-pills`/`.pill`, `.container`, `nav.toc`,
+`header`/`.header-badge`/`.header-pills`/`.pill`, `.stats`/`.stat` (`.num`/`.lbl`),
+`.container`, `nav.toc`, `.exec` (`.exec-eyebrow`/`.verdict`),
 `.section`/`.section-header`/`.section-icon`, `h2`–`h4`, `.steps`/`.sub-steps`,
 `.note`, `.info-box`, `<table>`/`thead`/`tbody`/`.num`, `.badge-ok`/`.status-tag`/`.type-tag`/`.day-tag`,
-`dl.tech`, `<details>`/`<summary>`, `.flowchart`/`.fc-node`(`.start`/`.decision`/`.action`/`.end`)/`.fc-arrow`,
+`.tag.p1`/`.tag.p2`/`.tag.p3` (+ `--p1..p3(-bg)`-tokens),
+`dl.tech`, `<details>`/`<summary>`, `details.tech`/`.tech-body` (foldbar teknisk detalje),
+`.flowchart`/`.fc-node`(`.start`/`.decision`/`.action`/`.end`)/`.fc-arrow`,
 `.sysflow*`, `code`/`pre`, og de JS-injicerede `.toc a.active`/`.copy-btn`/`.expand-all-btn`/`.to-top-btn`/`.reading-progress`/`.doc-search`/`mark.search-hit`/`.js-fx .section`.
+
+**Bemærk:** `.stat .num` skal sætte `text-align: left`, da tabel-klassen `.num`
+(højrestillede talkolonner) ellers rammer stat-tallene.
 
 **Kritisk step-regel (alle temaer):** brug **aldrig** `display:flex` på selve `<li>` i
 `.steps`/`.sub-steps` (det kollapser et flerlinjet trin til ét ord pr. linje). Brug
