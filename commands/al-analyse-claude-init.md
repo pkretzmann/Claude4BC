@@ -90,6 +90,13 @@ skal **ikke** indeholde build-, test- eller kodestils-instruktioner.
    8. **Pointers** — én linje om c4bc-dokumentationskommandoerne / `.website`-sitet,
       hvis det findes, samt **eksisterende analysedokumenter** i roden (fx
       `Analyse-*.md`).
+   9. **AL Quality Knowledge** — findes BCQuality-submodulet (typisk
+      `.claude/bcquality`, tjek `.gitmodules`), tilføj et kort afsnit: start i
+      `<sti>/skills/entry.md` (dispatch til action-skills) og slå regler op i
+      lagene `microsoft/` → `community/` → `custom/`; vidensområderne ligger pr.
+      lag (fx `microsoft/knowledge/performance/`, `security/`, `data-modeling/`,
+      `error-handling/`, `style/`). Findes submodulet ikke, udelades afsnittet
+      (installation: `/al-bcquality-init`).
 
    **Skrivestil:** koncis og skimbar; kun fakta Claude ikke selv billigt kan udlede;
    ingen tutorial-prosa; gentag ikke hvad en filliste alligevel viser.
