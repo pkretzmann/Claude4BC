@@ -46,12 +46,23 @@ For hver fundet side:
   `Warehouse/Jungheinrich/Spærring og synkronisering med Jungheinrich.html`.
 - **`group`** = den **øverste undermappe** i stien (fx `Warehouse`). Ligger siden direkte i
   sprogmappen, brug gruppen `"Generelt"`.
+  - **Visningsnavn:** strip et evt. ledende talpræfiks fra mappenavnet (`^\d+[.\-)]\s*`), så
+    mappen `1. Integrationer` vises som `Integrationer` i menuen. Præfikset bruges kun til
+    sortering (trin 4). `path` bruger naturligvis det **rå** mappenavn.
 - **`title`** = en kort, læsbar titel. Tag den fra sidens `<header>`-`<h1>` (foretrukket), ellers
   fra `<title>` (fjern et evt. site-suffiks som `" · …"` eller `" — …"`). Hold den kortfattet.
 
 ### 4. Sortér
-- Grupper i alfabetisk rækkefølge.
-- Sider inden for en gruppe i naturlig orden (så "Step 0", "Step 1", … "Step 10" er korrekt).
+- **Grupper:** findes filen `.website/<sprog>/.nav-order`, så kommer de grupper, der er nævnt i
+  den, **først** — i filens rækkefølge. Øvrige grupper følger efter i alfabetisk orden (på det
+  **rå** mappenavn, så et evt. talpræfiks også styrer fallback-ordenen). Uden `.nav-order`:
+  alle grupper alfabetisk.
+  - **`.nav-order`-format:** plain text (UTF-8), ét **gruppemappenavn** (råt, som på disken) pr.
+    linje i ønsket rækkefølge. Linjer der starter med `#` er kommentarer; tomme linjer ignoreres.
+  - Linjer der ikke matcher nogen eksisterende gruppemappe ignoreres, men nævnes i rapporten
+    (trin 8), så stavefejl/omdøbte mapper opdages.
+  - Filen starter med `.`, så den er hverken en side (trin 2) eller et sprog (trin 1).
+- **Sider** inden for en gruppe i naturlig orden (så "Step 0", "Step 1", … "Step 10" er korrekt).
 
 ### 5. Byg NAV-array'et
 Generér JavaScript med **2-mellemrums indrykning**, præcis dette format:
@@ -165,7 +176,8 @@ Hold redirect-sidens sprogliste i sync med de sprogmapper, der faktisk findes i 
 
 ### 8. Rapportér
 Vis en kort oversigt **pr. sprog**: antal sider fundet, grupper, og hvad der er
-**tilføjet/fjernet/omdøbt** i forhold til den tidligere NAV-liste. Nævn desuden, om
+**tilføjet/fjernet/omdøbt** i forhold til den tidligere NAV-liste. Nævn om gruppe-rækkefølgen
+kom fra en `.nav-order`-fil, og list evt. linjer i den, der ikke matchede nogen gruppemappe. Nævn desuden, om
 rod-redirectens sprogliste blev opdateret (og til hvilke sprog/standardsprog), om portalernes
 sprogvælger-liste (`LOCALES`) blev synkroniseret (og for hvilke portaler markørerne manglede, så de
 skal gendannes fra skabelonen), og om portalernes brandfarver blev synkroniseret fra
@@ -175,6 +187,9 @@ mangler).
 ## Vigtigt
 
 - Hver portals **NAV-liste er et genereret artefakt** — rediger den ikke i hånden; kør kommandoen igen.
+- **Gruppe-rækkefølgen** styres med en `.nav-order`-fil i sprogmappen (anbefalet — ingen mapper
+  skal omdøbes) eller med et talpræfiks på gruppemappen (`1. Integrationer`); præfikset vises
+  **ikke** i menuen. Uden nogen af delene sorteres grupperne alfabetisk.
 - Portalens *layout/opførsel* (sidebar-struktur, søgning, routing) ændres i skabelonen —
   projekt-ejet `<.website>/.portal-template.html` hvis den findes (lagt af et struktur-tema via
   `/website-theme`), ellers den delte `${CLAUDE_PLUGIN_ROOT}/html-guide/portal.html` — **ikke** i
