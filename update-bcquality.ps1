@@ -73,6 +73,17 @@ Write-Host ""
 Write-Host "Opdaterer submodul..." -ForegroundColor Cyan
 git submodule update --remote $SubmodulePath
 
+# Genbyg vidensindekset, saa det matcher den nye klon (BCQualitys entry-protokol
+# kraever et indeks over klonen som den ser ud nu — et foraeldet indeks er en
+# korrekthedsrisiko).
+$indexScript = Join-Path $fullSubmodulePath "tools/Build-KnowledgeIndex.ps1"
+if (Test-Path $indexScript) {
+    Write-Host "Genbygger knowledge-index.json..." -ForegroundColor Cyan
+    Push-Location $fullSubmodulePath
+    pwsh $indexScript | Out-Null
+    Pop-Location
+}
+
 Write-Host "Committer..." -ForegroundColor Cyan
 git add $SubmodulePath
 git commit -m "Bump BCQuality to latest"
