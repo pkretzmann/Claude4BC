@@ -7,6 +7,13 @@ argument-hint: "<fil.md | \"fil1.md\" \"fil2.md\" | mappe>"
 
 Konverter en markdown-brugervejledning til en professionel, interaktiv HTML-fil med projektets farvepalette og designsystem (CSS i `.website/styles.css` med fald-tilbage til `${CLAUDE_PLUGIN_ROOT}/html-guide/styles-default.css`, JavaScript i `${CLAUDE_PLUGIN_ROOT}/html-guide/script.js`).
 
+**Dokumentstruktur — samme opbygning som analyse-skabelonen**
+(`${CLAUDE_PLUGIN_ROOT}/al-analyse/Analyse-Skabelon.html`): **header med badge, titel,
+pills og stat-strip (oversigtstal) → indholdsfortegnelse → executive summary →
+sektioner med kunderettet hovedtekst og tekniske detaljer som foldbare accordions →
+footer**. Kun CSS'en er en anden (projektets/website-designsystemet, ikke
+editorial-temaet).
+
 ## Brug
 
 ```
@@ -56,9 +63,10 @@ Når der gives flere filer eller en mappe, samles alt til **ét** sammenhængend
   mappenavnet), med badge/pills der opsummerer guiden.
 - **Dubletter:** hvis flere filer gentager samme afsnit (fx "Hardware-opsætning"), beholdes de pr.
   gruppe for læsbarhed. Findes en oversigtsfil (fx Step 0), samler den typisk dette i forvejen.
-- **End-user-reglerne gælder på tværs af alle samlede filer** — se "Ingen kode i dokumentationen"
-  nedenfor. Tekniske "AL-objekter"-tabeller, objekt-/codeunit-/tabel-ID'er og kodeblokke udelades i
-  hele den samlede HTML, uanset hvilken kildefil de stammer fra.
+- **Kunderettet-reglerne gælder på tværs af alle samlede filer** — se "Kunderettet hovedtekst —
+  teknik som accordion" nedenfor. Tekniske "AL-objekter"-tabeller, objekt-/codeunit-/tabel-ID'er
+  og kodeblokke flyttes til foldbare `details.tech`-accordions i deres sektion, uanset hvilken
+  kildefil de stammer fra.
 
 ## Multi-side-tilstand (én side pr. emne → `.website/<sprog>`)
 
@@ -90,10 +98,12 @@ Regler (forskelle fra "ét dokument"):
   (udelades hvis `.website/favicon.svg` ikke findes — se *Favicon*).
 - **Ingen samlet header/TOC/footer på tværs** (modsat ét-dokument-tilstanden). Portalen fra
   `/website-update-index` leverer cross-side-navigationen.
+- **Executive summary og stat-strip lægges på oversigtssiden** (første side/gruppe, typisk
+  "Kom godt i gang"/Step 0) — ikke pr. side. `details.tech`-reglen gælder derimod **alle** sider.
 - **Krydsside-links undgås:** referencer mellem siderne skrives som **tekst** ("se afsnittet
   Opsætning → Knyt data"), ikke som hyperlinks — siderne loades i portalens iframe, og relative
   fil-links på tværs af gruppemapper er skrøbelige. Interne ankre **på samme side** er fine.
-- **End-user-/ingen-kode-reglerne gælder uændret** på hver side.
+- **Kunderettet-/accordion-reglerne gælder uændret** på hver side.
 - **Efterbehandling:** bed brugeren køre `/website-update-index` bagefter for at bygge portalens menu og
   opdatere rod-redirectens sprogliste.
 
@@ -187,6 +197,9 @@ Sitet har et fælles ikon, `favicon.svg`, som ligger i **roden af `.website/`** 
 - **Sektioner**: Hvide kort med let blå-grå skygge og afrundede hjørner (12px)
 - **Tabeller**: Mørk navy header-række, zebra-stribet body, hover-highlight
 - **Nummererede trin**: Cirkel-numre i brandfarve, lys baggrund. **Layout-regel (vigtig — håndhæves allerede af `styles.css`):** Brug **ikke** `display: flex` på selve `<li>` i `.steps`/`.sub-steps`. Flex gør hvert tekststykke og hvert inline-element til separate flex-items på én linje, så et trin der fylder mere end én linje kollapser til ét ord pr. linje. Brug i stedet `position: relative` på `<li>` med `padding-left` til at give plads, og placér cirkel-nummeret/pilen med `position: absolute` i venstre margen. Så flyder teksten normalt og ombrydes pænt over flere linjer. Reglerne scopes med child-combinator (`.steps > li`, ikke `.steps li`), så en `.sub-steps` nestet inde i et trin **ikke** arver nummercirklen og lægger sig oven i sin egen tekst.
+- **Stat-strip i header** (`.stats` > `.stat` med `.num` og `.lbl`): 2–4 guide-relevante oversigtstal (fx emner, trin, moduler, rapporter). Giv `.num` `data-countup="<tal>"` og skriv slutværdien som elementets tekst, så no-JS viser den.
+- **Executive summary** (`.exec` med `id="exec"`): placeres **efter TOC, før første sektion**. Indhold: `.exec-eyebrow` (fx "Kort fortalt"), overskrift, 1–3 afsnit om hvad guiden dækker og de vigtigste pointer for læseren, evt. punktliste, og en afsluttende `.verdict`-boks med den samlede anbefaling. Skrives kunderettet — ingen kode- eller objekt-referencer. TOC'ens første punkt linker til `#exec`.
+- **Teknisk detalje-accordion** (`details.tech`): `<summary>Vis teknisk detalje</summary>` + `<div class="tech-body">…</div>` nederst i den sektion detaljerne hører til — foldet ind som standard. Script'ets "Fold alle ud/ind"-knap virker automatisk på dem.
 - **Flowdiagrammer**: HTML-bokse (IKKE ASCII-art), brug `.fc-node`, `.fc-node.start`, `.fc-node.decision`, `.fc-node.action`, `.fc-node.end`
 - **To-system data-flow-diagram** (`.sysflow`): til at vise data der flyder **mellem to systemer**. To `.sysflow-node`-bokse med en `.sysflow-wires`-søjle imellem; hver `.sysflow-wire` (`.to-right`/`.to-left`) har en `.sysflow-label` + fire `<i class="dot">`, hvor prikkerne glider langs wiren (ren CSS, ingen JS). Diagrammet er **dekorativt** — sæt `aria-hidden="true"` og hav den tilsvarende tabel/tekst tæt på. Eksempel:
   ```html
@@ -228,10 +241,11 @@ CSS hentes **altid** fra `.website/styles.css` — eller fald-tilbage-filen
   </style>
 </head>
 <body>
-  <header> … </header>
+  <header> … badge, titel, pills + <div class="stats"> … </div> … </header>
   <div class="container">
     <nav class="toc"> … </nav>
-    <div class="section" id="…"> … </div>
+    <div class="exec" id="exec"> … executive summary + .verdict … </div>
+    <div class="section" id="…"> … evt. <details class="tech"> … </details> … </div>
     …
   </div>
   <footer> … </footer>
@@ -246,15 +260,23 @@ CSS hentes **altid** fra `.website/styles.css` — eller fald-tilbage-filen
 
 Vejledningerne er skrevet til **slutbrugere** — ikke udviklere. Sproget skal være handlingsorienteret og lettilgængeligt.
 
-## Ingen kode i dokumentationen
+## Kunderettet hovedtekst — teknik som accordion
 
-- **Aldrig** inkludere kodeblokke (```` ```...``` ````), AL-kode, SQL, JSON eller lignende teknisk kode i den genererede HTML
+Hovedteksten er til **slutbrugere** og skal kunne læses uden teknisk viden. Tekniske data
+slettes ikke — de foldes ind (mønstret fra analyse-skabelonen):
+
+- **Hovedteksten** indeholder **aldrig** kodeblokke (```` ```...``` ````), AL-kode, SQL, JSON
+  eller objekt-/codeunit-/tabel-ID'er
 - Feltnavne og systemnavne fremhæves med `<strong>` (eller skrives i en tabel) — **ikke** som `<code>`-elementer. `<strong>` ombrydes pænt i løbende tekst og lister, mens inline `<code>` har `white-space: nowrap` og kan bryde flerlinjet layout. (Dette er mønstret fra `Siloforbrugssporing.html`.) `strong { font-weight: 600 }` er allerede sat i `styles.css`, så fremhævningen ikke virker for tung, når teksten ombrydes over flere linjer
-- Referencer til codeunits, tabelnumre og objektnavne udelades — de er irrelevante for brugeren
-- Hvis kilden (markdown-filen) indeholder kodeblokke, **ignoreres de** eller omskrives til et brugervenligt handlingstrin
-- Tekniske detaljer-sektioner (feltnumre, codeunit-ID'er, tabel-ID'er) medtages **ikke** i HTML-outputtet, medmindre de har direkte brugerværdi (f.eks. rapport-ID en bruger skal indtaste)
-- "AL-objekter"-tabeller (kolonner som Objekt / ID / Fil) udelades **altid**
-- Ved multi-fil/mappe-tilstand gælder disse regler **på tværs af alle samlede kildefiler** — teknisk indhold fjernes uanset hvilken fil det stammer fra
+- **Tekniske detaljer bevares som foldbar accordion:** "AL-objekter"-tabeller (Objekt/ID/Fil),
+  felt-/tabel-/codeunit-ID'er og nødvendige kodeuddrag fra kilden lægges i en
+  `details.tech`-accordion (`<summary>Vis teknisk detalje</summary>` + `.tech-body`)
+  **nederst i den sektion, de hører til** — foldet ind som standard. Inde i `.tech-body`
+  er `<code>` og små tabeller tilladt
+- Har en teknisk detalje direkte brugerværdi (fx et rapport-ID brugeren skal indtaste),
+  må den gerne stå i hovedteksten
+- Rene støj-artefakter (tomme kodeblokke, udkommenteret kode, dubletter) udelades fortsat
+- Ved multi-fil/mappe-tilstand gælder disse regler **på tværs af alle samlede kildefiler**
 
 ## Regler for konvertering fra markdown
 
@@ -266,11 +288,12 @@ Vejledningerne er skrevet til **slutbrugere** — ikke udviklere. Sproget skal v
 | `> **Vigtigt:**` | `.note` box |
 | `> Info` | `.info-box` |
 | ASCII flowchart (```...```) | Rigtige `.flowchart` HTML-bokse |
-| Kodeblok (```al / ```js osv.) | **Udelades** — omskriv til klartekst hvis nødvendigt |
+| Kodeblok (```al / ```js osv.) | `details.tech`-accordion i sektionen — omskriv til klartekst i hovedteksten, hvis indholdet er brugerrelevant |
 | FAQ-sektion | `<details>`/`<summary>` accordion |
-| Tekniske detaljer (feltnumre, obj-ID) | **Udelades** |
-| "AL-objekter"-tabel (Objekt/ID/Fil) | **Udelades** |
-| Flere kildefiler / en mappe | Ét dokument med fælles header/TOC/footer; hver fil = sektionsgruppe; AL-objekt-tabeller udelades |
+| Tekniske detaljer (feltnumre, obj-ID) | `details.tech`-accordion nederst i sektionen |
+| "AL-objekter"-tabel (Objekt/ID/Fil) | `details.tech`-accordion nederst i sektionen |
+| Indledning/resumé (eller afled selv) | `.exec` executive summary efter TOC |
+| Flere kildefiler / en mappe | Ét dokument med fælles header/TOC/footer; hver fil = sektionsgruppe; AL-objekt-tabeller som `details.tech` |
 | Mappe → `.website/<sprog>` (multi-side) | Én selvstændig side pr. emne i gruppemapper; per-side header/TOC/footer; bind sammen med `/website-update-index` |
 
 ## Påkrævet indhold
@@ -281,8 +304,10 @@ Alle HTML-filer skal indeholde:
 - Google Fonts Inter-import
 - Hele indholdet af `.website/styles.css` (eller fald-tilbage `${CLAUDE_PLUGIN_ROOT}/html-guide/styles-default.css`) indsat ordret i `<style>`
 - Hele indholdet af `${CLAUDE_PLUGIN_ROOT}/html-guide/script.js` indsat ordret i `<script>` lige før `</body>`
-- `<header>` med gradient, badge, titel og pills
-- `<nav class="toc">` med indholdsfortegnelse
+- `<header>` med gradient, badge, titel, pills **og stat-strip** (`.stats` med 2–4 oversigtstal)
+- `<nav class="toc">` med indholdsfortegnelse (første punkt → `#exec`)
+- **Executive summary** (`.exec` med `id="exec"`) efter TOC, før første sektion
+- Tekniske detaljer fra kilden som `details.tech`-accordions i deres sektioner (se "Kunderettet hovedtekst — teknik som accordion")
 - `<footer>` med firmanavn og dato
 
 ## Sprog
