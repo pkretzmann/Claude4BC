@@ -60,7 +60,6 @@ ikke Claude Codes `SKILL.md`-format, og skal ikke ind i skill-auto-discovery).
 
 ## Vedligehold
 
-Opdatering til nyeste BCQuality sker med
-`git submodule update --remote <sti>` + commit af den nye pointer — det kan gøres
-manuelt eller ved at køre denne kommando igen med ordet `update` i `$ARGUMENTS`
-(så kører trin 1's opdatering med `--remote`).
+Opdatering til nyeste BCQuality sker med **`/c4bc:al-bcquality-update`**, som
+trækker nyeste version, opsummerer hvad der er ændret i vidensbasen og committer
+den nye pointer.
