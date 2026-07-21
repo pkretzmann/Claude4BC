@@ -92,10 +92,13 @@ skal **ikke** indeholde build-, test- eller kodestils-instruktioner.
       `Analyse-*.md`).
    9. **AL Quality Knowledge** — findes BCQuality-submodulet (typisk
       `.claude/bcquality`, tjek `.gitmodules`), tilføj et kort afsnit: start i
-      `<sti>/skills/entry.md` (dispatch til action-skills) og slå regler op i
-      lagene `microsoft/` → `community/` → `custom/`; vidensområderne ligger pr.
-      lag (fx `microsoft/knowledge/performance/`, `security/`, `data-modeling/`,
-      `error-handling/`, `style/`). Findes submodulet ikke, udelades afsnittet
+      `<sti>/skills/entry.md` (dispatch til action-skills) og slå regler op med
+      precedensen **claude4bc-submodulets `bcquality-custom/knowledge/`** →
+      klonens `community/` → `microsoft/`; vidensområderne ligger pr. lag (fx
+      `microsoft/knowledge/performance/`, `security/`, `data-modeling/`,
+      `error-handling/`, `style/`). Partner-/kundepolitikker bor i claude4bc
+      (`bcquality-custom/`), IKKE i BCQuality-klonen, som holdes ren mod
+      Microsofts repo. Findes BCQuality-submodulet ikke, udelades afsnittet
       (installation: `/al-bcquality-init`).
 
    **Skrivestil:** koncis og skimbar; kun fakta Claude ikke selv billigt kan udlede;
