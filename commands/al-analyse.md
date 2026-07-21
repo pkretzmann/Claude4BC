@@ -66,6 +66,14 @@ foreslået rækkefølge (quick wins først).
      selv kun oprydning. Opgradér kun prioriteten, hvis konteksten konkret viser
      **stille fejl** (felter læses fra en tom record, forkerte tal uden fejl, data
      skrives videre) eller andet udtrykkeligt er angivet.
+   - **Fix-forslag skal være gyldig AL.** AL har **ingen** `try/catch/finally`-blokke,
+     **intet** `using`-statement til oprydning (kun namespace-direktiv) og **ingen**
+     `async/await`. Foreslå i stedet: returværdi-tjek (`if not Evaluate(...) then`,
+     `if Rec.Get(...) then`), `[TryFunction]` + `GetLastErrorText()`,
+     `if Codeunit.Run(...) then`, `ErrorInfo`/`TestField`. Garanteret oprydning
+     formuleres som **ubetinget nulstilling i kalderen efter Try-kaldet** (husk:
+     SingleInstance-state ruller ikke tilbage med transaktionen). Baggrundskørsel
+     foreslås som Job Queue / `StartSession` / Page Background Task — ikke "async".
    - Hvert fund har: kort brugervendt beskrivelse (hvad betyder det i drift) og en
      foldbar teknisk detalje med objekt-/linjereferencer og et konkret fix-forslag.
    - **Tjekliste** (minimum): ubeskyttede `Get`/`FindFirst` (→ P3, jf. ovenfor);
