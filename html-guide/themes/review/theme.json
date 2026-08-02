@@ -1,0 +1,15 @@
+{
+  "name": "review",
+  "label": "Executive Review",
+  "description": "Corporate technical-review look for code analysis reports: deep navy/slate base with a single decisive gold accent, Inter sans, white cards. Adds review-only components — an executive-summary callout, an overall verdict banner, a RAG-rated status dashboard (scorecards + KPI tiles) and full-bleed/breakout images that escape the reading column. Same class contract as themes/classic — only the look differs, plus the review components.",
+  "structure": "sidebar",
+  "preview": "Navy + gold · exec summary · RAG status dashboard · KPI tiles · full-bleed images",
+  "brandDefaults": {
+    "--brand-dark": "#1B2A41",
+    "--brand-mid": "#324A6D",
+    "--brand-light": "#5C7CA8",
+    "--brand-pale": "#E8EDF4",
+    "--brand-subtle": "#F4F7FB",
+    "--accent": "#C9A227"
+  }
+}

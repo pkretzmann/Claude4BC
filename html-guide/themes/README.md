@@ -54,6 +54,7 @@ Alle struktur-temaers `portal.html` skal bevare markørerne `BRAND:START/END`,
 | `editorial` | sidebar | Serif display-overskrifter, papir-baggrund, smal læsespalte (magasin). |
 | `bold` | sidebar | Gradient-hero, runde knapper, store kort m. skygge, høj kontrast. |
 | `landing` | top-nav | **Struktur-variant**: hero-forside + vandret top-nav + iframe (egen portal.html). |
+| `review` | sidebar | Navy + guld ledelses-look til **kode-review-rapporter** (`/al-code-review`): exec-summary, verdict-banner, RAG-status-dashboard (scorecards + KPI-fliser) og full-bleed/breakout-billeder. |
 
 Tilføj et nyt tema ved at oprette `themes/<navn>/` med `styles.css` + `theme.json`
 (og `portal.html` hvis strukturen afviger). Det dukker automatisk op i `/website-theme`.

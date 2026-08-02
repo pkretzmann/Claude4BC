@@ -17,16 +17,18 @@ Claude4BC/
     website-github-init-deploy.md ← Publicér .website til GitHub Pages via GitHub Actions
     pdf-build.md           ← Saml .website-sitet til én PDF-brugervejledning pr. sprog
     al-update-translations.md ← Opdatér XLIFF-oversættelsesfiler
+    al-code-review.md      ← Ledelses-teknisk kode-review (HTML+PDF) af et AL-repo via al-mcp
   html-guide/
   pdf-build/
     build-pdf.mjs          ← Generator: .website-HTML → samlet PDF (Playwright + pdf-lib)
+    build-report-pdf.mjs   ← Generator: ét selvstændigt rapport-HTML → branded PDF (til al-code-review)
     package.json           ← Afhængigheder til build-pdf (installeres lokalt, git-ignoreret)
     styles-default.css     ← Fuldt kanonisk fallback-stylesheet (neutralt brand)
     script.js              ← Standard JavaScript til HTML-guides (inkl. scroll-reveal-bevægelse)
     serve.py               ← Lokal no-cache dokumentationsserver (kopieres til .website/)
     portal.html            ← Kanonisk skabelon til dokumentationsportalen (index.html)
     build_pages.py         ← Hjælpescript til multi-side-tilstand (wrapper bodies → selvstændige sider)
-    themes/                ← Tema-katalog: layouts/skins (classic, minimal, editorial, bold, landing)
+    themes/                ← Tema-katalog: layouts/skins (classic, minimal, editorial, bold, landing, review)
   docs/
     bc-dev-setup-guide.html ← Komplet guide til opsætning af BC-udviklingsmiljø
     Sådan anvendes Html guide.html ← Sådan bruges website-kommandoerne (build, create-css, theme, init, update-index) + temaer
@@ -145,6 +147,20 @@ Danner **én samlet PDF pr. sprog** ud af `.website`-sitet: brandet forside + in
 ```
 
 Output: `<.website>/<sprog>/Brugervejledning.pdf` (da-DK) / `User Guide.pdf` (en-US). Kræver Node.js; afhængigheder installeres én gang i plugin'ets `pdf-build/` (git-ignoreret). Sprog uden `NAV`-array springes over.
+
+---
+
+### `/al-code-review [sti] [--lang en|da] [--no-images] [--out <mappe>]`
+Analyserer et Business Central AL-repo og danner et **ledelses-rettet teknisk kode-review** som selvstændig **HTML + PDF**: executive summary, samlet verdict-banner, et **RAG-bedømt status-dashboard** (fire scorecards + KPI-fliser) på tværs af *Code quality*, *Test coverage*, *Architecture & maintainability* og *Security & upgrade-readiness*, per-dimension fund, og prioriterede anbefalinger. Data hentes via **`al-mcp`** (`al_getdiagnostics`, `al_symbolsearch`, `al_symbolrelations`, `al_getpackagedependencies`) kombineret med en let filsystem-scanning. Illustrationer genereres med **Higgsfields** (kan slås fra med `--no-images`). Rapporten styles af det nye **`review`**-tema og kan placere billeder full-bleed/breakout uden for tekstspalten.
+
+**Eksempler:**
+```
+/al-code-review
+/al-code-review "EbroFrost Base App" --lang da
+/al-code-review --no-images --out docs/review
+```
+
+Output: `<out>/Code-Review-<app>-<dato>.html` + `.pdf` (+ `assets/`). Default `<out>` er `./code-review/`. PDF'en bygges med `pdf-build/build-report-pdf.mjs` (Playwright + pdf-lib, samme isolerede afhængigheder som `/pdf-build`). Findes projektets `.website/styles.css`, arves brandfarverne så rapporten matcher kundens identitet.
 
 ---
 
