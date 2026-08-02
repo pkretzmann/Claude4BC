@@ -37,6 +37,13 @@
   --success-bg:   #EEF4E6;
   --code-bg:      #2A2521;
   --code-text:    #EDE6DA;
+
+  --p1:           #A23B2E;   /* P1 — høj prioritet (muted brick) */
+  --p1-bg:        #F6E3DE;
+  --p2:           #9A6614;   /* P2 — meningsfuld (ochre)         */
+  --p2-bg:        #FBF0DC;
+  --p3:           #5C5346;   /* P3 — oprydning (ink/brown)       */
+  --p3-bg:        #EEE8DD;
 }
 
 /* ── Reset & base ── */
@@ -94,6 +101,14 @@ header p { font-size: 19px; color: var(--gray-700); font-style: italic; font-wei
   color: var(--gray-700);
 }
 
+/* ── Stat-strip — serif figures with hairline separators ── */
+.stats { display: flex; flex-wrap: wrap; gap: 0; margin-top: 30px; border-top: 1px solid var(--gray-200); border-bottom: 1px solid var(--gray-200); }
+.stat { flex: 1 1 130px; padding: 18px 22px 18px 0; border-right: 1px solid var(--gray-200); }
+.stat + .stat { padding-left: 22px; }
+.stat:last-child { border-right: none; }
+.stat .num { font-family: 'Playfair Display', Georgia, serif; font-size: 38px; font-weight: 700; line-height: 1; color: var(--brand-dark); text-align: left; }
+.stat .lbl { font-size: 13px; font-style: italic; color: var(--gray-700); margin-top: 8px; }
+
 /* ── Layout — narrow measure for reading ── */
 .container { max-width: 760px; margin: 0 auto; padding: 48px 28px 80px; }
 
@@ -120,6 +135,18 @@ header p { font-size: 19px; color: var(--gray-700); font-style: italic; font-wei
 .toc li { margin-bottom: 7px; }
 .toc a { color: var(--brand-dark); text-decoration: none; font-size: 16px; font-style: italic; transition: color 0.15s; }
 .toc a:hover { color: var(--accent); }
+
+/* ── Executive summary ── */
+.exec { background: var(--brand-subtle); border: 1px solid var(--gray-200); border-left: 3px solid var(--accent); border-radius: 0; padding: 30px 34px; margin-bottom: 46px; }
+.exec .exec-eyebrow { font-size: 12px; text-transform: uppercase; letter-spacing: 0.2em; color: var(--brand-light); font-weight: 600; margin-bottom: 12px; }
+.exec h2 { font-family: 'Playfair Display', Georgia, serif; font-size: 30px; font-weight: 700; color: var(--brand-dark); line-height: 1.2; margin-bottom: 18px; }
+.exec h3 { font-family: 'Playfair Display', Georgia, serif; font-size: 20px; font-weight: 600; color: var(--brand-dark); margin: 22px 0 8px; }
+.exec p { margin-bottom: 14px; font-size: 17px; }
+.exec ul { margin: 6px 0 14px 22px; }
+.exec li { margin-bottom: 7px; }
+.exec .verdict { background: var(--note-bg); border-left: 3px solid var(--note-border); padding: 16px 20px; margin-top: 20px; font-size: 16.5px; }
+.exec .verdict strong { color: #9A6614; }
+@media (max-width: 640px) { .exec { padding: 24px 22px; } }
 
 /* ── Section — article block, hairline divider, no card ── */
 .section {
@@ -229,10 +256,29 @@ table code { white-space: nowrap; }
 .type-tag { display: inline-block; background: transparent; color: var(--gray-700); border: 1px solid var(--gray-200); border-radius: 2px; padding: 1px 8px; font-size: 12px; font-weight: 600; }
 .day-tag { display: inline-block; background: #FBF0DC; border: 1px solid #DDB158; border-radius: 2px; padding: 1px 7px; font-size: 12.5px; font-weight: 600; color: #9A6614; }
 
+/* ── Prioritets-tags (P1/P2/P3) — squared editorial badges ── */
+.tag { display: inline-block; border-radius: 2px; padding: 1px 9px; font-size: 12px; font-weight: 700; white-space: nowrap; letter-spacing: 0.06em; }
+.tag.p1 { background: var(--p1-bg); color: var(--p1); border: 1px solid #E3C3BB; }
+.tag.p2 { background: var(--p2-bg); color: var(--p2); border: 1px solid #DDB158; }
+.tag.p3 { background: var(--p3-bg); color: var(--p3); border: 1px solid var(--gray-200); }
+
 /* ── Tech-details grid ── */
 dl.tech { display: grid; grid-template-columns: 200px 1fr; gap: 8px 18px; margin: 18px 0; font-size: 16px; }
 dl.tech dt { font-weight: 600; color: var(--gray-700); }
 dl.tech dd { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 14px; color: var(--brand-dark); }
+
+/* ── Foldbar teknisk detalje (accordion) ── */
+details.tech { margin-top: 12px; border-top: 1px solid var(--gray-200); }
+details.tech > summary { cursor: pointer; list-style: none; padding: 9px 0; font-size: 13px; font-weight: 600; font-style: italic; color: var(--brand-light); letter-spacing: 0.04em; display: flex; align-items: center; gap: 9px; user-select: none; }
+details.tech > summary::-webkit-details-marker { display: none; }
+details.tech > summary::before { content: '＋'; font-size: 14px; font-weight: 700; font-style: normal; color: var(--accent); line-height: 1; }
+details.tech[open] > summary::before { content: '−'; }
+details.tech > summary:hover { color: var(--brand-dark); }
+.tech-body { padding: 2px 0 14px; font-size: 15.5px; color: var(--gray-700); animation: tech-open 0.25s ease; }
+.tech-body ul { margin: 8px 0 8px 20px; }
+.tech-body li { margin-bottom: 5px; }
+.tech-body p { margin-bottom: 8px; }
+@keyframes tech-open { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
 
 /* ── Note box — pull-quote feel ── */
 .note { background: var(--note-bg); border-left: 3px solid var(--note-border); border-radius: 0; padding: 16px 20px; margin: 22px 0; font-size: 16.5px; }
@@ -321,4 +367,6 @@ mark.search-hit { background: #F6E3B0; color: inherit; border-radius: 2px; paddi
   .to-top-btn, .copy-btn, .expand-all-btn, .reading-progress, .doc-search, .faq-no-results { display: none !important; }
   .sysflow-wire .dot { display: none !important; }
   .js-fx .section { opacity: 1 !important; transform: none !important; }
+  details.tech[open] .tech-body { display: block; }
+  details.tech > summary { color: #333; }
 }

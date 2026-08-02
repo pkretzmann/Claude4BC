@@ -1,6 +1,6 @@
 # Claude4BC
 
-Delt samling af Claude Code commands, HTML-guide og MCP-konfiguration til Business Central AL-projekter. Vedligeholdes ét sted og bruges på tværs af alle projekter via Git Submodule. Loades som et **in-place Claude Code-plugin** (`claude4bc@skills-dir`), så kommandoerne er tilgængelige med namespace `/claude4bc:*`.
+Delt samling af Claude Code commands, **BC-skills**, HTML-guide og MCP-konfiguration til Business Central AL-projekter. Vedligeholdes ét sted og bruges på tværs af alle projekter via Git Submodule. Loades som et **in-place Claude Code-plugin** (`claude4bc@skills-dir`), så kommandoerne er tilgængelige med namespace `/claude4bc:*` og skills aktiveres automatisk, når opgaven matcher.
 
 ## Indhold
 
@@ -17,31 +17,53 @@ Claude4BC/
     website-github-init-deploy.md ← Publicér .website til GitHub Pages via GitHub Actions
     pdf-build.md           ← Saml .website-sitet til én PDF-brugervejledning pr. sprog
     al-update-translations.md ← Opdatér XLIFF-oversættelsesfiler
+    al-sort-usings.md      ← Sortér using-direktiver alfabetisk i alle .al-filer
+    al-userdocs.md         ← AL-kildemappe → dansk slutbruger-dokumentation (.md, uden kode)
+    al-techdocs.md         ← AL-kildemappe (+ evt. spec) → teknisk dansk dokumentation (.md, med kode/layouts)
+    al-analyse.md          ← AL-app-mappe (analyse-repo) → dansk kodekvalitets-analyse (Analyse-<AppNavn>.md)
     al-code-review.md      ← Ledelses-teknisk kode-review (HTML+PDF) af et AL-repo via al-mcp
+    al-analyse-claude-init.md ← Analyse-repo (downloadet AL-kilde) → CLAUDE.md på engelsk til Claude Code
+    al-bcquality-init.md   ← Installér Microsofts BCQuality-vidensbase som submodule i .claude/bcquality
+    al-next-id.md          ← Find første ledige AL-objekt-ID for en objekttype (inden for app.json idRanges)
+    website-implement-language-selector.md ← Eftermontér sprogvælger i ældre portaler
+  skills/
+    bc-page-design/        ← Skill: design af BC-sider (List/Card/Document, actions, tooltip-regler)
+    bc-table-design/       ← Skill: design af BC-tabeller og table extensions (felter, nøgler, FlowFields)
+    al-testing/            ← Skill: AL-testcodeunits (Given/When/Then, handlers, libraries)
+    bc-extensibility/      ← Skill: events, posting-hooks, nummerserier, dimensioner, enums/interfaces
+  bcquality-custom/
+    knowledge/             ← Egne (partner-/kunde-) kvalitetsregler; vinder over BCQuality-klonens community/microsoft-lag
+  al-analyse/
+    Analyse-Skabelon.html  ← Kanonisk analyse-/rapportskabelon (bruges af al-analyse og website-build)
+    styles.css             ← Stylesheet til analyse-skabelonen (editorial-tema)
+  al-next-id/
+    next-id.ps1            ← Hjælpescript til /al-next-id (scanner .al-filer for brugte objekt-ID'er)
   html-guide/
+    portal.html            ← Kanonisk skabelon til dokumentationsportalen (index.html)
+    styles-default.css     ← Fuldt kanonisk fallback-stylesheet (neutralt brand)
+    script.js              ← Standard JavaScript til HTML-guides (inkl. scroll-reveal-bevægelse)
+    serve.py               ← Lokal no-cache dokumentationsserver (kopieres til .website/)
+    build_pages.py         ← Hjælpescript til multi-side-tilstand (wrapper bodies → selvstændige sider)
+    404.html               ← Standard 404-side til dokumentationssitet
+    themes/                ← Tema-katalog: layouts/skins (classic, minimal, editorial, bold, landing, review)
   pdf-build/
     build-pdf.mjs          ← Generator: .website-HTML → samlet PDF (Playwright + pdf-lib)
     build-report-pdf.mjs   ← Generator: ét selvstændigt rapport-HTML → branded PDF (til al-code-review)
     package.json           ← Afhængigheder til build-pdf (installeres lokalt, git-ignoreret)
-    styles-default.css     ← Fuldt kanonisk fallback-stylesheet (neutralt brand)
-    script.js              ← Standard JavaScript til HTML-guides (inkl. scroll-reveal-bevægelse)
-    serve.py               ← Lokal no-cache dokumentationsserver (kopieres til .website/)
-    portal.html            ← Kanonisk skabelon til dokumentationsportalen (index.html)
-    build_pages.py         ← Hjælpescript til multi-side-tilstand (wrapper bodies → selvstændige sider)
-    themes/                ← Tema-katalog: layouts/skins (classic, minimal, editorial, bold, landing, review)
   docs/
     bc-dev-setup-guide.html ← Komplet guide til opsætning af BC-udviklingsmiljø
-    Sådan anvendes Html guide.html ← Sådan bruges website-kommandoerne (build, create-css, theme, init, update-index) + temaer
+    Sådan anvendes Claude4BC.html ← Fuld brugerguide til alle kommandoer (website, AL-objekter, AL-analyse) + temaer
   .mcp.json                ← MCP-konfiguration (BC MCP Server m.fl.)
   CLAUDE.md                ← Fælles Claude Code kontekst
   update-claude4bc.ps1     ← Opdatér submodulet til seneste version (PowerShell)
+  update-bcquality.ps1     ← Opdatér BCQuality-klonen i .claude/bcquality (PowerShell)
 ```
 
 ## Kom godt i gang
 
-> 🚀 **Start her — komplet miljøopsætning:** [BC Dev Setup Guide](docs/bc-dev-setup-guide.html) er en omfattende guide til at sætte hele BC-udviklingsmiljøet op (MCP-servere, AL-LSP, BC MCP OAuth, hooks, Claude Code i AL-Go-pipelines og token-optimering) — med interaktivt vars-panel og setup-checkliste. `docs/Sådan anvendes Html guide.html` dækker derimod website-kommandoerne (`website-build`, `website-create-css`, `website-theme`, `website-init`, `website-update-index`) — herunder hvordan du vælger tema/layout.
+> 🚀 **Start her — komplet miljøopsætning:** [BC Dev Setup Guide](docs/bc-dev-setup-guide.html) er en omfattende guide til at sætte hele BC-udviklingsmiljøet op (MCP-servere, AL-LSP, BC MCP OAuth, hooks, Claude Code i AL-Go-pipelines og token-optimering) — med interaktivt vars-panel og setup-checkliste. `docs/Sådan anvendes Claude4BC.html` er derimod den fulde brugerguide til alle bundtets kommandoer — website/dokumentation, AL-objekter og AL-analyse — herunder hvordan du vælger tema/layout.
 
-Værktøjet er et delt git-submodul, der virker som et **Claude Code-plugin** — du skal derfor **ikke kopiere filer manuelt**. Følg de to trin herunder, så er du i gang; resten af opsætningen (initialisér site, brandfarver, byg guides) er beskrevet i den fulde vejledning.
+Værktøjet er et delt git-submodul, der virker som et **Claude Code-plugin** — du skal derfor **ikke kopiere filer manuelt**. Følg de tre trin herunder, så er du i gang; resten af opsætningen (initialisér site, brandfarver, byg guides) er beskrevet i den fulde vejledning.
 
 1. **Tilføj submodulet** under `.claude/skills/` i dit projekt:
 
@@ -49,9 +71,17 @@ Værktøjet er et delt git-submodul, der virker som et **Claude Code-plugin** �
    git submodule add https://github.com/pkretzmann/Claude4BC.git .claude/skills/claude4bc
    ```
 
-2. **Genstart Claude Code.** Mappen indeholder en `plugin.json`, så den loades automatisk som pluginnet `claude4bc`, og kommandoerne `/claude4bc:…` dukker op i listen over slash-kommandoer.
+2. **Genstart Claude Code.** Mappen indeholder en `plugin.json`, så den loades automatisk som pluginnet `claude4bc`, og kommandoerne `/claude4bc:…` samt skills (`c4bc:…`) dukker op automatisk.
 
-> 📖 **Fuld vejledning:** Se [Sådan anvendes Html guide](docs/Sådan%20anvendes%20Html%20guide.html) — afsnit **»4 · Kom i gang i et nyt projekt«** gennemgår de resterende trin (`/website-init`, `/website-create-css`, `/website-build`, `/website-update-index`) samt forskellen på submodul og plugin.
+3. **Importér de fælles husregler** i projektets egen `CLAUDE.md` (opret filen i git-roden, hvis den ikke findes) ved at tilføje denne linje:
+
+   ```markdown
+   @.claude/skills/claude4bc/CLAUDE.md
+   ```
+
+   > ⚠️ **Hvorfor?** Claude Code loader kun *nestede* CLAUDE.md-filer (som submodulets) **on demand** — dvs. når Claude læser filer i selve submodul-mappen, hvilket sjældent sker under almindeligt AL-arbejde. Uden import-linjen er de fælles AL/DevOps-regler (Caption/ToolTip-krav, navngivning, AB#-commits m.m.) derfor **ikke** i kontekst i dit projekt. `@`-importen loader dem ved sessionstart.
+
+> 📖 **Fuld vejledning:** Se [Sådan anvendes Claude4BC](docs/Sådan%20anvendes%20Claude4BC.html) — afsnit **»3 · Kom i gang i et nyt projekt«** gennemgår de resterende trin (`/website-init`, `/website-create-css`, `/website-build`, `/website-update-index`) samt forskellen på submodul og plugin.
 
 ---
 
@@ -68,6 +98,18 @@ Henter brandfarver fra en virksomheds hjemmeside og skriver dem ind i `:root`-bl
 ```
 
 Valgfri `type`-presets: `Production`, `Consulting`, `Wine Retail` — påvirker palettens karakter og bruges som fallback hvis hjemmesidens farver er svage.
+
+---
+
+### `/website-theme [tema-navn] [--preview]`
+Vælg eller skift **visuelt tema** (layout/skin) for projektets dokumentationssite uden at røre indholdet. Temaerne ligger som katalog i `html-guide/themes/` (classic, minimal, editorial, bold, landing, review) og materialiseres ind i projektets `.website/`, så hvert projekt er selvstændigt og portabelt.
+
+**Eksempler:**
+```
+/website-theme                 → lister temaerne
+/website-theme editorial
+/website-theme bold --preview
+```
 
 ---
 
@@ -99,6 +141,92 @@ Behandler alle `.xlf`-filer i projektet og sætter oversatte units til `state="t
 
 ---
 
+### `/al-sort-usings [fil | mappe | glob]`
+Sorterer `using`-direktiverne i alle `.al`-filer alfabetisk (ordinal/case-sensitiv — compilerens rækkefølge). Det afsluttende `;` indgår **ikke** i sorteringsnøglen, så et parent-namespace sorterer korrekt før sine children. Uden argument behandles hele projektet.
+
+**Eksempler:**
+```
+/al-sort-usings
+/al-sort-usings src/Sales
+```
+
+---
+
+### `/al-next-id <objekttype>`
+Finder det **første ledige AL-objekt-ID** for en given objekttype (codeunit, table, page, tableextension, …) inden for projektets `app.json` `idRanges`. Objekt-ID'er er namespacede pr. type, så svaret afhænger altid af typen.
+
+**Eksempler:**
+```
+/al-next-id codeunit
+/al-next-id tableextension
+```
+
+---
+
+### `/al-bcquality-init [submodule-sti]`
+Installerer Microsofts **BCQuality**-vidensbase ([github.com/microsoft/BCQuality](https://github.com/microsoft/BCQuality)) som git-submodule i `.claude/bcquality` og forbinder den til projektets CLAUDE.md, så review-/analyse-agenter kan bruge dens guardrails og skills. Egne partner-/kunderegler i `bcquality-custom/knowledge/` vinder over klonens community/microsoft-lag. Opdateres senere med `update-bcquality.ps1`.
+
+**Eksempler:**
+```
+/al-bcquality-init
+```
+
+---
+
+### `/al-userdocs <AL-kildemappe>`
+Læser en AL-kildemappe og skriver **dansk slutbruger-dokumentation** (`.md`) — *hvad* funktionaliteten gør og *hvordan* den bruges, **uden** kode, objekt-ID'er eller feltnumre. Emneopdelt (én fil pr. emne), klar til `/website-build` + `/website-update-index`.
+
+**Eksempler:**
+```
+/al-userdocs src/Inventory/Item
+/al-userdocs src/Manufacturing/NiceLabel
+```
+
+Gemmer som regel i `Ressourcer/<Modul>/`. Beskriver automatikker som *adfærd* ("når X sker, gør systemet Y") frem for teknik.
+
+---
+
+### `/al-techdocs <AL-kildemappe> [spec-fil]`
+Det **tekniske modstykke** til `/al-userdocs`: læser en AL-kildemappe (og evt. en leverandør-/interface-spec, fx en PDF) og skriver **teknisk dansk dokumentation** (`.md`) — handlinger, filformater/record-layouts med felt-positioner, statusforløb, flow-/sekvensdiagrammer (Mermaid) og en objekt-tabel. Her er kode, ID'er og layouts netop pointen.
+
+**Eksempler:**
+```
+/al-techdocs src/Warehouse/Jungheinrich
+/al-techdocs src/Warehouse/Jungheinrich "Ressourcer/.../Interface_Host_WMS.pdf"
+```
+
+Krydsreferér kode mod specen (bekræfter layouts; gør afvigelser eksplicitte). En teknisk side bygges **ikke** med `/website-build` (den stripper kode) — følg i stedet kommandoens *Teknisk HTML*-opskrift (inline `styles.css`/`script.js` ordret, Mermaid → `.fc-node`) og kør derefter `/website-update-index`.
+
+---
+
+### `/al-analyse-claude-init [projektrod] ['per-app' [app-mapper…]]`
+Dan eller opdatér en **CLAUDE.md på engelsk** for et **analyse-repo** — en samling downloadet/dekompileret AL-kilde fra publicerede BC-apps (flade filer, underscore-navne, tom `.alpackages`). Udleder indholdet af `app.json`-filerne og koden: repo-type, app-oversigtstabel i afhængighedsorden, 3–6 hovedområder pr. app, eksterne afhængigheder, analyse-begrænsninger og konventioner — og afslutter med en `@`-import af submodulets fælles CLAUDE.md (husregler), så de loades på projektniveau. Med nøgleordet **`per-app`** dannes desuden lokale CLAUDE.md-filer i de store app-mapper.
+
+**Eksempler:**
+```
+/al-analyse-claude-init
+/al-analyse-claude-init C:\AL\Soya
+/al-analyse-claude-init C:\AL\Soya per-app
+```
+
+Idempotent — findes der en CLAUDE.md i forvejen, bevares håndskrevet prosa og kun udledelige fakta synkroniseres. Almindelige udviklingsprojekter er **ikke** kommandoens opgave (den advarer og stopper); de får senere deres egen variant.
+
+---
+
+### `/al-analyse [app-mappe] [sprog]`
+Dan eller opdatér en **kodekvalitets-analyse** (`Analyse-<AppNavn>.md` i projektroden) af én downloadet/dekompileret AL-app i et analyse-repo: hvad appen løser, filstruktur pr. funktionsområde, arkitektur-/dataflow-diagram, fund pr. fil på fast alvorlighedsskala (🔴/🟠/🟡) med linjereferencer og fix-forslag, samlet vurdering og prioriteret handlingsliste. Store apps analyseres områdevis af parallelle agenter; referencer til afhængige apps, hvis kilde ligger i repoet, efterprøves mod faktisk kode. Kører autonomt; output er dansk medmindre andet sprog angives.
+
+**Eksempler:**
+```
+/al-analyse "Soya Special Handling_twoday_1.0.20250625.3"
+/al-analyse "Twoday Shopify Extension_twoday_1.0.20260701.1" english
+/al-analyse
+```
+
+Uden argument analyseres alle app-mapper uden eksisterende `Analyse-*.md`, og eksisterende analyser opdateres idempotent (daterede rettelser, nye fund og et §6 "Efterprøvning mod nu tilgængelig kildekode").
+
+---
+
 ### `/website-init [projektrod]`
 Initialisér dokumentationssitet i et nyt projekt: opretter `.website/`-mappen med kildemateriale-mappe, README'er og start-script.
 
@@ -122,6 +250,17 @@ Synkroniserer dokumentationsportalen `.website/index.html` med de HTML-sider der
 ```
 
 Findes `index.html` ikke i forvejen, oprettes den fra den kanoniske skabelon `html-guide/portal.html`. Findes den, opdateres **kun** `NAV`-listen (mellem `NAV:START`/`NAV:END`) — resten af portalen bevares. `/website-build` rører ikke `index.html`; det er denne kommandos opgave.
+
+---
+
+### `/website-implement-language-selector [sti]`
+Efter-monterer globus-**sprogvælgeren** i portaler dannet **før** sprogvælgeren kom i skabelonen, og gør rod-redirecten `.website/index.html` "klæbende" (husker brugerens valg). Injicerer kirurgisk kun de manglende dele, så eksisterende — evt. oversat — UI-tekst bevares. Nye sites får vælgeren automatisk fra skabelonen.
+
+**Eksempler:**
+```
+/website-implement-language-selector
+/website-implement-language-selector .website/da-DK
+```
 
 ---
 
@@ -164,6 +303,21 @@ Output: `<out>/Code-Review-<app>-<dato>.html` + `.pdf` (+ `assets/`). Default `<
 
 ---
 
+## Skills
+
+Ud over kommandoerne indeholder bundtet **Agent Skills** i `skills/`-mappen. Forskellen på de to: kommandoer starter *du* med `/claude4bc:…`, mens skills aktiveres **automatisk af Claude**, når opgaven matcher — fx når du beder om en ny BC-side eller -tabel. Hver skill bager de fælles husregler (Caption/ToolTip-krav, navngivning uden prefix/»Ext«, testkrav) direkte ind i mønstrene, og har en `references/examples.md` med komplette AL-eksempler, som Claude læser efter behov.
+
+| Skill | Aktiveres når… | Indhold |
+|---|---|---|
+| `bc-page-design` | der designes/ændres pages eller pageextensions | Valg af sidetype (List/Card/Document/…), layout & FastTabs, actions med `actionref`-promotion, views, tooltip-regler (ingen ToolTip på page-felter — de arves fra tabellen; krav om ToolTip på pageext-felter) |
+| `bc-table-design` | der designes/ændres tabeller eller tableextensions | Felter med Caption/ToolTip/DataClassification, datatyper, nøgler & SIFT, FlowFields/FlowFilters, TableRelation & validering, nummerserie-mønster |
+| `al-testing` | der skrives AL-tests (og efter nye codeunits/tableextensions — projektregel) | Testcodeunit-skelet, Given/When/Then, Assert, UI-handlers, TestPages, library-codeunits, isolation |
+| `bc-extensibility` | standard BC-logik skal udvides | Integration events & subscribers, posting-hooks (Sales/Purch), nummerserier (moderne »No. Series«-modul), dimensioner, enum extensions & interfaces |
+
+Skills loades automatisk sammen med pluginnet — der kræves ingen opsætning ud over submodulet. Nye skills tilføjes som `skills/<navn>/SKILL.md` (hold den under ~200 linjer; større referencemateriale lægges i undermappen `references/`).
+
+---
+
 ## MCP-servere
 
 `.mcp.json` indeholder tre MCP-servere, der loades som plugin-MCP når Claude4BC tilføjes som submodul (med per-server-godkendelse):
@@ -191,7 +345,9 @@ git commit -m "Add Claude4BC as submodule"
 git push
 ```
 
-Submodulet **skal ligge under en `.claude/skills/`-mappe** (gerne i git-roden, så det dækker alle apps i et monorepo). Det indeholder en `.claude-plugin/plugin.json` og loades derfor automatisk som et **in-place plugin** (`claude4bc@skills-dir`) — uden marketplace eller install-trin. Kommandoerne bliver tilgængelige med namespace, fx `/claude4bc:website-build`, og submodulets `.mcp.json` loades som plugin-MCP (med per-server-godkendelse). Genstart Claude Code efter tilføjelsen, så det nye plugin opdages.
+Submodulet **skal ligge under en `.claude/skills/`-mappe** (gerne i git-roden, så det dækker alle apps i et monorepo). Det indeholder en `.claude-plugin/plugin.json` og loades derfor automatisk som et **in-place plugin** (`claude4bc@skills-dir`) — uden marketplace eller install-trin. Kommandoerne bliver tilgængelige med namespace, fx `/claude4bc:website-build`, skills loades fra `skills/`-mappen, og submodulets `.mcp.json` loades som plugin-MCP (med per-server-godkendelse). Genstart Claude Code efter tilføjelsen, så det nye plugin opdages.
+
+Husk derefter import-linjen `@.claude/skills/claude4bc/CLAUDE.md` i projektets egen `CLAUDE.md` (se **Kom godt i gang**, trin 3) — ellers loades de fælles husregler ikke ved sessionstart.
 
 ---
 

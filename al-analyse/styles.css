@@ -1,0 +1,198 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap');
+/* ============================================================
+   THEME — "editorial" (Editorial / Magasin)
+   Playfair Display serif headings, Source Serif 4 body, warm
+   paper canvas, narrow reading measure, hairline dividers,
+   terracotta accent — a reading-first, magazine feel.
+   ============================================================ */
+:root {
+  --brand-dark:    #2A2521;   /* ink — headings, primary        */
+  --brand-mid:     #8A6A4B;   /* warm brown — links, table head */
+  --brand-light:   #B5732E;   /* terracotta — accents, badges   */
+  --brand-pale:    #F2E8DC;   /* hover, decision boxes          */
+  --brand-subtle:  #FBF6EF;   /* step backgrounds               */
+  --accent:        #B5732E;   /* general accent                 */
+
+  --white:        #FFFFFF;
+  --gray-100:     #FBFAF7;   /* page background (warm paper) */
+  --gray-200:     #E7E0D5;   /* borders          */
+  --gray-400:     #B0A795;
+  --gray-700:     #5C5346;   /* secondary text   */
+  --text:         #2B2620;   /* primary text     */
+  --note-bg:      #FCF4E2;
+  --note-border:  #D29A2E;
+  --success:      #4F7A3A;
+  --success-bg:   #EEF4E6;
+  --code-bg:      #2A2521;
+  --code-text:    #EDE6DA;
+
+  --p1:           #A23B2E;   /* P1 — høj prioritet (muted brick) */
+  --p1-bg:        #F6E3DE;
+  --p2:           #9A6614;   /* P2 — meningsfuld (ochre)         */
+  --p2-bg:        #FBF0DC;
+  --p3:           #5C5346;   /* P3 — oprydning (ink/brown)       */
+  --p3-bg:        #EEE8DD;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+  font-size: 17px;
+  line-height: 1.85;
+  color: var(--text);
+  background: var(--gray-100);
+}
+
+/* ── Header — paper, large serif display, no gradient ── */
+header {
+  background: var(--gray-100);
+  color: var(--text);
+  padding: 76px 28px 40px;
+  border-bottom: 2px solid var(--brand-dark);
+  text-align: left;
+}
+.hero-inner { max-width: 760px; margin: 0 auto; }
+.header-badge {
+  display: inline-flex; align-items: center; gap: 9px;
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: 12px; font-weight: 600;
+  letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--brand-light);
+  margin-bottom: 12px;
+}
+.header-badge svg { width: 16px; height: 16px; }
+header h1 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 50px; font-weight: 800;
+  line-height: 1.08; letter-spacing: -0.01em;
+  margin-bottom: 14px; color: var(--brand-dark);
+}
+header p.lead { font-size: 19px; color: var(--gray-700); font-style: italic; font-weight: 400; max-width: 60ch; }
+.header-pills { display: flex; gap: 10px; margin-top: 24px; flex-wrap: wrap; }
+.pill { background: transparent; border: 1px solid var(--gray-200); border-radius: 2px; padding: 4px 12px; font-size: 13px; font-weight: 600; letter-spacing: 0.04em; color: var(--gray-700); }
+
+/* ── Stat strip — serif figures with hairline separators ── */
+.stats { display: flex; flex-wrap: wrap; gap: 0; margin-top: 32px; border-top: 1px solid var(--gray-200); border-bottom: 1px solid var(--gray-200); }
+.stat { flex: 1 1 130px; padding: 18px 22px 18px 0; border-right: 1px solid var(--gray-200); }
+.stat:last-child { border-right: none; }
+.stat .num { font-family: 'Playfair Display', Georgia, serif; font-size: 38px; font-weight: 700; line-height: 1; color: var(--brand-dark); }
+.stat .lbl { font-size: 13px; font-style: italic; color: var(--gray-700); margin-top: 8px; }
+
+/* ── Layout — narrow measure for reading ── */
+.container { max-width: 760px; margin: 0 auto; padding: 48px 28px 80px; }
+
+/* ── How-to-read legend ── */
+.legend { display: grid; grid-template-columns: 1fr; gap: 0; margin-bottom: 44px; border-top: 1px solid var(--gray-200); }
+.legend-card { padding: 18px 0; border-bottom: 1px solid var(--gray-200); }
+.legend-card h4 { font-size: 12px; text-transform: uppercase; letter-spacing: 0.18em; color: var(--brand-light); margin-bottom: 8px; font-weight: 600; }
+.legend-card p { font-size: 15.5px; color: var(--gray-700); margin: 0; }
+
+/* ── Table of contents — restrained, italic ── */
+.toc { background: transparent; border: none; border-top: 1px solid var(--gray-200); border-bottom: 1px solid var(--gray-200); border-radius: 0; padding: 22px 0; margin-bottom: 48px; }
+.toc h2 { font-family: 'Source Serif 4', Georgia, serif; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.18em; color: var(--brand-light); margin-bottom: 14px; }
+.toc ul { list-style: none; padding-left: 0; column-count: 2; column-gap: 36px; }
+.toc li { margin-bottom: 7px; break-inside: avoid; }
+.toc a { color: var(--brand-dark); text-decoration: none; font-size: 16px; font-style: italic; transition: color 0.15s; }
+.toc a:hover, .toc a.active { color: var(--accent); }
+
+/* ── Section — article block, hairline divider, no card ── */
+.section { background: transparent; border: none; border-radius: 0; padding: 16px 0 44px; margin-bottom: 16px; box-shadow: none; border-bottom: 1px solid var(--gray-200); }
+.section-header { display: flex; align-items: baseline; gap: 14px; margin-bottom: 18px; padding-bottom: 0; border-bottom: none; }
+.section-icon { width: auto; height: auto; border-radius: 0; background: transparent; display: inline-flex; align-items: baseline; font-family: 'Playfair Display', Georgia, serif; font-size: 26px; font-weight: 700; color: var(--accent); flex-shrink: 0; }
+h2 { font-family: 'Playfair Display', Georgia, serif; font-size: 30px; font-weight: 700; color: var(--brand-dark); letter-spacing: -0.01em; line-height: 1.2; }
+.section > p { margin-bottom: 18px; }
+.section > p.intro { font-size: 17.5px; color: var(--text); }
+strong { font-weight: 600; }
+
+/* ── Finding — editorial entry, terracotta rule on the left ── */
+.finding { padding: 14px 0 14px 20px; margin: 10px 0; border-left: 2px solid var(--gray-200); transition: border-color 0.2s; }
+.finding:hover { border-left-color: var(--accent); }
+.finding-top { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; margin-bottom: 6px; }
+.finding-title { font-family: 'Playfair Display', Georgia, serif; font-size: 19px; font-weight: 600; color: var(--brand-dark); flex: 1 1 auto; line-height: 1.3; }
+.finding-body { font-size: 16.5px; color: var(--text); }
+.finding-body p { margin-bottom: 8px; }
+
+/* ── Priority + status tags — squared editorial badges ── */
+.tag { display: inline-block; border-radius: 2px; padding: 1px 9px; font-size: 12px; font-weight: 700; white-space: nowrap; letter-spacing: 0.06em; font-family: 'Source Serif 4', Georgia, serif; }
+.tag.p1 { background: var(--p1-bg); color: var(--p1); border: 1px solid #E3C3BB; }
+.tag.p2 { background: var(--p2-bg); color: var(--p2); border: 1px solid #DDB158; }
+.tag.p3 { background: var(--p3-bg); color: var(--p3); border: 1px solid var(--gray-200); }
+.status-tag { display: inline-block; background: var(--brand-pale); color: var(--brand-dark); border: 1px solid var(--gray-200); border-radius: 2px; padding: 1px 8px; font-size: 12.5px; font-weight: 600; font-style: italic; white-space: nowrap; }
+.status-tag.todo { background: #FBF0DC; color: #9A6614; border-color: #DDB158; }
+.status-tag.pattern { background: var(--brand-subtle); color: var(--brand-mid); }
+
+/* ── Executive summary ── */
+.exec { background: var(--brand-subtle); border: 1px solid var(--gray-200); border-left: 3px solid var(--accent); border-radius: 0; padding: 30px 34px; margin-bottom: 46px; }
+.exec .exec-eyebrow { font-size: 12px; text-transform: uppercase; letter-spacing: 0.2em; color: var(--brand-light); font-weight: 600; margin-bottom: 12px; }
+.exec h2 { font-family: 'Playfair Display', Georgia, serif; font-size: 30px; font-weight: 700; color: var(--brand-dark); line-height: 1.2; margin-bottom: 18px; }
+.exec p { margin-bottom: 14px; font-size: 17px; }
+.exec h3 { font-family: 'Playfair Display', Georgia, serif; font-size: 20px; font-weight: 600; color: var(--brand-dark); margin: 22px 0 8px; }
+.exec ul { margin: 6px 0 14px 22px; }
+.exec li { margin-bottom: 7px; }
+.exec .verdict { background: var(--note-bg); border-left: 3px solid var(--note-border); padding: 16px 20px; margin-top: 20px; font-size: 16.5px; }
+.exec .verdict strong { color: #9A6614; }
+@media (max-width: 640px) { .exec { padding: 24px 22px; } }
+
+/* ── Inline code ── */
+code { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px; background: var(--brand-subtle); border: 1px solid var(--gray-200); border-radius: 3px; padding: 1px 6px; color: var(--brand-dark); overflow-wrap: break-word; }
+
+/* ── Accordion (technical details) — <details>/<summary> ── */
+details.tech { margin-top: 12px; border-top: 1px solid var(--gray-200); background: transparent; }
+details.tech > summary { cursor: pointer; list-style: none; padding: 9px 0; font-family: 'Source Serif 4', Georgia, serif; font-size: 13px; font-weight: 600; font-style: italic; color: var(--brand-light); letter-spacing: 0.04em; display: flex; align-items: center; gap: 9px; user-select: none; }
+details.tech > summary::-webkit-details-marker { display: none; }
+details.tech > summary::before { content: '＋'; font-size: 14px; font-weight: 700; font-style: normal; color: var(--accent); line-height: 1; }
+details.tech[open] > summary::before { content: '−'; }
+details.tech > summary:hover { color: var(--brand-dark); }
+.tech-body { padding: 2px 0 14px; font-size: 15.5px; color: var(--gray-700); animation: tech-open 0.25s ease; }
+.tech-body ul { margin: 8px 0 8px 20px; }
+.tech-body li { margin-bottom: 5px; }
+.tech-body p { margin-bottom: 8px; }
+@keyframes tech-open { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+
+/* ── Recommendation / note box — pull-quote feel ── */
+.note { background: var(--note-bg); border-left: 3px solid var(--note-border); border-radius: 0; padding: 16px 20px; margin: 24px 0 4px; font-size: 16.5px; }
+.note strong { color: #9A6614; }
+
+/* ── Order list (Foreslået rækkefølge) ── */
+.order { counter-reset: ord; list-style: none; padding: 0; display: flex; flex-direction: column; gap: 16px; }
+.order > li { counter-increment: ord; position: relative; padding: 4px 0 4px 48px; font-size: 17px; }
+.order > li::before { content: counter(ord); position: absolute; left: 0; top: -4px; font-family: 'Playfair Display', Georgia, serif; font-size: 28px; font-weight: 700; line-height: 1; color: var(--accent); }
+
+/* ── Footer — paper, small caps ── */
+footer { background: var(--gray-100); color: var(--gray-700); text-align: center; padding: 32px 20px; font-size: 13px; letter-spacing: 0.08em; margin-top: 48px; border-top: 2px solid var(--brand-dark); }
+footer strong { color: var(--brand-dark); }
+
+/* ── Buttons injected by JS ── */
+.expand-all-btn { display: inline-block; margin-bottom: 20px; background: transparent; color: var(--brand-dark); border: 1px solid var(--brand-dark); border-radius: 2px; padding: 7px 18px; font-size: 13px; font-weight: 600; letter-spacing: 0.04em; cursor: pointer; font-family: 'Source Serif 4', Georgia, serif; transition: background 0.15s, color 0.15s; }
+.expand-all-btn:hover { background: var(--brand-dark); color: #fff; }
+.to-top-btn { position: fixed; bottom: 24px; right: 24px; width: 46px; height: 46px; border-radius: 50%; background: var(--brand-dark); color: #fff; border: none; font-size: 20px; line-height: 1; cursor: pointer; box-shadow: 0 3px 10px rgba(42,37,33,0.22); opacity: 0; visibility: hidden; transition: opacity 0.2s, visibility 0.2s, background 0.15s; z-index: 50; }
+.to-top-btn.visible { opacity: 1; visibility: visible; }
+.to-top-btn:hover { background: var(--accent); }
+.reading-progress { position: fixed; top: 0; left: 0; height: 3px; width: 0; background: var(--accent); z-index: 60; transition: width 0.1s ease-out; }
+
+/* ── Scroll-reveal — only active under .js-fx ── */
+.js-fx .section, .js-fx .legend, .js-fx .toc { opacity: 0; transform: translateY(18px); transition: opacity 0.6s ease, transform 0.6s ease; will-change: opacity, transform; }
+.js-fx .section.in-view, .js-fx .legend.in-view, .js-fx .toc.in-view { opacity: 1; transform: none; }
+
+/* ── Motion safety ── */
+@media (prefers-reduced-motion: reduce) {
+  .js-fx .section, .js-fx .legend, .js-fx .toc { opacity: 1; transform: none; transition: none; }
+}
+
+/* ── Responsive ── */
+@media (max-width: 640px) {
+  header { padding: 56px 24px 36px; }
+  header h1 { font-size: 36px; }
+  .toc ul { column-count: 1; }
+  .stat { flex-basis: 45%; }
+}
+
+/* ── Print ── */
+@media print {
+  body { background: #fff; font-size: 13px; }
+  .to-top-btn, .expand-all-btn, .reading-progress { display: none !important; }
+  .section { box-shadow: none; border-bottom: 1px solid #ccc; page-break-inside: avoid; }
+  header { border-bottom: 2px solid #333; }
+  details.tech[open] .tech-body { display: block; }
+  .js-fx .section, .js-fx .legend, .js-fx .toc { opacity: 1 !important; transform: none !important; }
+}

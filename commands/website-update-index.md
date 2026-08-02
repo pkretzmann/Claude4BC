@@ -46,12 +46,23 @@ For hver fundet side:
   `Warehouse/Jungheinrich/Spærring og synkronisering med Jungheinrich.html`.
 - **`group`** = den **øverste undermappe** i stien (fx `Warehouse`). Ligger siden direkte i
   sprogmappen, brug gruppen `"Generelt"`.
+  - **Visningsnavn:** strip et evt. ledende talpræfiks fra mappenavnet (`^\d+[.\-)]\s*`), så
+    mappen `1. Integrationer` vises som `Integrationer` i menuen. Præfikset bruges kun til
+    sortering (trin 4). `path` bruger naturligvis det **rå** mappenavn.
 - **`title`** = en kort, læsbar titel. Tag den fra sidens `<header>`-`<h1>` (foretrukket), ellers
   fra `<title>` (fjern et evt. site-suffiks som `" · …"` eller `" — …"`). Hold den kortfattet.
 
 ### 4. Sortér
-- Grupper i alfabetisk rækkefølge.
-- Sider inden for en gruppe i naturlig orden (så "Step 0", "Step 1", … "Step 10" er korrekt).
+- **Grupper:** findes filen `.website/<sprog>/.nav-order`, så kommer de grupper, der er nævnt i
+  den, **først** — i filens rækkefølge. Øvrige grupper følger efter i alfabetisk orden (på det
+  **rå** mappenavn, så et evt. talpræfiks også styrer fallback-ordenen). Uden `.nav-order`:
+  alle grupper alfabetisk.
+  - **`.nav-order`-format:** plain text (UTF-8), ét **gruppemappenavn** (råt, som på disken) pr.
+    linje i ønsket rækkefølge. Linjer der starter med `#` er kommentarer; tomme linjer ignoreres.
+  - Linjer der ikke matcher nogen eksisterende gruppemappe ignoreres, men nævnes i rapporten
+    (trin 8), så stavefejl/omdøbte mapper opdages.
+  - Filen starter med `.`, så den er hverken en side (trin 2) eller et sprog (trin 1).
+- **Sider** inden for en gruppe i naturlig orden (så "Step 0", "Step 1", … "Step 10" er korrekt).
 
 ### 5. Byg NAV-array'et
 Generér JavaScript med **2-mellemrums indrykning**, præcis dette format:
@@ -144,6 +155,25 @@ portalens `const LOCALES = [ … ]` mellem markørerne `// === LOCALES:START …
 Dette gælder **både** ved oprettelse fra skabelonen (trin 6) og ved opdatering af en eksisterende
 portal — så sproglisten holdes i sync med sprogmapperne ved hver kørsel.
 
+### 6d. Sidebar-accordion (sammenfoldelige grupper) — til/fra-valg
+Portalen kan vise NAV-grupperne som **accordion**: klik på en gruppetitel for at folde gruppen
+ud/sammen (kun gruppen med den aktive side er udfoldet ved indlæsning; søgning udfolder midlertidigt
+alle grupper med træffere). Det styres af `const SIDEBAR_ACCORDION = …;` mellem markørerne
+`// === ACCORDION:START …` og `// === ACCORDION:END ===` i portalen — værdien er enten `true` (til)
+eller `false` (fra).
+
+- **Standard er `false`** (Nej) — alle grupper vises altid udfoldet (det hidtidige udseende).
+- **Ny portal fra skabelonen:** behold skabelonens standard `false`, medmindre brugeren
+  **udtrykkeligt** beder om accordion (sæt da linjen mellem markørerne til `true;`).
+- **Eksisterende portal:** **bevar** den nuværende værdi mellem markørerne — sæt den *ikke* tilbage
+  til standard. Bruger portalen allerede accordion (`true`), forbliver den `true`, medmindre brugeren
+  udtrykkeligt beder om at slå den fra.
+- **Findes markørerne ikke** (ældre portal fra før accordion-valget): spring over og bemærk i
+  rapporten, at valget kræver, at portalen gendannes fra skabelonen (slet `.website/<sprog>/index.html`
+  og kør igen) — det er en layout-/skabelon-ændring, ikke en NAV-ændring.
+
+Dette gælder **både** ved oprettelse og opdatering, så valget holdes konsistent på tværs af kørsler.
+
 ### 7. Opdatér rod-redirecten `.website/index.html`
 Hold redirect-sidens sprogliste i sync med de sprogmapper, der faktisk findes i `.website/`.
 - **Find alle sprogmapper** i `.website/` (umiddelbare undermapper hvis navn ikke starter med `.`),
@@ -165,16 +195,21 @@ Hold redirect-sidens sprogliste i sync med de sprogmapper, der faktisk findes i 
 
 ### 8. Rapportér
 Vis en kort oversigt **pr. sprog**: antal sider fundet, grupper, og hvad der er
-**tilføjet/fjernet/omdøbt** i forhold til den tidligere NAV-liste. Nævn desuden, om
+**tilføjet/fjernet/omdøbt** i forhold til den tidligere NAV-liste. Nævn om gruppe-rækkefølgen
+kom fra en `.nav-order`-fil, og list evt. linjer i den, der ikke matchede nogen gruppemappe. Nævn desuden, om
 rod-redirectens sprogliste blev opdateret (og til hvilke sprog/standardsprog), om portalernes
 sprogvælger-liste (`LOCALES`) blev synkroniseret (og for hvilke portaler markørerne manglede, så de
 skal gendannes fra skabelonen), og om portalernes brandfarver blev synkroniseret fra
 `.website/styles.css` (eller om der blev brugt neutrale standardfarver, fordi `.website/styles.css`
-mangler).
+mangler). Nævn også hver portals accordion-tilstand (`SIDEBAR_ACCORDION` = til/fra), og om en portal
+manglede markørerne, så valget ikke kunne sættes.
 
 ## Vigtigt
 
 - Hver portals **NAV-liste er et genereret artefakt** — rediger den ikke i hånden; kør kommandoen igen.
+- **Gruppe-rækkefølgen** styres med en `.nav-order`-fil i sprogmappen (anbefalet — ingen mapper
+  skal omdøbes) eller med et talpræfiks på gruppemappen (`1. Integrationer`); præfikset vises
+  **ikke** i menuen. Uden nogen af delene sorteres grupperne alfabetisk.
 - Portalens *layout/opførsel* (sidebar-struktur, søgning, routing) ændres i skabelonen —
   projekt-ejet `<.website>/.portal-template.html` hvis den findes (lagt af et struktur-tema via
   `/website-theme`), ellers den delte `${CLAUDE_PLUGIN_ROOT}/html-guide/portal.html` — **ikke** i
@@ -186,6 +221,11 @@ mangler).
 - Portalens **sprogliste** (`LOCALES`-blokken mellem markørerne) er også et genereret artefakt —
   rediger den ikke i hånden. Den afspejler sprogmapperne i `.website/` og holdes i sync ved hver
   kørsel. Sprogvælgeren skjules automatisk, hvis der kun findes ét sprog.
+- Portalens **accordion-valg** (`SIDEBAR_ACCORDION` mellem `ACCORDION:START`/`END`) er et **bevaret
+  valg** (ikke et genereret artefakt): standard er `false` (Nej), og en eksisterende portals værdi
+  bevares ved opdatering. Slå til/fra ved at sætte linjen til `true;`/`false;` mellem markørerne
+  (eller bed Claude om det). Accordion-CSS/JS ligger altid i skabelonen og er inaktiv, når valget er
+  `false`.
 - Sti-værdier i `NAV` skal være **relative til portalen** (dvs. til sprogmappen `.website/<sprog>/`),
   så portalen kan loade siderne i sin iframe og fuldtekst-søgningen kan `fetch`'e dem. Hold derfor
   hver sides kildemateriale og færdige HTML i **samme** sprogmappe.

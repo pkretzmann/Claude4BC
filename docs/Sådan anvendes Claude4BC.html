@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sådan anvendes Html-guide</title>
+  <title>Sådan anvendes Claude4BC</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
   <style>
@@ -542,34 +542,115 @@ pre { position: relative; }   /* anchor for the copy button */
   .to-top-btn, .copy-btn, .expand-all-btn { display: none !important; }
 }
   </style>
+  <style>
+/* ============================================================
+   Page-specific layout for this doc: fixed left sidebar nav.
+   (The canonical html-guide stylesheet above is untouched.)
+   ============================================================ */
+body { display: block; }
+.side-nav {
+  position: fixed; top: 0; left: 0; bottom: 0; width: 262px;
+  overflow-y: auto; background: var(--code-bg); color: var(--code-text);
+  padding: 24px 0 32px; z-index: 50;
+}
+.side-nav-brand {
+  padding: 0 22px 16px; border-bottom: 1px solid rgba(255,255,255,0.08);
+  margin-bottom: 16px; color: var(--white); font-weight: 700; font-size: 17px;
+}
+.side-nav-brand span {
+  display: block; font-size: 11px; font-weight: 400; opacity: 0.6;
+  letter-spacing: 0.6px; text-transform: uppercase; margin-top: 2px;
+}
+.nav-group { margin-bottom: 18px; }
+.nav-group-title {
+  padding: 0 22px; margin-bottom: 6px; font-size: 11px;
+  text-transform: uppercase; letter-spacing: 1px; opacity: 0.5;
+}
+.side-nav a {
+  display: block; padding: 6px 22px 6px 19px; font-size: 13.5px;
+  color: var(--code-text); text-decoration: none;
+  border-left: 3px solid transparent; opacity: 0.85;
+}
+.side-nav a:hover { background: rgba(255,255,255,0.06); opacity: 1; }
+.side-nav a.active {
+  border-left-color: var(--brand-light); background: rgba(255,255,255,0.09);
+  color: var(--white); opacity: 1;
+}
+.side-nav a.sub { padding-left: 34px; font-size: 12.5px; }
+.page { margin-left: 262px; min-width: 0; }
+.nav-toggle { display: none; }
+@media (max-width: 900px) {
+  .side-nav { transform: translateX(-100%); transition: transform 0.25s ease; box-shadow: 4px 0 24px rgba(0,0,0,0.25); }
+  .side-nav.open { transform: none; }
+  .page { margin-left: 0; }
+  .nav-toggle {
+    display: block; position: fixed; top: 14px; left: 14px; z-index: 60;
+    background: var(--brand-dark); color: var(--white); border: 0;
+    border-radius: 8px; padding: 8px 13px; font: 600 14px 'Inter', sans-serif;
+    cursor: pointer; box-shadow: 0 2px 10px rgba(0,0,0,0.25);
+  }
+}
+@media print {
+  .side-nav, .nav-toggle { display: none !important; }
+  .page { margin-left: 0; }
+}
+  </style>
 </head>
 <body>
 
+<button type="button" class="nav-toggle" aria-label="Menu">☰ Menu</button>
+
+<aside class="side-nav" id="sideNav">
+  <div class="side-nav-brand">🧰 Claude4BC<span>c4bc-plugin til Claude Code</span></div>
+  <nav>
+    <div class="nav-group">
+      <div class="nav-group-title">Introduktion</div>
+      <a href="#overblik">Overblik</a>
+      <a href="#submodul-plugin">Submodul vs. plugin</a>
+      <a href="#kom-i-gang">Kom i gang i et nyt projekt</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Website &amp; dokumentation</div>
+      <a href="#website">Byg HTML-vejledninger</a>
+      <a class="sub" href="#website-flow">Arbejdsgangen</a>
+      <a class="sub" href="#design">Design, farver og temaer</a>
+      <a class="sub" href="#portal">Portal &amp; publicering</a>
+      <a class="sub" href="#pdf">Saml til PDF</a>
+      <a class="sub" href="#interaktivitet">Interaktivitet</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">AL-objekter &amp; kode</div>
+      <a href="#al-docs">Dokumentation fra AL-kode</a>
+      <a href="#al-vedligehold">Vedligehold &amp; hjælpere</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">AL-analyse</div>
+      <a href="#al-analyse">Kodekvalitets-analyse</a>
+      <a class="sub" href="#al-analyse-claude-init">CLAUDE.md til analyse-repo</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Opslag</div>
+      <a href="#reference">Kommando-reference</a>
+    </div>
+  </nav>
+</aside>
+
+<div class="page">
+
 <header>
-  <div class="header-badge">Business Central · Dokumentationsværktøj</div>
-  <h1>Sådan anvendes Html-guide</h1>
-  <p>Sådan laver du flotte, selvstændige HTML-vejledninger fra dine markdown-filer — og hvad det vil sige, at værktøjet kører som et <strong>plugin</strong>.</p>
+  <div class="header-badge">Business Central · c4bc-plugin</div>
+  <h1>Sådan anvendes Claude4BC</h1>
+  <p>Ét delt bundt af Claude Code-kommandoer til Business Central-arbejde: HTML-/PDF-dokumentation med eget design, dokumentation og hjælpere til AL-kode — og kodekvalitets-analyse af downloadede apps.</p>
   <div class="header-pills">
-    <span class="pill">⚡ Slash-kommando</span>
-    <span class="pill">🧩 Claude Code-plugin</span>
+    <span class="pill">⚡ Slash-kommandoer</span>
+    <span class="pill">🌐 Website &amp; PDF</span>
+    <span class="pill">🧱 AL-objekter</span>
+    <span class="pill">🔍 AL-analyse</span>
     <span class="pill">📦 Delt via git-submodul</span>
-    <span class="pill">🎨 Eget design</span>
   </div>
 </header>
 
 <div class="container">
-
-  <nav class="toc">
-    <h2>Indholdsfortegnelse</h2>
-    <ol>
-      <li><a href="#overblik">1 · Overblik</a></li>
-      <li><a href="#submodul-plugin">2 · Submodul vs. plugin — forklaret</a></li>
-      <li><a href="#brug">3 · Sådan kalder du kommandoerne</a></li>
-      <li><a href="#kom-i-gang">4 · Kom i gang i et nyt projekt</a></li>
-      <li><a href="#design">5 · Design, farver og temaer</a></li>
-      <li><a href="#interaktivitet">6 · Interaktivitet</a></li>
-    </ol>
-  </nav>
 
   <!-- ── 1 Overblik ── -->
   <div class="section" id="overblik">
@@ -577,9 +658,30 @@ pre { position: relative; }   /* anchor for the copy button */
       <div class="section-icon">🧭</div>
       <h2>1 · Overblik</h2>
     </div>
-    <p>Værktøjet hører til <strong>c4bc</strong> — et delt bundt af kommandoer til Claude Code. Kommandoen <code>/c4bc:website-build</code> konverterer en markdown-brugervejledning til en professionel, selvstændig HTML-fil med projektets farvepalette og designsystem. Selve kommandoen er beskrevet i pluginnets <code>commands/website-build.md</code>, som indeholder designreglerne og en tabel over, hvordan markdown-elementer bliver til HTML-komponenter.</p>
-    <p>c4bc er installeret som et <strong>plugin</strong>, så kommandoerne dukker automatisk op i listen over slash-kommandoer — du skal ikke installere eller kopiere noget manuelt for at bruge dem.</p>
-    <div class="info-box"><strong>Kommandoerne i bundtet:</strong> <code>/c4bc:website-build</code>, <code>/c4bc:website-create-css</code>, <code>/c4bc:website-theme</code>, <code>/c4bc:website-init</code>, <code>/c4bc:website-update-index</code> og <code>/c4bc:al-update-translations</code>.</div>
+    <p><strong>c4bc</strong> er et delt bundt af kommandoer til Claude Code, som lånes ind i hvert projekt som git-submodul og aktiveres som plugin (se afsnit 2). Skriv <code>/c4bc:</code> i Claude Code, så foreslås alle bundtets kommandoer. De falder i tre grupper:</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Gruppe</th><th>Kommandoer</th><th>Typisk output</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>🌐 Website &amp; dokumentation</strong></td>
+            <td><code>website-init</code> · <code>website-create-css</code> · <code>website-theme</code> · <code>website-build</code> · <code>website-update-index</code> · <code>website-github-init-deploy</code> · <code>website-implement-language-selector</code> · <code>pdf-build</code></td>
+            <td>Selvstændige HTML-vejledninger, dokumentationsportal (<code>.website/</code>), GitHub Pages-publicering, samlet PDF</td>
+          </tr>
+          <tr>
+            <td><strong>🧱 AL-objekter &amp; kode</strong></td>
+            <td><code>al-userdocs</code> · <code>al-techdocs</code> · <code>al-update-translations</code> · <code>al-sort-usings</code> · <code>al-next-id</code></td>
+            <td>Bruger-/teknisk dokumentation (.md) fra AL-kilde, opdaterede .xlf-filer, sorterede usings, næste ledige objekt-id</td>
+          </tr>
+          <tr>
+            <td><strong>🔍 AL-analyse</strong></td>
+            <td><code>al-analyse</code> · <code>al-analyse-claude-init</code></td>
+            <td>Kodekvalitets-analyser (<code>Analyse-&lt;AppNavn&gt;.md</code>) og CLAUDE.md-filer til analyse-repos med downloadet/dekompileret AL-kilde</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Hver kommando er beskrevet i sin egen fil under pluginnets <code>commands/</code>-mappe — den fulde liste med argumenter står i <a href="#reference">kommando-referencen</a> nederst.</p>
   </div>
 
   <!-- ── 2 Submodul vs plugin ── -->
@@ -618,26 +720,11 @@ pre { position: relative; }   /* anchor for the copy button */
     <div class="note"><strong>Det, der gør forskellen:</strong> En mappe bliver først til et <em>aktivt</em> plugin, når to ting er på plads — en <code>plugin.json</code> i mappen <strong>og</strong> at mappen ligger under <code>.claude/skills/</code>. Mangler én af delene, er det "bare et submodul": filerne er der, men Claude Code aktiverer dem ikke.</div>
   </div>
 
-  <!-- ── 3 Brug ── -->
-  <div class="section" id="brug">
-    <div class="section-header">
-      <div class="section-icon">⚡</div>
-      <h2>3 · Sådan kalder du kommandoerne</h2>
-    </div>
-    <p>Skriv <code>/c4bc:</code> i Claude Code, så foreslås alle bundtets kommandoer. Til HTML-vejledninger bruger du <code>/c4bc:website-build</code> med stien til en eller flere markdown-filer — eller en hel mappe:</p>
-    <ul class="bullets">
-      <li><code>/c4bc:website-build &lt;fil.md&gt;</code> — én fil bliver til én HTML i <strong>samme mappe</strong> med samme navn.</li>
-      <li><code>/c4bc:website-build &lt;fil1.md&gt; &lt;fil2.md&gt; …</code> — flere filer samles til <strong>ét</strong> dokument (i den angivne rækkefølge).</li>
-      <li><code>/c4bc:website-build &lt;mappe&gt;</code> — alle <strong>.md</strong>-filer i mappen samles til <strong>ét</strong> dokument (i naturlig navnerækkefølge).</li>
-    </ul>
-    <div class="note"><strong>⚠ Bemærk:</strong> Et nyt plugin — eller ændringer i det — opdages først efter en <strong>genstart</strong> af Claude Code (eller med kommandoen <code>/reload-plugins</code>).</div>
-  </div>
-
-  <!-- ── 4 Kom i gang ── -->
+  <!-- ── 3 Kom i gang ── -->
   <div class="section" id="kom-i-gang">
     <div class="section-header">
       <div class="section-icon">🚀</div>
-      <h2>4 · Kom i gang i et nyt projekt</h2>
+      <h2>3 · Kom i gang i et nyt projekt</h2>
     </div>
     <p>Fordi værktøjet er et delt submodul, der virker som et plugin, skal du <strong>ikke kopiere filer manuelt</strong>. Du låner bundtet ind under projektets <code>.claude/skills/</code>, og Claude Code aktiverer det automatisk:</p>
     <ol class="steps">
@@ -647,30 +734,52 @@ pre { position: relative; }   /* anchor for the copy button */
       <li><strong>Genstart Claude Code.</strong> Mappen indeholder en <code>plugin.json</code>, så den loades automatisk som pluginnet <code>c4bc</code> — og kommandoerne <code>/c4bc:…</code> dukker op.</li>
       <li>Kør <code>/c4bc:website-init</code> <strong>én gang</strong> for at initialisere dokumentationssitet — den opretter <code>.website/</code> med sprogmapper (<code>da-DK</code>, <code>en-US</code>), rod-redirect, kildemateriale-mapper, start-script og preview-konfigurationen <code>.claude/launch.json</code>.</li>
       <li>Kør <code>/c4bc:website-create-css &lt;hjemmeside-url&gt; [type] [--theme &lt;tema&gt;]</code> for at hente kundens brandfarver og oprette projektets eget <code>.website/styles.css</code>. Tilføj <code>--theme</code> for at vælge et bestemt layout fra start (standard er <strong>classic</strong>).</li>
-      <li><em>(Valgfrit)</em> Vil du skifte layout/tema senere, så kør <code>/c4bc:website-theme &lt;tema&gt;</code> — fx <code>editorial</code> eller <code>landing</code>. Se afsnit 5 for de tilgængelige temaer.</li>
+      <li><em>(Valgfrit)</em> Vil du skifte layout/tema senere, så kør <code>/c4bc:website-theme &lt;tema&gt;</code> — fx <code>editorial</code> eller <code>landing</code>. Se <a href="#design">Design, farver og temaer</a>.</li>
       <li>Kør <code>/c4bc:website-build</code> på dine markdown-vejledninger — de får automatisk projektets design.</li>
       <li>Kør <code>/c4bc:website-update-index</code> for at bygge sprogenes portal-menu, så de nye sider dukker op i dokumentationssitet.</li>
     </ol>
+    <div class="info-box"><strong>Analyse-repo i stedet for udviklingsprojekt?</strong> Arbejder du i et repo med <em>downloadet/dekompileret</em> AL-kilde (kodeanalyse, ikke udvikling), springer du website-trinnene over og starter med <code>/c4bc:al-analyse-claude-init</code>, der bygger en CLAUDE.md til repoet — og derefter <code>/c4bc:al-analyse</code> pr. app. Se <a href="#al-analyse">AL-analyse</a>.</div>
+    <div class="note"><strong>⚠ Bemærk:</strong> Et nyt plugin — eller ændringer i det — opdages først efter en <strong>genstart</strong> af Claude Code (eller med kommandoen <code>/reload-plugins</code>).</div>
     <div class="info-box"><strong>Vigtigt om placering:</strong> Pluginnet skal ligge under <strong>den mappe, du åbner Claude Code i</strong> (projektets egen <code>.claude/skills/</code>). Ligger det et niveau højere oppe — fx i en fælles monorepo-rod — bliver det <em>ikke</em> fundet.</div>
   </div>
 
-  <!-- ── 5 Design og farver ── -->
-  <div class="section" id="design">
+  <!-- ── 4 Website & dokumentation ── -->
+  <div class="section" id="website">
     <div class="section-header">
-      <div class="section-icon">🎨</div>
-      <h2>5 · Design, farver og temaer</h2>
+      <div class="section-icon">🌐</div>
+      <h2>4 · Website &amp; dokumentation</h2>
     </div>
-    <p>Designet styres af to ting, du kan ændre uafhængigt: <strong>farverne</strong> (kundens brand) og <strong>temaet</strong> (selve layoutet/stilen). Alle vejledninger er stadig selvstændige HTML-filer, der kan deles, printes og åbnes uden internet — kommandoen lægger det valgte stylesheet direkte ind i hver side.</p>
+    <h3 id="website-flow">Arbejdsgangen — hvad kører jeg hvornår?</h3>
+    <p>Kommandoerne falder i to grupper: <strong>engangsopsætning</strong> af projektet og det <strong>gentagne flow</strong>, hver gang du har nyt eller ændret indhold. Rækkefølgen er:</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>&nbsp;</th><th>Trin</th><th>Kommando</th><th>Hvornår</th></tr></thead>
+        <tbody>
+          <tr><td rowspan="3"><strong>🔧 Opsætning</strong></td><td>1</td><td><code>/c4bc:website-init</code></td><td><strong>Én gang</strong> pr. projekt — opretter <code>.website/</code>-strukturen</td></tr>
+          <tr><td>2</td><td><code>/c4bc:website-create-css &lt;url&gt;</code></td><td><strong>Én gang</strong> — henter kundens brandfarver (tilføj evt. <code>--theme</code>)</td></tr>
+          <tr><td>3</td><td><code>/c4bc:website-theme</code> · <code>/c4bc:website-github-init-deploy</code></td><td><em>Valgfrit</em> — skift layout / opsæt GitHub Pages-publicering</td></tr>
+          <tr><td rowspan="3"><strong>🔁 Gentages</strong></td><td>4</td><td><code>/c4bc:website-build &lt;md&gt;</code></td><td><strong>Hver gang</strong> du har nye/ændrede markdown-vejledninger</td></tr>
+          <tr><td>5</td><td><code>/c4bc:website-update-index</code></td><td><strong>Hver gang</strong> efter build — opdaterer portal-menuen</td></tr>
+          <tr><td>6</td><td><code>/c4bc:pdf-build</code></td><td><em>Ved behov</em> — samler sitet til én PDF</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="info-box"><strong>Kort sagt:</strong> Du starter <em>ikke</em> med <code>/c4bc:website-build</code> — den forudsætter, at trin 1-2 er kørt én gang, så design og mappestruktur er på plads. Første gang i et nyt projekt? Følg trinnene i <a href="#kom-i-gang">afsnit 3 · Kom i gang</a>, som også dækker selve plugin-installationen.</div>
 
-    <h3>Farver</h3>
+    <p>Kernen i det gentagne flow er <code>/c4bc:website-build</code>, der konverterer en markdown-brugervejledning til en professionel, selvstændig HTML-fil med projektets farvepalette og designsystem:</p>
+    <ul class="bullets">
+      <li><code>/c4bc:website-build &lt;fil.md&gt;</code> — én fil bliver til én HTML i <strong>samme mappe</strong> med samme navn.</li>
+      <li><code>/c4bc:website-build &lt;fil1.md&gt; &lt;fil2.md&gt; …</code> — flere filer samles til <strong>ét</strong> dokument (i den angivne rækkefølge).</li>
+      <li><code>/c4bc:website-build &lt;mappe&gt;</code> — alle <strong>.md</strong>-filer i mappen samles til <strong>ét</strong> dokument (i naturlig navnerækkefølge).</li>
+    </ul>
+    <p>Markdown-kilderne kommer typisk fra <a href="#al-docs"><code>/c4bc:al-userdocs</code> eller <code>/c4bc:al-techdocs</code></a> — eller skrives i hånden.</p>
+
+    <h3 id="design">Design, farver og temaer</h3>
+    <p>Designet styres af to ting, du kan ændre uafhængigt: <strong>farverne</strong> (kundens brand) og <strong>temaet</strong> (selve layoutet/stilen). Alle vejledninger er stadig selvstændige HTML-filer, der kan deles, printes og åbnes uden internet — kommandoen lægger det valgte stylesheet direkte ind i hver side.</p>
     <p>Vil du give et projekt kundens egne brandfarver, opretter du <code>.website/styles.css</code> — det nemmeste er <code>/c4bc:website-create-css</code>, der henter farverne fra en hjemmeside og laver filen for dig:</p>
     <pre><code>/c4bc:website-create-css https://www.kunde.dk "Wine Retail"</code></pre>
-    <div class="note"><strong>Tip:</strong> Brandfarverne styres af <code>--brand-*</code>-variablerne øverst i stylesheetet. <code>/c4bc:website-create-css</code> opdaterer <strong>kun</strong> farverne — selve layoutet bestemmes af temaet (se nedenfor), så et farveskift ændrer ikke stilen.</div>
-
-    <h3>Temaer (layouts)</h3>
-    <p>Et <strong>tema</strong> er en komplet stil — typografi, header, kort, afstande og evt. selve opbygningen — mens indholdet er præcis det samme. Du skifter tema med:</p>
-    <pre><code>/c4bc:website-theme editorial</code></pre>
-    <p>Kør <code>/c4bc:website-theme</code> uden noget for at se listen og det aktive tema, eller <code>/c4bc:website-theme &lt;tema&gt; --preview</code> for at se et tema på prøve, før du skifter. De medfølgende temaer er:</p>
+    <div class="note"><strong>Tip:</strong> Brandfarverne styres af <code>--brand-*</code>-variablerne øverst i stylesheetet. <code>/c4bc:website-create-css</code> opdaterer <strong>kun</strong> farverne — selve layoutet bestemmes af temaet, så et farveskift ændrer ikke stilen.</div>
+    <p>Et <strong>tema</strong> er en komplet stil — typografi, header, kort, afstande og evt. selve opbygningen — mens indholdet er præcis det samme. Du skifter tema med <code>/c4bc:website-theme editorial</code>. Kør kommandoen uden argument for at se listen og det aktive tema, eller med <code>--preview</code> for at se et tema på prøve. De medfølgende temaer er:</p>
     <div class="table-wrap">
       <table>
         <thead><tr><th>Tema</th><th>Type</th><th>Stil</th></tr></thead>
@@ -683,19 +792,23 @@ pre { position: relative; }   /* anchor for the copy button */
         </tbody>
       </table>
     </div>
-    <div class="note"><strong>Husk:</strong> Når du har skiftet tema med <code>/c4bc:website-theme</code>, så kør <code>/c4bc:website-update-index</code> og <code>/c4bc:website-build</code> igen, så portalen og siderne får det nye udseende. Dine brandfarver bevares automatisk på tværs af tema-skift.</div>
-  </div>
+    <div class="note"><strong>Husk:</strong> Efter tema-skift med <code>/c4bc:website-theme</code>, så kør <code>/c4bc:website-update-index</code> og <code>/c4bc:website-build</code> igen, så portalen og siderne får det nye udseende. Dine brandfarver bevares automatisk på tværs af tema-skift.</div>
 
-  <!-- ── 6 Interaktivitet ── -->
-  <div class="section" id="interaktivitet">
-    <div class="section-header">
-      <div class="section-icon">🖱️</div>
-      <h2>6 · Interaktivitet</h2>
-    </div>
+    <h3 id="portal">Portal &amp; publicering</h3>
+    <ul class="bullets">
+      <li><code>/c4bc:website-update-index</code> — synkroniserer dokumentationsportalen pr. sprog (<code>.website/&lt;sprog&gt;/index.html</code>) med de HTML-sider, der ligger i sprogmappen, og holder rod-redirectens sprogliste opdateret. Kør den, hver gang du har bygget nye sider.</li>
+      <li><code>/c4bc:website-github-init-deploy</code> — initialiserer en GitHub Actions-workflow, der publicerer <code>.website/</code> til <strong>GitHub Pages</strong>, så dokumentationen får en offentlig URL.</li>
+      <li><code>/c4bc:website-implement-language-selector</code> — eftermonterer sprogvælgeren på ældre portaler, der er dannet før sprogvælgeren fandtes — uden at miste oversat UI-tekst.</li>
+    </ul>
+
+    <h3 id="pdf">Saml til PDF</h3>
+    <p><code>/c4bc:pdf-build</code> samler hele <code>.website</code>-dokumentationssitet til <strong>én PDF-brugervejledning</strong> pr. sprog — med forside, indholdsfortegnelse og alle sider i portalens rækkefølge. God til kunder, der vil have dokumentationen "på papir".</p>
+
+    <h3 id="interaktivitet">Interaktivitet</h3>
     <p>Vejledningerne er <strong>interaktive som standard</strong>. Et lille JavaScript-lag (i pluginnets <code>html-guide/script.js</code>) tilføjer automatisk:</p>
     <ul class="bullets">
-      <li>Blød scroll og fremhævning af det aktive punkt i indholdsfortegnelsen (prøv at scrolle på denne side).</li>
-      <li>Kopiér-knap på kodeblokke (se knappen i feltet ovenfor).</li>
+      <li>Blød scroll og fremhævning af det aktive punkt i navigationen (prøv at scrolle på denne side).</li>
+      <li>Kopiér-knap på kodeblokke (se knappen i felterne ovenfor).</li>
       <li>"Fold alle ud/ind" på FAQ-sektioner.</li>
       <li>En læse-fremgangslinje i toppen og en "til toppen"-knap, der dukker op, når du scroller.</li>
       <li>En søgeboks på FAQ-sektioner, der filtrerer spørgsmålene mens du skriver.</li>
@@ -703,17 +816,110 @@ pre { position: relative; }   /* anchor for the copy button */
     <p>Alt fungerer også <strong>uden</strong> JavaScript — laget tilføjer kun ekstra bekvemmelighed og skjuler sig selv ved print.</p>
   </div>
 
+  <!-- ── 5 AL-objekter & kode ── -->
+  <div class="section" id="al-docs">
+    <div class="section-header">
+      <div class="section-icon">🧱</div>
+      <h2>5 · AL-objekter &amp; kode</h2>
+    </div>
+    <h3>Dokumentation fra AL-kode</h3>
+    <p>To kommandoer skriver dansk markdown-dokumentation direkte ud fra en AL-kildemappe — klar til <code>/c4bc:website-build</code>:</p>
+    <ul class="bullets">
+      <li><code>/c4bc:al-userdocs &lt;AL-mappe&gt;</code> — <strong>slutbruger-dokumentation</strong>: emneopdelt, uden kode, med fokus på hvad brugeren kan og skal gøre.</li>
+      <li><code>/c4bc:al-techdocs &lt;AL-mappe&gt; [spec-fil]</code> — <strong>teknisk dokumentation</strong>: handlinger, filformater/record-layouts med felt-positioner, statusforløb, flow-diagrammer og objekt-tabeller. Angiv evt. en leverandør-spec (fx PDF), som krydsrefereres mod koden.</li>
+    </ul>
+    <pre><code>/c4bc:al-techdocs src/Warehouse/Jungheinrich "Ressourcer/Interface_Host_WMS.pdf"</code></pre>
+    <div class="note"><strong>Bemærk:</strong> En teknisk side bygges <em>ikke</em> med <code>/c4bc:website-build</code> (den stripper kode) — følg i stedet kommandoens egen <em>Teknisk HTML</em>-opskrift og kør derefter <code>/c4bc:website-update-index</code>.</div>
+
+    <h3 id="al-vedligehold">Vedligehold &amp; hjælpere</h3>
+    <ul class="bullets">
+      <li><code>/c4bc:al-update-translations</code> — opdaterer projektets oversættelsesfiler (<code>.xlf</code>), til alt er oversat.</li>
+      <li><code>/c4bc:al-sort-usings</code> — sorterer <code>using</code>-direktiver alfabetisk i alle .al-filer (et overordnet namespace sorteres før sine undernamespaces).</li>
+      <li><code>/c4bc:al-next-id &lt;objekttype&gt;</code> — printer det første ledige AL-objekt-id af en given type (codeunit, table, page, …) inden for projektets <code>app.json</code>-idRanges.</li>
+    </ul>
+  </div>
+
+  <!-- ── 6 AL-analyse ── -->
+  <div class="section" id="al-analyse">
+    <div class="section-header">
+      <div class="section-icon">🔍</div>
+      <h2>6 · AL-analyse</h2>
+    </div>
+    <p>Analyse-kommandoerne er til <strong>analyse-repos</strong>: samlinger af <em>downloadet/dekompileret</em> AL-kilde fra publicerede BC-apps (flade filer, underscore-navne, tom <code>.alpackages</code>) — hvor opgaven er at forstå og vurdere koden, ikke at udvikle i den.</p>
+
+    <h3>Kodekvalitets-analyse: <code>/c4bc:al-analyse</code></h3>
+    <p>Danner eller opdaterer en kodekvalitets-analyse (<code>Analyse-&lt;AppNavn&gt;.md</code> i projektroden) af én app: hvad appen løser, filstruktur pr. funktionsområde, arkitektur-/dataflow-diagram, fund pr. fil på fast alvorlighedsskala (🔴 Kritisk / 🟠 Væsentlig / 🟡 Mindre) med linjereferencer og fix-forslag, samlet vurdering og prioriteret handlingsliste.</p>
+    <ul class="bullets">
+      <li>Store apps analyseres <strong>områdevis af parallelle agenter</strong>, og resultaterne samles og efterprøves.</li>
+      <li>Referencer til afhængige apps, hvis kilde ligger i repoet, <strong>verificeres mod faktisk kode</strong> — fund markeres som <em>verificeret</em> eller <em>udledt af signaturer</em>.</li>
+      <li>Kører <strong>autonomt</strong> (ingen spørgsmål undervejs); output er <strong>dansk</strong>, medmindre et andet sprog angives som argument.</li>
+      <li><strong>Idempotent opdatering:</strong> findes analysen allerede, tilføjes daterede rettelser, nye fund og et afsnit "Efterprøvning mod nu tilgængelig kildekode" — i stedet for at skrive dokumentet om.</li>
+    </ul>
+    <pre><code>/c4bc:al-analyse "Soya Special Handling_twoday_1.0.20250625.3"
+/c4bc:al-analyse "Twoday Shopify Extension_twoday_1.0.20260701.1" english
+/c4bc:al-analyse</code></pre>
+    <div class="info-box"><strong>Uden argument</strong> analyseres alle app-mapper uden eksisterende <code>Analyse-*.md</code>, og eksisterende analyser får opdaterings-passet.</div>
+
+    <h3 id="al-analyse-claude-init">CLAUDE.md til analyse-repo: <code>/c4bc:al-analyse-claude-init</code></h3>
+    <p>Danner eller opdaterer en <strong>CLAUDE.md på engelsk</strong> for analyse-repoet, så Claude Code har den kontekst, der ikke billigt kan udledes af filerne: repo-type, app-oversigtstabel i afhængighedsorden, hovedområder pr. app, eksterne afhængigheder, analyse-begrænsninger og konventioner — afsluttet med en <code>@</code>-import af submodulets fælles husregler. Med nøgleordet <code>per-app</code> dannes desuden lokale CLAUDE.md-filer i de store app-mapper.</p>
+    <pre><code>/c4bc:al-analyse-claude-init
+/c4bc:al-analyse-claude-init C:\AL\Soya per-app</code></pre>
+    <div class="note"><strong>Idempotent:</strong> Findes der en CLAUDE.md i forvejen, bevares håndskrevet prosa, og kun udledelige fakta synkroniseres. Almindelige udviklingsprojekter er <em>ikke</em> kommandoens opgave — den advarer og stopper.</div>
+  </div>
+
+  <!-- ── 7 Reference ── -->
+  <div class="section" id="reference">
+    <div class="section-header">
+      <div class="section-icon">📖</div>
+      <h2>7 · Kommando-reference</h2>
+    </div>
+    <p>Alle bundtets kommandoer i ét opslag. Detaljer og argumenter står i hver kommandos fil under <code>commands/</code>.</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Kommando</th><th>Hvad den gør</th></tr></thead>
+        <tbody>
+          <tr><td><code>/c4bc:website-init</code></td><td>Initialiserer dokumentationssitet (<code>.website</code>) med sprogmapper, rod-redirect, kildemateriale-mapper, README og start-script</td></tr>
+          <tr><td><code>/c4bc:website-create-css</code></td><td>Udleder brandfarver fra en hjemmeside og skriver dem ind i projektets <code>.website/styles.css</code></td></tr>
+          <tr><td><code>/c4bc:website-theme</code></td><td>Vælger eller skifter visuelt tema (layout/skin) for projektets dokumentationssite</td></tr>
+          <tr><td><code>/c4bc:website-build</code></td><td>Konverterer en eller flere markdown-brugervejledninger til en selvstændig, interaktiv HTML-side</td></tr>
+          <tr><td><code>/c4bc:website-update-index</code></td><td>Synkroniserer dokumentationsportalen pr. sprog med de HTML-sider, der ligger i sprogmappen</td></tr>
+          <tr><td><code>/c4bc:website-github-init-deploy</code></td><td>Initialiserer en GitHub Actions-workflow, der publicerer <code>.website</code> til GitHub Pages</td></tr>
+          <tr><td><code>/c4bc:website-implement-language-selector</code></td><td>Eftermonterer sprogvælgeren på ældre dokumentationsportaler — uden at miste oversat UI-tekst</td></tr>
+          <tr><td><code>/c4bc:pdf-build</code></td><td>Danner én samlet PDF-brugervejledning (forside + indholdsfortegnelse + alle sider) ud af <code>.website</code>-sitet</td></tr>
+          <tr><td><code>/c4bc:al-userdocs</code></td><td>Skriver dansk slutbruger-dokumentation (.md) ud fra en AL-kildemappe — emneopdelt og uden kode</td></tr>
+          <tr><td><code>/c4bc:al-techdocs</code></td><td>Skriver teknisk dansk dokumentation (.md) ud fra en AL-kildemappe (+ valgfri spec-fil)</td></tr>
+          <tr><td><code>/c4bc:al-update-translations</code></td><td>Opdaterer projektets oversættelsesfiler (<code>.xlf</code>), til alt er oversat</td></tr>
+          <tr><td><code>/c4bc:al-sort-usings</code></td><td>Sorterer using-direktiver alfabetisk i alle .al-filer</td></tr>
+          <tr><td><code>/c4bc:al-next-id</code></td><td>Printer det første ledige AL-objekt-id af en given type inden for <code>app.json</code>-idRanges</td></tr>
+          <tr><td><code>/c4bc:al-analyse</code></td><td>Danner/opdaterer en dansk kodekvalitets-analyse af en downloadet AL-app — fund pr. fil med alvorlighedsgrader og handlingsliste</td></tr>
+          <tr><td><code>/c4bc:al-analyse-claude-init</code></td><td>Danner/opdaterer CLAUDE.md (engelsk) for et analyse-repo; med <code>per-app</code> også lokale CLAUDE.md-filer pr. app</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
 </div>
 
 <footer>
-  <strong>Kretzmann ApS</strong> · c4bc-plugin · html-guide · Opdateret juni 2026
+  <strong>Kretzmann ApS</strong> · c4bc-plugin · Opdateret juli 2026
 </footer>
+
+</div><!-- /.page -->
 
 <script>
 (function () {
   'use strict';
 
-  /* ── Smooth in-page scrolling for TOC / anchor links ── */
+  /* ── Mobile sidebar toggle ── */
+  var sideNav = document.getElementById('sideNav');
+  var toggle = document.querySelector('.nav-toggle');
+  if (toggle && sideNav) {
+    toggle.addEventListener('click', function () {
+      sideNav.classList.toggle('open');
+    });
+  }
+
+  /* ── Smooth in-page scrolling for nav / anchor links ── */
   document.querySelectorAll('a[href^="#"]').forEach(function (link) {
     link.addEventListener('click', function (e) {
       var id = link.getAttribute('href').slice(1);
@@ -722,32 +928,33 @@ pre { position: relative; }   /* anchor for the copy button */
       e.preventDefault();
       target.scrollIntoView({ behavior: 'smooth', block: 'start' });
       if (history.replaceState) history.replaceState(null, '', '#' + id);
+      if (sideNav) sideNav.classList.remove('open');
     });
   });
 
-  /* ── Scroll-spy: highlight the current section in the TOC ── */
-  var tocLinks = Array.prototype.slice.call(
-    document.querySelectorAll('.toc a[href^="#"]')
+  /* ── Scroll-spy: highlight the current target in the sidebar ── */
+  var navLinks = Array.prototype.slice.call(
+    document.querySelectorAll('.side-nav a[href^="#"]')
   );
-  if (tocLinks.length && 'IntersectionObserver' in window) {
+  if (navLinks.length && 'IntersectionObserver' in window) {
     var byId = {};
-    tocLinks.forEach(function (l) { byId[l.getAttribute('href').slice(1)] = l; });
-    var sections = tocLinks
+    navLinks.forEach(function (l) { byId[l.getAttribute('href').slice(1)] = l; });
+    var targets = navLinks
       .map(function (l) { return document.getElementById(l.getAttribute('href').slice(1)); })
       .filter(Boolean);
     var spy = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
         var link = byId[entry.target.id];
         if (link && entry.isIntersecting) {
-          tocLinks.forEach(function (l) { l.classList.remove('active'); });
+          navLinks.forEach(function (l) { l.classList.remove('active'); });
           link.classList.add('active');
         }
       });
     }, { rootMargin: '0px 0px -75% 0px', threshold: 0 });
-    sections.forEach(function (s) { spy.observe(s); });
+    targets.forEach(function (t) { spy.observe(t); });
   }
 
-  /* ── Copy-to-clipboard buttons on code blocks (technical guides) ── */
+  /* ── Copy-to-clipboard buttons on code blocks ── */
   if (navigator.clipboard) {
     document.querySelectorAll('pre').forEach(function (pre) {
       var btn = document.createElement('button');
@@ -770,16 +977,16 @@ pre { position: relative; }   /* anchor for the copy button */
   if (details.length > 1) {
     var first = details[0];
     var allOpen = false;
-    var toggle = document.createElement('button');
-    toggle.type = 'button';
-    toggle.className = 'expand-all-btn';
-    toggle.textContent = 'Fold alle ud';
-    toggle.addEventListener('click', function () {
+    var toggleAll = document.createElement('button');
+    toggleAll.type = 'button';
+    toggleAll.className = 'expand-all-btn';
+    toggleAll.textContent = 'Fold alle ud';
+    toggleAll.addEventListener('click', function () {
       allOpen = !allOpen;
       details.forEach(function (d) { d.open = allOpen; });
-      toggle.textContent = allOpen ? 'Fold alle ind' : 'Fold alle ud';
+      toggleAll.textContent = allOpen ? 'Fold alle ind' : 'Fold alle ud';
     });
-    if (first.parentNode) first.parentNode.insertBefore(toggle, first);
+    if (first.parentNode) first.parentNode.insertBefore(toggleAll, first);
   }
 
   /* ── Back-to-top button ── */

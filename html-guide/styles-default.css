@@ -35,6 +35,13 @@
     --success-bg:   #E6F6EE;
     --code-bg:      #0E2230;
     --code-text:    #D6E7F2;
+
+    --p1:           #B3261E;   /* P1 — høj prioritet            */
+    --p1-bg:        #FCEAE8;
+    --p2:           #9A6614;   /* P2 — meningsfuld forbedring   */
+    --p2-bg:        #FBF0DC;
+    --p3:           #4A5C6A;   /* P3 — oprydning / nice-to-have */
+    --p3-bg:        #EDF1F5;
   }
   
   /* ── Reset & base ── */
@@ -115,7 +122,27 @@
     font-size: 13px;
     font-weight: 500;
   }
-  
+
+  /* ── Header stat-strip (oversigtstal; .num kan have data-countup) ── */
+  .stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0;
+    margin-top: 24px;
+    border-top: 1px solid rgba(255,255,255,0.25);
+    position: relative;
+    z-index: 1;
+  }
+  .stat {
+    flex: 1 1 130px;
+    padding: 14px 22px 2px 0;
+    border-right: 1px solid rgba(255,255,255,0.25);
+  }
+  .stat + .stat { padding-left: 22px; }
+  .stat:last-child { border-right: none; }
+  .stat .num { font-size: 30px; font-weight: 700; line-height: 1; text-align: left; }
+  .stat .lbl { font-size: 12.5px; opacity: 0.85; margin-top: 6px; }
+
   /* ── Layout ── */
   .container {
     max-width: 980px;
@@ -153,7 +180,40 @@
     transition: color 0.15s;
   }
   .toc a:hover { color: var(--brand-light); }
-  
+
+  /* ── Executive summary (efter TOC, før sektionerne) ── */
+  .exec {
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-left: 4px solid var(--accent);
+    border-radius: 8px;
+    padding: 28px 32px;
+    margin-bottom: 40px;
+    box-shadow: 0 2px 8px rgba(0,63,127,0.06);
+  }
+  .exec .exec-eyebrow {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--brand-mid);
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+  .exec h2 { font-size: 24px; font-weight: 700; color: var(--brand-dark); line-height: 1.25; margin-bottom: 14px; }
+  .exec h3 { font-size: 16px; font-weight: 600; color: var(--brand-dark); margin: 18px 0 6px; }
+  .exec p { margin-bottom: 12px; }
+  .exec ul { margin: 6px 0 12px 22px; }
+  .exec li { margin-bottom: 6px; }
+  .exec .verdict {
+    background: var(--note-bg);
+    border-left: 4px solid var(--note-border);
+    border-radius: 0 8px 8px 0;
+    padding: 14px 18px;
+    margin-top: 16px;
+  }
+  .exec .verdict strong { color: #B7770A; }
+  @media (max-width: 640px) { .exec { padding: 22px 20px; } }
+
   /* ── Section cards ── */
   .section {
     background: var(--white);
@@ -368,6 +428,20 @@
     font-weight: 600;
   }
   
+  /* ── Prioritets-tags (P1/P2/P3 — analyse-dokumenter o.l.) ── */
+  .tag {
+    display: inline-block;
+    border-radius: 4px;
+    padding: 1px 9px;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+    letter-spacing: 0.3px;
+  }
+  .tag.p1 { background: var(--p1-bg); color: var(--p1); border: 1px solid #EBC2BE; }
+  .tag.p2 { background: var(--p2-bg); color: var(--p2); border: 1px solid #E4C98F; }
+  .tag.p3 { background: var(--p3-bg); color: var(--p3); border: 1px solid var(--gray-200); }
+
   /* ── Day-badge (highlight concrete days/times in examples) ── */
   .day-tag {
     display: inline-block;
@@ -398,6 +472,34 @@
     color: var(--brand-dark);
   }
   
+  /* ── Foldbar teknisk detalje (accordion inde i en .section) ── */
+  details.tech {
+    margin-top: 14px;
+    border-top: 1px solid var(--gray-200);
+  }
+  details.tech > summary {
+    cursor: pointer;
+    list-style: none;
+    padding: 9px 0;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--brand-mid);
+    letter-spacing: 0.3px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    user-select: none;
+  }
+  details.tech > summary::-webkit-details-marker { display: none; }
+  details.tech > summary::before { content: '＋'; font-weight: 700; color: var(--accent); line-height: 1; }
+  details.tech[open] > summary::before { content: '−'; }
+  details.tech > summary:hover { color: var(--brand-dark); }
+  .tech-body { padding: 2px 0 12px; font-size: 14px; color: var(--gray-700); animation: tech-open 0.25s ease; }
+  .tech-body ul { margin: 8px 0 8px 20px; }
+  .tech-body li { margin-bottom: 5px; }
+  .tech-body p { margin-bottom: 8px; }
+  @keyframes tech-open { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+
   /* ── Note box ── */
   .note {
     background: var(--note-bg);
@@ -674,5 +776,7 @@
     .reading-progress, .doc-search, .faq-no-results { display: none !important; }
     .sysflow-wire .dot { display: none !important; }
     .js-fx .section { opacity: 1 !important; transform: none !important; }
+    details.tech[open] .tech-body { display: block; }
+    details.tech > summary { color: #333; }
   }
   

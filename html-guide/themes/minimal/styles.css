@@ -35,6 +35,13 @@
   --success-bg:   #ECFDF3;
   --code-bg:      #0D1117;
   --code-text:    #E6EDF3;
+
+  --p1:           #B91C1C;   /* P1 — høj prioritet            */
+  --p1-bg:        #FEF2F2;
+  --p2:           #A16207;   /* P2 — meningsfuld forbedring   */
+  --p2-bg:        #FEFCE8;
+  --p3:           #5B6470;   /* P3 — oprydning / nice-to-have */
+  --p3-bg:        #F3F4F6;
 }
 
 /* ── Reset & base ── */
@@ -87,6 +94,14 @@ header p { font-size: 15px; color: var(--gray-700); font-weight: 400; }
   color: var(--gray-700);
 }
 
+/* ── Stat-strip — diskrete tal, hairline-adskilt (lys header) ── */
+.stats { display: flex; flex-wrap: wrap; gap: 0; margin-top: 20px; border-top: 1px solid var(--gray-200); }
+.stat { flex: 1 1 120px; padding: 12px 20px 0 0; border-right: 1px solid var(--gray-200); }
+.stat + .stat { padding-left: 20px; }
+.stat:last-child { border-right: none; }
+.stat .num { font-size: 26px; font-weight: 700; line-height: 1; color: var(--brand-dark); letter-spacing: -0.01em; text-align: left; }
+.stat .lbl { font-size: 12px; color: var(--gray-700); margin-top: 5px; }
+
 /* ── Layout ── */
 .container { max-width: 880px; margin: 0 auto; padding: 32px 24px 64px; }
 
@@ -111,6 +126,18 @@ header p { font-size: 15px; color: var(--gray-700); font-weight: 400; }
 .toc li { margin-bottom: 3px; }
 .toc a { color: var(--gray-700); text-decoration: none; font-size: 13.5px; transition: color 0.15s; }
 .toc a:hover { color: var(--accent); }
+
+/* ── Executive summary — tyndt rammet, accent-kant ── */
+.exec { background: var(--gray-100); border: 1px solid var(--gray-200); border-left: 2px solid var(--accent); border-radius: 8px; padding: 24px 28px; margin-bottom: 36px; }
+.exec .exec-eyebrow { font-size: 11px; text-transform: uppercase; letter-spacing: 0.09em; color: var(--gray-400); font-weight: 700; margin-bottom: 8px; }
+.exec h2 { font-size: 20px; font-weight: 650; color: var(--brand-dark); letter-spacing: -0.01em; line-height: 1.3; margin-bottom: 12px; }
+.exec h3 { font-size: 14.5px; font-weight: 650; color: var(--text); margin: 16px 0 6px; }
+.exec p { margin-bottom: 11px; }
+.exec ul { margin: 5px 0 11px 20px; }
+.exec li { margin-bottom: 5px; }
+.exec .verdict { background: var(--note-bg); border-left: 3px solid var(--note-border); border-radius: 0 6px 6px 0; padding: 12px 16px; margin-top: 14px; }
+.exec .verdict strong { color: #97700A; }
+@media (max-width: 640px) { .exec { padding: 18px 16px; } }
 
 /* ── Section cards — borderless, hairline divider, no shadow ── */
 .section {
@@ -226,6 +253,25 @@ table code { white-space: nowrap; }
 .type-tag { display: inline-block; background: var(--white); color: var(--gray-700); border: 1px solid var(--gray-200); border-radius: 4px; padding: 1px 8px; font-size: 11.5px; font-weight: 600; }
 .day-tag { display: inline-block; background: #FFF7ED; border: 1px solid #FDBA74; border-radius: 4px; padding: 1px 7px; font-size: 12px; font-weight: 600; color: #B45309; }
 
+/* ── Prioritets-tags (P1/P2/P3) — små firkantede badges ── */
+.tag { display: inline-block; border-radius: 4px; padding: 1px 8px; font-size: 11.5px; font-weight: 700; white-space: nowrap; letter-spacing: 0.02em; }
+.tag.p1 { background: var(--p1-bg); color: var(--p1); border: 1px solid #F3C6C6; }
+.tag.p2 { background: var(--p2-bg); color: var(--p2); border: 1px solid #EBD89A; }
+.tag.p3 { background: var(--p3-bg); color: var(--p3); border: 1px solid var(--gray-200); }
+
+/* ── Foldbar teknisk detalje (accordion) ── */
+details.tech { margin-top: 12px; border-top: 1px solid var(--gray-200); }
+details.tech > summary { cursor: pointer; list-style: none; padding: 8px 0; font-size: 12.5px; font-weight: 600; color: var(--gray-700); display: flex; align-items: center; gap: 7px; user-select: none; }
+details.tech > summary::-webkit-details-marker { display: none; }
+details.tech > summary::before { content: '＋'; font-weight: 700; color: var(--accent); line-height: 1; }
+details.tech[open] > summary::before { content: '−'; }
+details.tech > summary:hover { color: var(--accent); }
+.tech-body { padding: 2px 0 10px; font-size: 13.5px; color: var(--gray-700); animation: tech-open 0.25s ease; }
+.tech-body ul { margin: 7px 0 7px 18px; }
+.tech-body li { margin-bottom: 4px; }
+.tech-body p { margin-bottom: 7px; }
+@keyframes tech-open { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+
 /* ── Tech-details grid ── */
 dl.tech { display: grid; grid-template-columns: 200px 1fr; gap: 6px 18px; margin: 14px 0; font-size: 14px; }
 dl.tech dt { font-weight: 600; color: var(--gray-700); }
@@ -318,4 +364,6 @@ mark.search-hit { background: #FEF3C7; color: inherit; border-radius: 3px; paddi
   .to-top-btn, .copy-btn, .expand-all-btn, .reading-progress, .doc-search, .faq-no-results { display: none !important; }
   .sysflow-wire .dot { display: none !important; }
   .js-fx .section { opacity: 1 !important; transform: none !important; }
+  details.tech[open] .tech-body { display: block; }
+  details.tech > summary { color: #333; }
 }

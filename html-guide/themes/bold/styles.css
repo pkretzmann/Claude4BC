@@ -35,6 +35,13 @@
   --success-bg:   #D1FAE5;
   --code-bg:      #1E1432;
   --code-text:    #E9E2FB;
+
+  --p1:           #DC2626;   /* P1 — høj prioritet            */
+  --p1-bg:        #FEE2E2;
+  --p2:           #B45309;   /* P2 — meningsfuld forbedring   */
+  --p2-bg:        #FFEDD5;
+  --p3:           #524B6B;   /* P3 — oprydning / nice-to-have */
+  --p3-bg:        #ECE9F4;
 }
 
 /* ── Reset & base ── */
@@ -96,6 +103,14 @@ header p { font-size: 18px; opacity: 0.94; font-weight: 400; position: relative;
   font-weight: 700;
 }
 
+/* ── Stat-strip — hvide tal på hero-gradienten ── */
+.stats { display: flex; flex-wrap: wrap; gap: 0; margin-top: 30px; border-top: 1px solid rgba(255,255,255,0.28); position: relative; z-index: 1; }
+.stat { flex: 1 1 130px; padding: 16px 24px 2px 0; border-right: 1px solid rgba(255,255,255,0.28); }
+.stat + .stat { padding-left: 24px; }
+.stat:last-child { border-right: none; }
+.stat .num { font-size: 34px; font-weight: 800; line-height: 1; letter-spacing: -0.02em; text-align: left; }
+.stat .lbl { font-size: 12.5px; font-weight: 600; opacity: 0.88; margin-top: 6px; }
+
 /* ── Layout ── */
 .container { max-width: 980px; margin: 0 auto; padding: 44px 24px 72px; }
 
@@ -121,6 +136,18 @@ header p { font-size: 18px; opacity: 0.94; font-weight: 400; position: relative;
 .toc li { margin-bottom: 6px; }
 .toc a { color: var(--brand-dark); text-decoration: none; font-size: 14.5px; font-weight: 600; transition: color 0.15s; }
 .toc a:hover { color: var(--accent); }
+
+/* ── Executive summary — stort afrundet kort med accent-kant ── */
+.exec { background: var(--white); border: none; border-left: 6px solid var(--accent); border-radius: 20px; padding: 32px 36px; margin-bottom: 40px; box-shadow: 0 10px 30px rgba(76,29,149,0.09); }
+.exec .exec-eyebrow { font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--brand-mid); font-weight: 800; margin-bottom: 10px; }
+.exec h2 { font-size: 26px; font-weight: 800; color: var(--brand-dark); letter-spacing: -0.02em; line-height: 1.2; margin-bottom: 14px; }
+.exec h3 { font-size: 16px; font-weight: 700; color: var(--brand-mid); margin: 18px 0 6px; }
+.exec p { margin-bottom: 12px; }
+.exec ul { margin: 6px 0 12px 22px; }
+.exec li { margin-bottom: 6px; }
+.exec .verdict { background: var(--note-bg); border-left: 5px solid var(--note-border); border-radius: 0 14px 14px 0; padding: 14px 18px; margin-top: 16px; }
+.exec .verdict strong { color: #B45309; }
+@media (max-width: 640px) { .exec { padding: 24px 22px; } }
 
 /* ── Section cards — big radius, strong shadow ── */
 .section {
@@ -233,6 +260,25 @@ table code { white-space: nowrap; }
 .type-tag { display: inline-block; background: var(--gray-100); color: var(--gray-700); border: 1px solid var(--gray-200); border-radius: 30px; padding: 2px 12px; font-size: 11.5px; font-weight: 700; }
 .day-tag { display: inline-block; background: #FFEDD5; border: none; border-radius: 30px; padding: 2px 11px; font-size: 12px; font-weight: 700; color: #B45309; }
 
+/* ── Prioritets-tags (P1/P2/P3) — pille-form som øvrige badges ── */
+.tag { display: inline-block; border-radius: 30px; padding: 2px 12px; font-size: 12px; font-weight: 800; white-space: nowrap; letter-spacing: 0.04em; }
+.tag.p1 { background: var(--p1-bg); color: var(--p1); border: none; }
+.tag.p2 { background: var(--p2-bg); color: var(--p2); border: none; }
+.tag.p3 { background: var(--p3-bg); color: var(--p3); border: none; }
+
+/* ── Foldbar teknisk detalje (accordion) ── */
+details.tech { margin-top: 14px; border-top: 2px solid var(--brand-pale); }
+details.tech > summary { cursor: pointer; list-style: none; padding: 10px 0; font-size: 13px; font-weight: 700; color: var(--brand-mid); display: flex; align-items: center; gap: 8px; user-select: none; }
+details.tech > summary::-webkit-details-marker { display: none; }
+details.tech > summary::before { content: '＋'; font-weight: 800; color: var(--accent); line-height: 1; }
+details.tech[open] > summary::before { content: '−'; }
+details.tech > summary:hover { color: var(--brand-dark); }
+.tech-body { padding: 2px 0 12px; font-size: 14px; color: var(--gray-700); animation: tech-open 0.25s ease; }
+.tech-body ul { margin: 8px 0 8px 20px; }
+.tech-body li { margin-bottom: 5px; }
+.tech-body p { margin-bottom: 8px; }
+@keyframes tech-open { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+
 /* ── Tech-details grid ── */
 dl.tech { display: grid; grid-template-columns: 200px 1fr; gap: 8px 18px; margin: 16px 0; font-size: 14px; }
 dl.tech dt { font-weight: 700; color: var(--gray-700); }
@@ -325,4 +371,6 @@ mark.search-hit { background: #FDE68A; color: inherit; border-radius: 3px; paddi
   .to-top-btn, .copy-btn, .expand-all-btn, .reading-progress, .doc-search, .faq-no-results { display: none !important; }
   .sysflow-wire .dot { display: none !important; }
   .js-fx .section { opacity: 1 !important; transform: none !important; }
+  details.tech[open] .tech-body { display: block; }
+  details.tech > summary { color: #333; }
 }
