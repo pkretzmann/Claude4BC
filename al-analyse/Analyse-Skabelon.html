@@ -615,7 +615,7 @@ footer strong { color: var(--brand-dark); }
       <div class="finding-top"><span class="tag p2">P2</span><span class="status-tag pattern">gennemgående</span><span class="finding-title">Hardcodede danske brugervendte strenge</span></div>
       <div class="finding-body"><p>Labels ligger direkte i koden i stedet for som oversættbare <code>Label</code>s.</p></div>
       <details class="tech"><summary>Vis teknisk detalje</summary><div class="tech-body">
-        <p>Fx i Truck-siderne (<code>TrucktoTransferOrder.Page.al</code>, <code>TrucktoSalesOrder.Page.al</code>): <code>'Vil du flytte hentet antal (%1) ?'</code>. Sørg for at alle tekster er <code>Label</code>s og dækket i <code>Translations/Cronus.da-DK.xlf</code> (kør <code>/claude4bc:update-translations</code>).</p>
+        <p>Fx i Truck-siderne (<code>TrucktoTransferOrder.Page.al</code>, <code>TrucktoSalesOrder.Page.al</code>): <code>'Vil du flytte hentet antal (%1) ?'</code>. Sørg for at alle tekster er <code>Label</code>s og dækket i <code>Translations/Cronus.da-DK.xlf</code> (kør <code>/c4bc:al-update-translations</code>).</p>
       </div></details>
     </div>
 
@@ -721,7 +721,7 @@ footer strong { color: var(--brand-dark); }
       <li><strong>Defensiv Get()/FindFirst() (§2)</strong> — slå AA0175 til, ryd op via fælles setup-getters.</li>
       <li><strong>Hardcodede templates/grupper (§3)</strong> — flyt til setup-tabel; rydder samtidig en stor del af <code>// TODO DEV-1</code>-gælden.</li>
       <li><strong>Baggrundssikkerhed &amp; nummerserier (§5, §6)</strong> — gør integrationsstier Job Queue-sikre.</li>
-      <li><strong>Lokalisering, UX, teknisk gæld (§7–§10)</strong> — løbende oprydning; kør <code>/claude4bc:update-translations</code> til sidst.</li>
+      <li><strong>Lokalisering, UX, teknisk gæld (§7–§10)</strong> — løbende oprydning; kør <code>/c4bc:al-update-translations</code> til sidst.</li>
     </ol>
     <div class="note"><strong>Metodenote:</strong> Fundene stammer fra en modulopdelt gennemgang af alle 563 <code>.al</code>-filer. <span class="status-tag">verificeret</span> = læst direkte i koden. <span class="status-tag pattern">gennemgående</span> = mønstre med flere forekomster, hvor de nævnte linjer er repræsentative. Flere automatisk rapporterede "kompilerer ikke"-påstande blev <strong>afvist ved verifikation</strong> og er udeladt; appen kompilerer.</div>
   </section>

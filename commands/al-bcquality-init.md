@@ -71,5 +71,5 @@ Opdatering til nyeste BCQuality sker med scriptet
 `update-claude4bc.ps1`): viser status og ændringerne siden din version
 (commit-liste + berørte filer pr. lag), spørger om bekræftelse og kører derefter
 `submodule update --remote` + commit + push. Kør det fra en terminal:
-`.\.claude\skills\claude4bc\update-bcquality.ps1` (evt. med
+`.\.claude\skills\c4bc\update-bcquality.ps1` (evt. med
 `-SubmodulePath <sti>`, hvis submodulet ligger et andet sted).

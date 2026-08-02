@@ -44,7 +44,7 @@ Kør denne kommando **én gang** pr. projekt, når dokumentationen skal lægges 
 - Ellers søg efter mapper med navnet `.website` under repo-roden. **Udelad** mapper under
   `.git/`, `node_modules/` og `.claude/` (submodul-skabeloner må aldrig matche).
 - Håndtér resultatet:
-  - **Ingen `.website` fundet** → fortæl brugeren at køre `/claude4bc:website-init` først, og stop.
+  - **Ingen `.website` fundet** → fortæl brugeren at køre `/c4bc:website-init` først, og stop.
   - **Præcis én fundet** → brug den.
   - **Flere fundet** (monorepo med flere apps) → vis listen og **spørg** brugeren, hvilken
     der skal publiceres. (Bemærk: én workflow publicerer ét site — se `## Bemærk`.)

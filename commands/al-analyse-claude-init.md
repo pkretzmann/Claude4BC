@@ -84,9 +84,9 @@ skal **ikke** indeholde build-, test- eller kodestils-instruktioner.
       navnebaseret filsøgning upålidelig — grep på objektnavnet i filindholdet i
       stedet for at globbe på filnavne.
    7. **Husregler** — afslut med en `@`-import af den fælles CLAUDE.md fra
-      submodulet, fx `@.claude/skills/claude4bc/CLAUDE.md`. **Detektér den faktiske
-      mappesti** (submodulet kan hedde `claude4bc` eller `c4bc`); findes submodulet
-      ikke, udelades linjen.
+      submodulet, fx `@.claude/skills/c4bc/CLAUDE.md`. **Detektér den faktiske
+      mappesti** (submodulet kan hedde `c4bc` eller `claude4bc` i ældre projekter);
+      findes submodulet ikke, udelades linjen.
    8. **Pointers** — én linje om c4bc-dokumentationskommandoerne / `.website`-sitet,
       hvis det findes, samt **eksisterende analysedokumenter** i roden (fx
       `Analyse-*.md`).

@@ -1,6 +1,6 @@
 # Claude4BC
 
-Delt samling af Claude Code commands, **BC-skills**, HTML-guide og MCP-konfiguration til Business Central AL-projekter. Vedligeholdes ét sted og bruges på tværs af alle projekter via Git Submodule. Loades som et **in-place Claude Code-plugin** (`claude4bc@skills-dir`), så kommandoerne er tilgængelige med namespace `/claude4bc:*` og skills aktiveres automatisk, når opgaven matcher.
+Delt samling af Claude Code commands, **BC-skills**, HTML-guide og MCP-konfiguration til Business Central AL-projekter. Vedligeholdes ét sted og bruges på tværs af alle projekter via Git Submodule. Loades som et **in-place Claude Code-plugin** (`c4bc@skills-dir`), så kommandoerne er tilgængelige med namespace `/c4bc:*` og skills aktiveres automatisk, når opgaven matcher.
 
 ## Indhold
 
@@ -26,6 +26,7 @@ Claude4BC/
     al-bcquality-init.md   ← Installér Microsofts BCQuality-vidensbase som submodule i .claude/bcquality
     al-next-id.md          ← Find første ledige AL-objekt-ID for en objekttype (inden for app.json idRanges)
     website-implement-language-selector.md ← Eftermontér sprogvælger i ældre portaler
+    nav-split-objects.md   ← Split en klassisk NAV C/SIDE-teksteksport i én fil pr. objekt
   skills/
     bc-page-design/        ← Skill: design af BC-sider (List/Card/Document, actions, tooltip-regler)
     bc-table-design/       ← Skill: design af BC-tabeller og table extensions (felter, nøgler, FlowFields)
@@ -38,6 +39,8 @@ Claude4BC/
     styles.css             ← Stylesheet til analyse-skabelonen (editorial-tema)
   al-next-id/
     next-id.ps1            ← Hjælpescript til /al-next-id (scanner .al-filer for brugte objekt-ID'er)
+  nav-split/
+    split-nav-objects.ps1  ← Motor til /nav-split-objects (byte-bevarende split af C/SIDE-eksporter)
   html-guide/
     portal.html            ← Kanonisk skabelon til dokumentationsportalen (index.html)
     styles-default.css     ← Fuldt kanonisk fallback-stylesheet (neutralt brand)
@@ -68,15 +71,15 @@ Værktøjet er et delt git-submodul, der virker som et **Claude Code-plugin** �
 1. **Tilføj submodulet** under `.claude/skills/` i dit projekt:
 
    ```bash
-   git submodule add https://github.com/pkretzmann/Claude4BC.git .claude/skills/claude4bc
+   git submodule add https://github.com/pkretzmann/Claude4BC.git .claude/skills/c4bc
    ```
 
-2. **Genstart Claude Code.** Mappen indeholder en `plugin.json`, så den loades automatisk som pluginnet `claude4bc`, og kommandoerne `/claude4bc:…` samt skills (`c4bc:…`) dukker op automatisk.
+2. **Genstart Claude Code.** Mappen indeholder en `plugin.json`, så den loades automatisk som pluginnet `c4bc`, og kommandoerne `/c4bc:…` samt skills dukker op automatisk.
 
 3. **Importér de fælles husregler** i projektets egen `CLAUDE.md` (opret filen i git-roden, hvis den ikke findes) ved at tilføje denne linje:
 
    ```markdown
-   @.claude/skills/claude4bc/CLAUDE.md
+   @.claude/skills/c4bc/CLAUDE.md
    ```
 
    > ⚠️ **Hvorfor?** Claude Code loader kun *nestede* CLAUDE.md-filer (som submodulets) **on demand** — dvs. når Claude læser filer i selve submodul-mappen, hvilket sjældent sker under almindeligt AL-arbejde. Uden import-linjen er de fælles AL/DevOps-regler (Caption/ToolTip-krav, navngivning, AB#-commits m.m.) derfor **ikke** i kontekst i dit projekt. `@`-importen loader dem ved sessionstart.
@@ -123,7 +126,7 @@ Konverterer en eller flere markdown-brugervejledninger til en professionel, selv
 /website-build Dokumentation/
 ```
 
-Bruger projektets `.website/styles.css` hvis den findes — ellers falder den tilbage på `.claude/skills/claude4bc/html-guide/styles-default.css`. CSS og JavaScript indsættes ordret i den genererede HTML, så filen er selvstændig og virker offline.
+Bruger projektets `.website/styles.css` hvis den findes — ellers falder den tilbage på `.claude/skills/c4bc/html-guide/styles-default.css`. CSS og JavaScript indsættes ordret i den genererede HTML, så filen er selvstændig og virker offline.
 
 ---
 
@@ -303,9 +306,23 @@ Output: `<out>/Code-Review-<app>-<dato>.html` + `.pdf` (+ `assets/`). Default `<
 
 ---
 
+### `/nav-split-objects <eksport.txt> [output-mappe] [--types …] [--list]`
+Splitter en **klassisk NAV C/SIDE-teksteksport** (én stor `.txt` fra Object Designer med tusindvis af objekter) i **én fil pr. objekt**, navngivet `<Type>_<Nr>_<Navn>.txt` (fx `Table_36_Sales_Header.txt`). Kører via et bundtet PowerShell-script, der **aldrig** lader modellen parse eksporten — splittet er **byte-bevarende**, så kodning (UTF-8 eller OEM/CP850 med æøå) aldrig ødelægges, og en sammenkædning af output-filerne genskaber kilden byte for byte. Håndterer Table, Form, Report, Dataport, Codeunit, XMLport, MenuSuite, Page og Query; en 185 MB-eksport med 7.500+ objekter splittes på ~15 sekunder.
+
+**Eksempler:**
+```
+/nav-split-objects all_objects.txt
+/nav-split-objects "Changes 2024.txt" Split --types Codeunit,Table
+/nav-split-objects eksport.txt --list
+```
+
+Default-output er mappen `<eksportnavn>-Objects` ved siden af kildefilen. `--list` viser kun objekt-oversigten uden at skrive filer. Idempotent — genkørsel overskriver eksisterende output-filer.
+
+---
+
 ## Skills
 
-Ud over kommandoerne indeholder bundtet **Agent Skills** i `skills/`-mappen. Forskellen på de to: kommandoer starter *du* med `/claude4bc:…`, mens skills aktiveres **automatisk af Claude**, når opgaven matcher — fx når du beder om en ny BC-side eller -tabel. Hver skill bager de fælles husregler (Caption/ToolTip-krav, navngivning uden prefix/»Ext«, testkrav) direkte ind i mønstrene, og har en `references/examples.md` med komplette AL-eksempler, som Claude læser efter behov.
+Ud over kommandoerne indeholder bundtet **Agent Skills** i `skills/`-mappen. Forskellen på de to: kommandoer starter *du* med `/c4bc:…`, mens skills aktiveres **automatisk af Claude**, når opgaven matcher — fx når du beder om en ny BC-side eller -tabel. Hver skill bager de fælles husregler (Caption/ToolTip-krav, navngivning uden prefix/»Ext«, testkrav) direkte ind i mønstrene, og har en `references/examples.md` med komplette AL-eksempler, som Claude læser efter behov.
 
 | Skill | Aktiveres når… | Indhold |
 |---|---|---|
@@ -339,15 +356,15 @@ Skills loades automatisk sammen med pluginnet — der kræves ingen opsætning u
 Kør følgende fra git-roden i dit projekt:
 
 ```bash
-git submodule add https://github.com/pkretzmann/Claude4BC .claude/skills/claude4bc
+git submodule add https://github.com/pkretzmann/Claude4BC .claude/skills/c4bc
 git add .
 git commit -m "Add Claude4BC as submodule"
 git push
 ```
 
-Submodulet **skal ligge under en `.claude/skills/`-mappe** (gerne i git-roden, så det dækker alle apps i et monorepo). Det indeholder en `.claude-plugin/plugin.json` og loades derfor automatisk som et **in-place plugin** (`claude4bc@skills-dir`) — uden marketplace eller install-trin. Kommandoerne bliver tilgængelige med namespace, fx `/claude4bc:website-build`, skills loades fra `skills/`-mappen, og submodulets `.mcp.json` loades som plugin-MCP (med per-server-godkendelse). Genstart Claude Code efter tilføjelsen, så det nye plugin opdages.
+Submodulet **skal ligge under en `.claude/skills/`-mappe** (gerne i git-roden, så det dækker alle apps i et monorepo). Det indeholder en `.claude-plugin/plugin.json` og loades derfor automatisk som et **in-place plugin** (`c4bc@skills-dir`) — uden marketplace eller install-trin. Kommandoerne bliver tilgængelige med namespace, fx `/c4bc:website-build`, skills loades fra `skills/`-mappen, og submodulets `.mcp.json` loades som plugin-MCP (med per-server-godkendelse). Genstart Claude Code efter tilføjelsen, så det nye plugin opdages.
 
-Husk derefter import-linjen `@.claude/skills/claude4bc/CLAUDE.md` i projektets egen `CLAUDE.md` (se **Kom godt i gang**, trin 3) — ellers loades de fælles husregler ikke ved sessionstart.
+Husk derefter import-linjen `@.claude/skills/c4bc/CLAUDE.md` i projektets egen `CLAUDE.md` (se **Kom godt i gang**, trin 3) — ellers loades de fælles husregler ikke ved sessionstart.
 
 ---
 
@@ -356,18 +373,27 @@ Husk derefter import-linjen `@.claude/skills/claude4bc/CLAUDE.md` i projektets e
 Når der er ændringer i Claude4BC, kør medfølgende script fra git-roden i dit projekt:
 
 ```powershell
-.\.claude\skills\claude4bc\update-claude4bc.ps1
+.\.claude\skills\c4bc\update-claude4bc.ps1
 ```
 
 Scriptet finder selv git-roden, viser nuværende og seneste commit, og springer over hvis du allerede er på seneste version. Ellers beder det om bekræftelse (`j/n`) og udfører derefter: opdaterer submodulet (`git submodule update --remote`), committer ændringen (`"Bump Claude4BC to latest"`) og pusher.
+
+> ℹ️ **Ældre projekter med mappen `claude4bc`:** Standardstien er nu `.claude/skills/c4bc`, men projekter med den gamle mappe `.claude/skills/claude4bc` virker uændret — scriptet finder submodulet ud fra sin egen placering, og kommando-namespacet har altid været `/c4bc:` (det kommer fra `plugin.json`, ikke mappenavnet). Sørg blot for, at `@`-import-linjen i projektets CLAUDE.md matcher den faktiske mappesti. Vil du migrere til den korte sti:
+>
+> ```bash
+> git mv .claude/skills/claude4bc .claude/skills/c4bc
+> git commit -m "Rename Claude4BC submodule folder to c4bc"
+> ```
+>
+> (`git mv` opdaterer selv stien i `.gitmodules`.)
 
 ### Manuelt
 
 Foretrækker du at køre trinene selv:
 
 ```bash
-git submodule update --remote .claude/skills/claude4bc
-git add .claude/skills/claude4bc
+git submodule update --remote .claude/skills/c4bc
+git add .claude/skills/c4bc
 git commit -m "Bump Claude4BC to latest"
 git push
 ```
@@ -390,4 +416,4 @@ git submodule update --init
 
 ## Lokal CSS-override
 
-`.claude/skills/claude4bc/html-guide/styles-default.css` er det fulde, neutralt-brandede standardstylesheet til HTML-guides og **deles** via submodulet — rediger den ikke per projekt. Ønsker du et projekt-specifikt stylesheet, opret `.website/styles.css` i dit projekt (typisk via `/website-create-css`, der seeder fra default'en og sætter dine brandfarver) — `/website-build` bruger den automatisk frem for default'en.
+`.claude/skills/c4bc/html-guide/styles-default.css` er det fulde, neutralt-brandede standardstylesheet til HTML-guides og **deles** via submodulet — rediger den ikke per projekt. Ønsker du et projekt-specifikt stylesheet, opret `.website/styles.css` i dit projekt (typisk via `/website-create-css`, der seeder fra default'en og sætter dine brandfarver) — `/website-build` bruger den automatisk frem for default'en.

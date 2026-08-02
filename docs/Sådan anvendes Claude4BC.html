@@ -622,11 +622,18 @@ body { display: block; }
       <div class="nav-group-title">AL-objekter &amp; kode</div>
       <a href="#al-docs">Dokumentation fra AL-kode</a>
       <a href="#al-vedligehold">Vedligehold &amp; hjælpere</a>
+      <a href="#nav-split">NAV C/SIDE-eksporter</a>
     </div>
     <div class="nav-group">
       <div class="nav-group-title">AL-analyse</div>
       <a href="#al-analyse">Kodekvalitets-analyse</a>
       <a class="sub" href="#al-analyse-claude-init">CLAUDE.md til analyse-repo</a>
+      <a class="sub" href="#al-code-review">Ledelses-kode-review</a>
+      <a class="sub" href="#al-bcquality">BCQuality-vidensbase</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Skills</div>
+      <a href="#skills">BC-skills (automatiske)</a>
     </div>
     <div class="nav-group">
       <div class="nav-group-title">Opslag</div>
@@ -646,6 +653,7 @@ body { display: block; }
     <span class="pill">🌐 Website &amp; PDF</span>
     <span class="pill">🧱 AL-objekter</span>
     <span class="pill">🔍 AL-analyse</span>
+    <span class="pill">🎯 BC-skills</span>
     <span class="pill">📦 Delt via git-submodul</span>
   </div>
 </header>
@@ -670,18 +678,19 @@ body { display: block; }
           </tr>
           <tr>
             <td><strong>🧱 AL-objekter &amp; kode</strong></td>
-            <td><code>al-userdocs</code> · <code>al-techdocs</code> · <code>al-update-translations</code> · <code>al-sort-usings</code> · <code>al-next-id</code></td>
-            <td>Bruger-/teknisk dokumentation (.md) fra AL-kilde, opdaterede .xlf-filer, sorterede usings, næste ledige objekt-id</td>
+            <td><code>al-userdocs</code> · <code>al-techdocs</code> · <code>al-update-translations</code> · <code>al-sort-usings</code> · <code>al-next-id</code> · <code>nav-split-objects</code></td>
+            <td>Bruger-/teknisk dokumentation (.md) fra AL-kilde, opdaterede .xlf-filer, sorterede usings, næste ledige objekt-id, C/SIDE-eksport splittet i én fil pr. objekt</td>
           </tr>
           <tr>
             <td><strong>🔍 AL-analyse</strong></td>
-            <td><code>al-analyse</code> · <code>al-analyse-claude-init</code></td>
-            <td>Kodekvalitets-analyser (<code>Analyse-&lt;AppNavn&gt;.md</code>) og CLAUDE.md-filer til analyse-repos med downloadet/dekompileret AL-kilde</td>
+            <td><code>al-analyse</code> · <code>al-analyse-claude-init</code> · <code>al-code-review</code> · <code>al-bcquality-init</code></td>
+            <td>Kodekvalitets-analyser (<code>Analyse-&lt;AppNavn&gt;.md</code>), CLAUDE.md-filer til analyse-repos, ledelses-rettet kode-review (HTML+PDF) og Microsofts BCQuality-vidensbase som guardrails</td>
           </tr>
         </tbody>
       </table>
     </div>
     <p>Hver kommando er beskrevet i sin egen fil under pluginnets <code>commands/</code>-mappe — den fulde liste med argumenter står i <a href="#reference">kommando-referencen</a> nederst.</p>
+    <p>Ud over kommandoerne indeholder bundtet fire <strong>BC-skills</strong>, som Claude aktiverer <em>automatisk</em>, når du arbejder med sider, tabeller, tests eller udvidelse af standard-logik — se <a href="#skills">afsnittet om skills</a>.</p>
   </div>
 
   <!-- ── 2 Submodul vs plugin ── -->
@@ -731,7 +740,10 @@ body { display: block; }
       <li>Tilføj submodulet under <code>.claude/skills/</code> i projektet. Kør denne ene kommando i projektets rod — brug <em>Kopiér</em>-knappen for at kopiere præcis linjen:
         <pre><code>git submodule add https://github.com/pkretzmann/Claude4BC.git .claude/skills/c4bc</code></pre>
       </li>
-      <li><strong>Genstart Claude Code.</strong> Mappen indeholder en <code>plugin.json</code>, så den loades automatisk som pluginnet <code>c4bc</code> — og kommandoerne <code>/c4bc:…</code> dukker op.</li>
+      <li><strong>Genstart Claude Code.</strong> Mappen indeholder en <code>plugin.json</code>, så den loades automatisk som pluginnet <code>c4bc</code> — og kommandoerne <code>/c4bc:…</code> samt skills dukker op.</li>
+      <li><strong>Importér de fælles husregler</strong> i projektets egen <code>CLAUDE.md</code> (opret filen i git-roden, hvis den ikke findes) ved at tilføje linjen:
+        <pre><code>@.claude/skills/c4bc/CLAUDE.md</code></pre>
+        Claude Code loader kun nestede CLAUDE.md-filer (som submodulets) <em>on demand</em> — uden import-linjen er de fælles AL-/DevOps-regler (Caption/ToolTip-krav, navngivning, AB#-commits) altså <strong>ikke</strong> i kontekst under almindeligt AL-arbejde.</li>
       <li>Kør <code>/c4bc:website-init</code> <strong>én gang</strong> for at initialisere dokumentationssitet — den opretter <code>.website/</code> med sprogmapper (<code>da-DK</code>, <code>en-US</code>), rod-redirect, kildemateriale-mapper, start-script og preview-konfigurationen <code>.claude/launch.json</code>.</li>
       <li>Kør <code>/c4bc:website-create-css &lt;hjemmeside-url&gt; [type] [--theme &lt;tema&gt;]</code> for at hente kundens brandfarver og oprette projektets eget <code>.website/styles.css</code>. Tilføj <code>--theme</code> for at vælge et bestemt layout fra start (standard er <strong>classic</strong>).</li>
       <li><em>(Valgfrit)</em> Vil du skifte layout/tema senere, så kør <code>/c4bc:website-theme &lt;tema&gt;</code> — fx <code>editorial</code> eller <code>landing</code>. Se <a href="#design">Design, farver og temaer</a>.</li>
@@ -837,6 +849,17 @@ body { display: block; }
       <li><code>/c4bc:al-sort-usings</code> — sorterer <code>using</code>-direktiver alfabetisk i alle .al-filer (et overordnet namespace sorteres før sine undernamespaces).</li>
       <li><code>/c4bc:al-next-id &lt;objekttype&gt;</code> — printer det første ledige AL-objekt-id af en given type (codeunit, table, page, …) inden for projektets <code>app.json</code>-idRanges.</li>
     </ul>
+
+    <h3 id="nav-split">NAV C/SIDE-eksporter: <code>/c4bc:nav-split-objects</code></h3>
+    <p>Splitter en <strong>klassisk NAV C/SIDE-teksteksport</strong> — én stor <code>.txt</code> fra Object Designer med op til tusindvis af objekter — i <strong>én fil pr. objekt</strong>, navngivet <code>&lt;Type&gt;_&lt;Nr&gt;_&lt;Navn&gt;.txt</code> (fx <code>Table_36_Sales_Header.txt</code>). Håndterer alle objekttyper: Table, Form, Report, Dataport, Codeunit, XMLport, MenuSuite, Page og Query.</p>
+    <pre><code>/c4bc:nav-split-objects all_objects.txt
+/c4bc:nav-split-objects "Changes 2024.txt" Split --types Codeunit,Table
+/c4bc:nav-split-objects eksport.txt --list</code></pre>
+    <ul class="bullets">
+      <li>Default-output er mappen <code>&lt;eksportnavn&gt;-Objects</code> ved siden af kildefilen; <code>--types</code> begrænser til udvalgte objekttyper, og <code>--list</code> viser kun oversigten uden at skrive filer.</li>
+      <li>Splittet udføres af et bundtet PowerShell-script og er <strong>byte-bevarende</strong>: kodningen (UTF-8 eller OEM/CP850 med æøå) røres aldrig, og en sammenkædning af output-filerne genskaber kilden byte for byte. En 185 MB-eksport med 7.500+ objekter splittes på ca. 15 sekunder.</li>
+      <li>Idempotent — genkørsel overskriver eksisterende output-filer.</li>
+    </ul>
   </div>
 
   <!-- ── 6 AL-analyse ── -->
@@ -865,13 +888,43 @@ body { display: block; }
     <pre><code>/c4bc:al-analyse-claude-init
 /c4bc:al-analyse-claude-init C:\AL\Soya per-app</code></pre>
     <div class="note"><strong>Idempotent:</strong> Findes der en CLAUDE.md i forvejen, bevares håndskrevet prosa, og kun udledelige fakta synkroniseres. Almindelige udviklingsprojekter er <em>ikke</em> kommandoens opgave — den advarer og stopper.</div>
+
+    <h3 id="al-code-review">Ledelses-kode-review: <code>/c4bc:al-code-review</code></h3>
+    <p>Analyserer et BC AL-repo og danner et <strong>ledelses-rettet teknisk kode-review</strong> som selvstændig <strong>HTML + PDF</strong>: executive summary, samlet verdict-banner, et RAG-bedømt status-dashboard på tværs af <em>Code quality</em>, <em>Test coverage</em>, <em>Architecture &amp; maintainability</em> og <em>Security &amp; upgrade-readiness</em>, fund pr. dimension og prioriterede anbefalinger. Data hentes via <code>al-mcp</code> kombineret med en let filsystem-scanning; rapporten styles af <code>review</code>-temaet og arver projektets brandfarver, hvis <code>.website/styles.css</code> findes.</p>
+    <pre><code>/c4bc:al-code-review
+/c4bc:al-code-review "EbroFrost Base App" --lang da
+/c4bc:al-code-review --no-images --out docs/review</code></pre>
+
+    <h3 id="al-bcquality">BCQuality-vidensbase: <code>/c4bc:al-bcquality-init</code></h3>
+    <p>Installerer Microsofts <strong>BCQuality</strong>-vidensbase (<a href="https://github.com/microsoft/BCQuality">github.com/microsoft/BCQuality</a>) som git-submodule i <code>.claude/bcquality</code> og forbinder den til projektets CLAUDE.md, så review- og analyse-agenter kan bruge dens guardrails og skills. Egne partner-/kunderegler i bundtets <code>bcquality-custom/knowledge/</code> vinder over klonens community- og microsoft-lag. Opdateres senere med <code>update-bcquality.ps1</code>.</p>
   </div>
 
-  <!-- ── 7 Reference ── -->
+  <!-- ── 7 BC-skills ── -->
+  <div class="section" id="skills">
+    <div class="section-header">
+      <div class="section-icon">🎯</div>
+      <h2>7 · BC-skills — automatisk aktiveret viden</h2>
+    </div>
+    <p>Skills er bundtets anden værktøjstype. Forskellen på de to: <strong>kommandoer starter du selv</strong> med <code>/c4bc:…</code>, mens <strong>skills aktiveres automatisk af Claude</strong>, når opgaven matcher — fx når du beder om en ny BC-side eller -tabel. Hver skill bager de fælles husregler (Caption/ToolTip-krav, navngivning uden prefix/»Ext«, testkrav) direkte ind i mønstrene og har komplette AL-eksempler, som Claude læser efter behov.</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Skill</th><th>Aktiveres når…</th><th>Indhold</th></tr></thead>
+        <tbody>
+          <tr><td><code>bc-page-design</code></td><td>der designes eller ændres pages/pageextensions</td><td>Valg af sidetype (List/Card/Document/…), layout &amp; FastTabs, actions med <code>actionref</code>-promotion, views — og tooltip-reglerne: ingen ToolTip på page-felter (arves fra tabellen), krav om ToolTip på pageext-felter</td></tr>
+          <tr><td><code>bc-table-design</code></td><td>der designes eller ændres tabeller/tableextensions</td><td>Felter med Caption/ToolTip/DataClassification, datatyper, nøgler &amp; SIFT, FlowFields/FlowFilters, TableRelation &amp; validering, nummerserie-mønster</td></tr>
+          <tr><td><code>al-testing</code></td><td>der skrives AL-tests — og efter nye codeunits/tableextensions (projektregel)</td><td>Testcodeunit-skelet, Given/When/Then, Assert, UI-handlers, TestPages, library-codeunits, isolation</td></tr>
+          <tr><td><code>bc-extensibility</code></td><td>standard BC-logik skal udvides</td><td>Integration events &amp; subscribers, posting-hooks (Sales/Purch), nummerserier (moderne »No. Series«-modul), dimensioner, enum extensions &amp; interfaces</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="info-box"><strong>Ingen opsætning:</strong> Skills loades automatisk sammen med pluginnet. Husk dog <a href="#kom-i-gang">import-linjen i trin 3</a>, så de fælles husregler også er i kontekst — skills og husregler supplerer hinanden.</div>
+  </div>
+
+  <!-- ── 8 Reference ── -->
   <div class="section" id="reference">
     <div class="section-header">
       <div class="section-icon">📖</div>
-      <h2>7 · Kommando-reference</h2>
+      <h2>8 · Kommando-reference</h2>
     </div>
     <p>Alle bundtets kommandoer i ét opslag. Detaljer og argumenter står i hver kommandos fil under <code>commands/</code>.</p>
     <div class="table-wrap">
@@ -891,8 +944,11 @@ body { display: block; }
           <tr><td><code>/c4bc:al-update-translations</code></td><td>Opdaterer projektets oversættelsesfiler (<code>.xlf</code>), til alt er oversat</td></tr>
           <tr><td><code>/c4bc:al-sort-usings</code></td><td>Sorterer using-direktiver alfabetisk i alle .al-filer</td></tr>
           <tr><td><code>/c4bc:al-next-id</code></td><td>Printer det første ledige AL-objekt-id af en given type inden for <code>app.json</code>-idRanges</td></tr>
+          <tr><td><code>/c4bc:nav-split-objects</code></td><td>Splitter en klassisk NAV C/SIDE-teksteksport i én fil pr. objekt (<code>Type_Nr_Navn.txt</code>) — byte-bevarende</td></tr>
           <tr><td><code>/c4bc:al-analyse</code></td><td>Danner/opdaterer en dansk kodekvalitets-analyse af en downloadet AL-app — fund pr. fil med alvorlighedsgrader og handlingsliste</td></tr>
           <tr><td><code>/c4bc:al-analyse-claude-init</code></td><td>Danner/opdaterer CLAUDE.md (engelsk) for et analyse-repo; med <code>per-app</code> også lokale CLAUDE.md-filer pr. app</td></tr>
+          <tr><td><code>/c4bc:al-code-review</code></td><td>Danner et ledelses-rettet teknisk kode-review af et AL-repo som selvstændig HTML + PDF med RAG-dashboard og anbefalinger</td></tr>
+          <tr><td><code>/c4bc:al-bcquality-init</code></td><td>Installerer Microsofts BCQuality-vidensbase som git-submodule i <code>.claude/bcquality</code> og forbinder den til CLAUDE.md</td></tr>
         </tbody>
       </table>
     </div>
@@ -901,7 +957,7 @@ body { display: block; }
 </div>
 
 <footer>
-  <strong>Kretzmann ApS</strong> · c4bc-plugin · Opdateret juli 2026
+  <strong>Kretzmann ApS</strong> · c4bc-plugin · Opdateret august 2026
 </footer>
 
 </div><!-- /.page -->
