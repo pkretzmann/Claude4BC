@@ -273,7 +273,7 @@ Initialisér GitHub Actions-workflowen `.github/workflows/DeployDocsWebsite.yaml
 **Eksempler:**
 ```
 /website-github-init-deploy
-/website-github-init-deploy "EbroFrost Base App/.website"
+/website-github-init-deploy "Customer Base App/.website"
 ```
 
 Idempotent — findes workflowen, vises forskellen og du spørges før overskrivning. Husk bagefter at sætte **Settings → Pages → Source = »GitHub Actions«** i repoet. Selve `.website`-indholdet dannes af `/website-init`, `/website-build` og `/website-update-index`.
@@ -285,7 +285,7 @@ Danner **én samlet PDF pr. sprog** ud af `.website`-sitet: brandet forside + in
 ```
 /pdf-build
 /pdf-build --locale da-DK
-/pdf-build "EbroFrost Base App/.website"
+/pdf-build "Customer Base App/.website"
 ```
 
 Output: `<.website>/<sprog>/Brugervejledning.pdf` (da-DK) / `User Guide.pdf` (en-US). Kræver Node.js; afhængigheder installeres én gang i plugin'ets `pdf-build/` (git-ignoreret). Sprog uden `NAV`-array springes over.
@@ -298,7 +298,7 @@ Analyserer et Business Central AL-repo og danner et **ledelses-rettet teknisk ko
 **Eksempler:**
 ```
 /al-code-review
-/al-code-review "EbroFrost Base App" --lang da
+/al-code-review "Customer Base App" --lang da
 /al-code-review --no-images --out docs/review
 ```
 

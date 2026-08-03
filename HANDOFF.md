@@ -43,6 +43,6 @@ claude mcp add playwright -s user -- npx @playwright/mcp@latest
 4. Hook into existing GitHub Pages deploy workflow
 
 ## Notes
-- Claude4BC submodule lives at: `EbroFrost Base App/.claude/claude4bc` (GitHub: `pkretzmann/Claude4BC`)
+- Claude4BC submodule lives at: GitHub: `pkretzmann/Claude4BC`
 - Same submodule pattern could apply here as `web-projects/` submodule
 - F&K website: `fich-kretzmann.dk` (single-page HTML/CSS/JS, dark theme)

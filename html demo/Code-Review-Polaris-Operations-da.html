@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Polaris Operations Base App — Teknisk kodegennemgang</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Cdefs%3E%3ClinearGradient%20id='g'%20x1='0'%20y1='0'%20x2='1'%20y2='1'%3E%3Cstop%20offset='0'%20stop-color='%231B2A41'/%3E%3Cstop%20offset='1'%20stop-color='%23324A6D'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width='64'%20height='64'%20rx='14'%20fill='url(%23g)'/%3E%3Cpath%20d='M16%2040%20L28%2024%20L36%2034%20L48%2018'%20fill='none'%20stroke='%23C9A227'%20stroke-width='4'%20stroke-linecap='round'%20stroke-linejoin='round'/%3E%3Ccircle%20cx='48'%20cy='18'%20r='4'%20fill='%23C9A227'/%3E%3C/svg%3E" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+/* ============================================================
+   html-guide THEME — "review" (Executive Review)  [inlined verbatim]
+   ============================================================ */
+:root {
+  --brand-dark:    #1B2A41;
+  --brand-mid:     #324A6D;
+  --brand-light:   #5C7CA8;
+  --brand-pale:    #E8EDF4;
+  --brand-subtle:  #F4F7FB;
+  --accent:        #C9A227;
+}
+:root {
+  --white:        #FFFFFF;
+  --gray-100:     #F5F7FA;
+  --gray-200:     #E2E8F0;
+  --gray-400:     #94A3B8;
+  --gray-700:     #475569;
+  --text:         #1E293B;
+  --note-bg:      #FBF1DC;
+  --note-border:  #C9A227;
+  --success:      #2E7D4F;
+  --success-bg:   #E6F4EC;
+  --code-bg:      #16213A;
+  --code-text:    #E5ECF6;
+  --rag-green:     #2E7D4F;  --rag-green-bg:  #E6F4EC;  --rag-green-bd:  #BFE2CD;
+  --rag-amber:     #B7791F;  --rag-amber-bg:  #FBF1DC;  --rag-amber-bd:  #ECD9A8;
+  --rag-red:       #C0392B;  --rag-red-bg:    #FBEAE7;  --rag-red-bd:    #F0C6BF;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 16px; line-height: 1.7; color: var(--text); background: var(--gray-100);
+}
+header {
+  background: linear-gradient(135deg, var(--brand-dark) 0%, var(--brand-mid) 55%, var(--brand-light) 100%);
+  color: #fff; padding: 56px 48px 44px; border-bottom: 4px solid var(--accent);
+}
+.header-badge {
+  display: inline-block; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.28);
+  border-radius: 4px; padding: 5px 14px; font-size: 12px; font-weight: 600; letter-spacing: 0.14em;
+  text-transform: uppercase; color: #fff; margin-bottom: 16px;
+}
+header h1 { font-size: 40px; font-weight: 700; line-height: 1.12; letter-spacing: -0.02em; margin-bottom: 12px; }
+header p { font-size: 18px; color: rgba(255,255,255,0.88); font-weight: 300; max-width: 70ch; }
+.header-pills { display: flex; gap: 10px; margin-top: 22px; flex-wrap: wrap; }
+.pill { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.25); border-radius: 20px; padding: 5px 14px; font-size: 13px; font-weight: 500; color: #fff; }
+.container { max-width: 1000px; margin: 0 auto; padding: 40px 28px 80px; }
+.toc { background: var(--white); border: 1px solid var(--gray-200); border-radius: 12px; padding: 24px 28px; margin-bottom: 36px; box-shadow: 0 1px 3px rgba(27,42,65,0.06); }
+.toc h2 { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.14em; color: var(--brand-mid); margin-bottom: 14px; }
+.toc ol { padding-left: 22px; column-count: 2; column-gap: 40px; }
+.toc li { margin-bottom: 7px; }
+.toc a { color: var(--brand-mid); text-decoration: none; font-size: 15px; transition: color 0.15s; }
+.toc a:hover { color: var(--accent); }
+.section { background: var(--white); border: 1px solid var(--gray-200); border-radius: 12px; padding: 30px 34px; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(27,42,65,0.06); }
+.section-header { display: flex; align-items: center; gap: 14px; margin-bottom: 22px; padding-bottom: 16px; border-bottom: 1px solid var(--gray-200); }
+.section-icon { width: 40px; height: 40px; border-radius: 9px; background: var(--brand-pale); display: inline-flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 700; color: var(--brand-mid); flex-shrink: 0; }
+h2 { font-size: 25px; font-weight: 700; color: var(--brand-dark); letter-spacing: -0.01em; line-height: 1.25; }
+h3 { font-size: 19px; font-weight: 600; color: var(--brand-dark); margin: 26px 0 12px; }
+h4 { font-size: 15px; font-weight: 600; color: var(--gray-700); margin: 20px 0 8px; text-transform: uppercase; letter-spacing: 0.04em; }
+p { margin-bottom: 16px; }
+ul.bullets { margin: 0 0 16px 22px; }
+ul.bullets li { margin-bottom: 8px; }
+strong { font-weight: 600; }
+code { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px; background: var(--brand-subtle); border: 1px solid var(--gray-200); border-radius: 4px; padding: 1px 6px; color: var(--brand-dark); overflow-wrap: break-word; }
+pre { background: var(--code-bg); color: var(--code-text); border-radius: 8px; padding: 20px 22px; margin: 18px 0; overflow-x: auto; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px; line-height: 1.6; position: relative; }
+pre code { background: none; border: none; padding: 0; color: inherit; white-space: pre; font-size: inherit; }
+pre .cmt { color: #8A9BB5; font-style: italic; }
+pre .kw  { color: #E0A85B; }
+pre .str { color: #A7CDA0; }
+.steps { counter-reset: step; list-style: none; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+.steps > li { counter-increment: step; position: relative; padding: 4px 0 4px 46px; font-size: 16px; }
+.steps > li::before { content: counter(step); position: absolute; left: 0; top: 0; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: var(--brand-pale); color: var(--brand-mid); font-size: 14px; font-weight: 700; line-height: 1; }
+.sub-steps { list-style: none; padding: 0; margin: 10px 0 14px; display: flex; flex-direction: column; gap: 6px; }
+.sub-steps > li { position: relative; padding: 2px 0 2px 24px; font-size: 15px; }
+.sub-steps > li::before { content: '–'; position: absolute; left: 4px; top: 0; color: var(--brand-light); font-weight: 700; }
+.table-wrap { overflow-x: auto; margin: 20px 0; }
+table { width: 100%; border-collapse: collapse; font-size: 15px; }
+thead tr { background: var(--brand-dark); color: #fff; }
+thead th { padding: 11px 14px; text-align: left; font-weight: 600; font-size: 13px; letter-spacing: 0.03em; }
+tbody tr:nth-child(even) { background: var(--brand-subtle); }
+tbody tr:hover { background: var(--brand-pale); }
+tbody td { padding: 10px 14px; border-bottom: 1px solid var(--gray-200); vertical-align: top; }
+table code { white-space: nowrap; }
+.num { text-align: right; font-variant-numeric: tabular-nums; }
+.badge-ok { display: inline-block; background: var(--success-bg); color: var(--success); border: 1px solid #BFE2CD; border-radius: 4px; padding: 1px 8px; font-size: 12.5px; font-weight: 600; }
+.status-tag { display: inline-block; background: var(--brand-pale); color: var(--brand-dark); border: 1px solid var(--gray-200); border-radius: 4px; padding: 1px 8px; font-size: 13px; font-weight: 600; white-space: nowrap; }
+.type-tag { display: inline-block; background: transparent; color: var(--gray-700); border: 1px solid var(--gray-200); border-radius: 4px; padding: 1px 8px; font-size: 12px; font-weight: 600; }
+.day-tag { display: inline-block; background: #FBF0DC; border: 1px solid #DDB158; border-radius: 4px; padding: 1px 7px; font-size: 12.5px; font-weight: 600; color: #9A6614; }
+dl.tech { display: grid; grid-template-columns: 220px 1fr; gap: 8px 18px; margin: 18px 0; font-size: 15px; }
+dl.tech dt { font-weight: 600; color: var(--gray-700); }
+dl.tech dd { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 14px; color: var(--brand-dark); }
+.note { background: var(--note-bg); border-left: 4px solid var(--note-border); border-radius: 6px; padding: 16px 20px; margin: 22px 0; font-size: 15.5px; }
+.note strong { color: #9A6614; }
+.info-box { background: var(--brand-pale); border-left: 4px solid var(--brand-light); border-radius: 6px; padding: 16px 20px; margin: 22px 0; font-size: 15.5px; }
+details.tech { margin-top: 12px; border-top: 1px solid var(--gray-200); }
+details.tech > summary { cursor: pointer; list-style: none; padding: 9px 0; font-size: 13px; font-weight: 600; color: var(--brand-mid); letter-spacing: 0.02em; display: flex; align-items: center; gap: 9px; user-select: none; }
+details.tech > summary::-webkit-details-marker { display: none; }
+details.tech > summary::before { content: '+'; font-size: 15px; font-weight: 700; color: var(--accent); line-height: 1; }
+details.tech[open] > summary::before { content: '\2212'; }
+details.tech > summary:hover { color: var(--brand-dark); }
+.tech-body { padding: 2px 0 14px; font-size: 14.5px; color: var(--gray-700); }
+.tech-body p { margin-bottom: 8px; }
+footer { background: var(--brand-dark); color: rgba(255,255,255,0.82); text-align: center; padding: 32px 20px; font-size: 13px; letter-spacing: 0.04em; margin-top: 48px; border-top: 4px solid var(--accent); }
+footer strong { color: #fff; }
+.toc a.active { color: var(--accent); font-weight: 600; }
+.copy-btn { position: absolute; top: 8px; right: 8px; background: rgba(255,255,255,0.12); color: var(--code-text); border: 1px solid rgba(255,255,255,0.22); border-radius: 4px; padding: 2px 10px; font-size: 11.5px; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; }
+.copy-btn:hover { background: rgba(255,255,255,0.22); }
+.expand-all-btn { display: inline-block; align-self: flex-start; margin-bottom: 12px; background: transparent; color: var(--brand-mid); border: 1px solid var(--brand-mid); border-radius: 6px; padding: 6px 16px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; }
+.expand-all-btn:hover { background: var(--brand-mid); color: #fff; }
+.to-top-btn { position: fixed; bottom: 24px; right: 24px; width: 46px; height: 46px; border-radius: 50%; background: var(--brand-dark); color: #fff; border: none; font-size: 20px; line-height: 1; cursor: pointer; box-shadow: 0 3px 10px rgba(27,42,65,0.28); opacity: 0; visibility: hidden; transition: opacity 0.2s, visibility 0.2s; z-index: 50; }
+.to-top-btn.visible { opacity: 1; visibility: visible; }
+.to-top-btn:hover { background: var(--accent); }
+.reading-progress { position: fixed; top: 0; left: 0; height: 3px; width: 0; background: var(--accent); z-index: 60; transition: width 0.1s ease-out; }
+.js-fx .section { opacity: 0; transform: translateY(18px); transition: opacity 0.6s ease, transform 0.6s ease; will-change: opacity, transform; }
+.js-fx .section.in-view { opacity: 1; transform: none; }
+
+/* ── REVIEW-ONLY COMPONENTS ── */
+.exec-summary { background: var(--white); border: 1px solid var(--gray-200); border-top: 4px solid var(--accent); border-radius: 12px; padding: 32px 36px; margin-bottom: 24px; box-shadow: 0 2px 10px rgba(27,42,65,0.08); }
+.exec-summary h2 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--accent); margin-bottom: 14px; }
+.exec-summary p { font-size: 18px; line-height: 1.65; color: var(--text); }
+.exec-summary p:last-child { margin-bottom: 0; }
+.exec-summary strong { color: var(--brand-dark); }
+.verdict-banner { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; background: linear-gradient(135deg, var(--brand-dark) 0%, var(--brand-mid) 100%); color: #fff; border-radius: 12px; padding: 26px 32px; margin-bottom: 24px; }
+.verdict-banner .verdict-score { flex-shrink: 0; width: 96px; height: 96px; border-radius: 50%; border: 4px solid var(--accent); display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: 800; }
+.verdict-banner .verdict-score .grade { font-size: 38px; line-height: 1; }
+.verdict-banner .verdict-score .out { font-size: 11px; opacity: 0.8; font-weight: 500; letter-spacing: 0.05em; }
+.verdict-banner .verdict-body { flex: 1; min-width: 240px; }
+.verdict-banner .verdict-label { font-size: 12px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--accent); font-weight: 700; margin-bottom: 6px; }
+.verdict-banner .verdict-title { font-size: 24px; font-weight: 700; margin-bottom: 6px; }
+.verdict-banner .verdict-text { font-size: 15px; color: rgba(255,255,255,0.88); }
+.dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px; margin: 24px 0; }
+.scorecard { background: var(--white); border: 1px solid var(--gray-200); border-left: 5px solid var(--gray-400); border-radius: 10px; padding: 20px 22px; box-shadow: 0 1px 3px rgba(27,42,65,0.06); }
+.scorecard .sc-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
+.scorecard .sc-title { font-size: 15px; font-weight: 600; color: var(--brand-dark); }
+.scorecard .sc-score { font-size: 30px; font-weight: 800; line-height: 1; color: var(--brand-dark); margin-bottom: 6px; font-variant-numeric: tabular-nums; }
+.scorecard .sc-verdict { font-size: 13.5px; color: var(--gray-700); line-height: 1.5; }
+.rating-badge { display: inline-flex; align-items: center; gap: 6px; border-radius: 20px; padding: 3px 11px; font-size: 12px; font-weight: 700; letter-spacing: 0.02em; white-space: nowrap; border: 1px solid; }
+.rating-badge::before { content: ''; width: 9px; height: 9px; border-radius: 50%; background: currentColor; }
+.scorecard.rag-green { border-left-color: var(--rag-green); }
+.scorecard.rag-amber { border-left-color: var(--rag-amber); }
+.scorecard.rag-red   { border-left-color: var(--rag-red); }
+.scorecard.rag-green .rating-badge { color: var(--rag-green); background: var(--rag-green-bg); border-color: var(--rag-green-bd); }
+.scorecard.rag-amber .rating-badge { color: var(--rag-amber); background: var(--rag-amber-bg); border-color: var(--rag-amber-bd); }
+.scorecard.rag-red   .rating-badge { color: var(--rag-red);   background: var(--rag-red-bg);   border-color: var(--rag-red-bd); }
+.rating-badge.green { color: var(--rag-green); background: var(--rag-green-bg); border-color: var(--rag-green-bd); }
+.rating-badge.amber { color: var(--rag-amber); background: var(--rag-amber-bg); border-color: var(--rag-amber-bd); }
+.rating-badge.red   { color: var(--rag-red);   background: var(--rag-red-bg);   border-color: var(--rag-red-bd); }
+.kpi-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; margin: 24px 0; }
+.kpi { background: var(--white); border: 1px solid var(--gray-200); border-radius: 10px; padding: 18px 20px; text-align: center; box-shadow: 0 1px 3px rgba(27,42,65,0.06); }
+.kpi .kpi-value { font-size: 32px; font-weight: 800; color: var(--brand-dark); line-height: 1; font-variant-numeric: tabular-nums; }
+.kpi .kpi-value.is-warn { color: var(--rag-amber); }
+.kpi .kpi-value.is-bad  { color: var(--rag-red); }
+.kpi .kpi-value.is-good { color: var(--rag-green); }
+.kpi .kpi-label { font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--gray-700); margin-top: 8px; font-weight: 600; }
+figure.figure { margin: 26px 0; }
+figure.figure img, figure.figure svg { display: block; width: 100%; height: auto; border-radius: 10px; border: 1px solid var(--gray-200); }
+.figure-caption { margin-top: 8px; font-size: 13px; color: var(--gray-700); font-style: italic; text-align: center; }
+figure.full-bleed { margin-left: calc(50% - 50vw); margin-right: calc(50% - 50vw); width: 100vw; max-width: 100vw; }
+figure.full-bleed img, figure.full-bleed svg { border-radius: 0; border-left: none; border-right: none; }
+figure.full-bleed .figure-caption { max-width: 1000px; margin-left: auto; margin-right: auto; padding: 8px 28px 0; }
+figure.breakout-left, figure.breakout-right { max-width: 46%; margin-top: 6px; }
+figure.breakout-left  { float: left;  margin-right: 28px; margin-left: -40px; }
+figure.breakout-right { float: right; margin-left: 28px;  margin-right: -40px; }
+.section::after { content: ''; display: block; clear: both; }
+@media (max-width: 720px) {
+  figure.breakout-left, figure.breakout-right { float: none; max-width: 100%; margin-left: 0; margin-right: 0; }
+}
+@media (prefers-reduced-motion: reduce) { .js-fx .section { opacity: 1; transform: none; transition: none; } }
+/* ============================================================
+   REVIEW — motion & interaction layer (dynamics + checklist)
+   ============================================================ */
+.js-fx .reveal { opacity: 0; transform: translateY(24px); transition: opacity .6s ease, transform .6s cubic-bezier(.2,.7,.2,1); will-change: opacity, transform; }
+.js-fx .reveal.in-view { opacity: 1; transform: none; }
+.scorecard, .kpi { transition: transform .25s ease, box-shadow .25s ease; }
+.scorecard:hover, .kpi:hover { transform: translateY(-5px); box-shadow: 0 14px 30px rgba(27,42,65,0.16); }
+.kpi .kpi-value { transition: transform .25s ease; }
+.kpi:hover .kpi-value { transform: scale(1.06); }
+/* scorecard score bar */
+.sc-bar { height: 7px; border-radius: 4px; background: var(--gray-200); margin-top: 14px; overflow: hidden; }
+.sc-bar-fill { display: block; height: 100%; width: 0; border-radius: 4px; background: var(--gray-400); transition: width 1.1s cubic-bezier(.2,.7,.2,1); }
+.scorecard.rag-green .sc-bar-fill { background: var(--rag-green); }
+.scorecard.rag-amber .sc-bar-fill { background: var(--rag-amber); }
+.scorecard.rag-red   .sc-bar-fill { background: var(--rag-red); }
+/* verdict gauge ring */
+.verdict-score { position: relative; }
+.verdict-score.has-gauge { border-color: transparent !important; }
+.verdict-score .gauge { position: absolute; top: -4px; left: -4px; width: calc(100% + 8px); height: calc(100% + 8px); transform: rotate(-90deg); }
+.verdict-score .g-track { fill: none; stroke: rgba(255,255,255,0.16); stroke-width: 7; }
+.verdict-score .g-fill { fill: none; stroke: var(--accent); stroke-width: 7; stroke-linecap: round; transition: stroke-dashoffset 1.5s cubic-bezier(.2,.7,.2,1); }
+.verdict-score .grade, .verdict-score .out { position: relative; z-index: 1; }
+/* task checklist */
+.checklist-head { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; margin: 18px 0; }
+.checklist-progress { flex: 1; min-width: 240px; }
+.cp-top { display: flex; justify-content: space-between; align-items: baseline; font-size: 13px; font-weight: 600; color: var(--gray-700); margin-bottom: 8px; }
+.cp-pct { color: var(--brand-dark); font-size: 19px; font-variant-numeric: tabular-nums; }
+.cp-track { height: 12px; border-radius: 7px; background: var(--gray-200); overflow: hidden; }
+.cp-fill { display: block; height: 100%; width: 0; border-radius: 7px; background: linear-gradient(90deg, var(--brand-mid), var(--accent)); transition: width .8s cubic-bezier(.2,.7,.2,1); }
+.checklist-filters { display: flex; gap: 8px; flex-wrap: wrap; }
+.filter-btn { background: var(--white); color: var(--brand-mid); border: 1px solid var(--gray-200); border-radius: 20px; padding: 5px 13px; font-size: 12.5px; font-weight: 600; cursor: pointer; font-family: inherit; transition: background .15s, color .15s, border-color .15s; }
+.filter-btn:hover { border-color: var(--brand-mid); }
+.filter-btn.active { background: var(--brand-mid); color: #fff; border-color: var(--brand-mid); }
+.checklist { list-style: none; padding: 0; margin: 6px 0 0; }
+.task { display: flex; align-items: flex-start; gap: 12px; padding: 0; border-bottom: 1px solid var(--gray-200); transition: background .15s; }
+.task:hover { background: var(--brand-subtle); }
+.task input[type=checkbox] { appearance: none; -webkit-appearance: none; flex-shrink: 0; width: 20px; height: 20px; margin: 14px 0 0 8px; border: 2px solid var(--gray-400); border-radius: 6px; cursor: pointer; position: relative; transition: background .15s, border-color .15s; }
+.task input[type=checkbox]:checked { background: var(--accent); border-color: var(--accent); }
+.task input[type=checkbox]:checked::after { content: '✓'; position: absolute; inset: -2px 0 0 0; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 13px; font-weight: 800; }
+.task-acc { flex: 1; min-width: 0; }
+.task-acc > summary { list-style: none; cursor: pointer; display: flex; align-items: flex-start; gap: 10px; flex-wrap: wrap; padding: 12px 8px 12px 0; user-select: none; }
+.task-acc > summary::-webkit-details-marker { display: none; }
+.task-acc > summary::after { content: '+'; margin-left: auto; align-self: center; color: var(--accent); font-weight: 700; font-size: 17px; line-height: 1; flex-shrink: 0; }
+.task-acc[open] > summary::after { content: '\2212'; }
+.task-text { flex: 1 1 55%; font-size: 15px; color: var(--text); line-height: 1.5; }
+.task.done .task-text { color: var(--gray-400); text-decoration: line-through; }
+.task-tags { display: inline-flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.task-detail-body { padding: 0 8px 16px 0; font-size: 14px; color: var(--gray-700); line-height: 1.6; }
+.task-detail-body p { margin: 0 0 8px; }
+.task-detail-body code { font-size: 12.5px; }
+.f-tag { display: inline-block; border-radius: 4px; padding: 0 7px; font-size: 11px; font-weight: 600; color: var(--brand-mid); background: var(--brand-subtle); border: 1px solid var(--gray-200); }
+.p-tag { display: inline-block; border-radius: 4px; padding: 0 7px; font-size: 11px; font-weight: 700; letter-spacing: .04em; }
+.p-tag.P1 { background: var(--rag-red-bg); color: var(--rag-red); border: 1px solid var(--rag-red-bd); }
+.p-tag.P2 { background: var(--rag-amber-bg); color: var(--rag-amber); border: 1px solid var(--rag-amber-bd); }
+.p-tag.P3 { background: var(--brand-pale); color: var(--brand-mid); border: 1px solid var(--gray-200); }
+.dim-tag { display: inline-block; border-radius: 4px; padding: 0 7px; font-size: 11px; font-weight: 600; color: var(--gray-700); border: 1px solid var(--gray-200); }
+.task.hide { display: none; }
+.checklist-empty { padding: 16px 8px; color: var(--gray-700); font-style: italic; }
+@media print {
+  .checklist-filters, .copy-btn { display: none !important; }
+  .js-fx .reveal { opacity: 1 !important; transform: none !important; }
+  .task { break-inside: avoid; }
+}
+@media print {
+  body { background: white; font-size: 12.5px; }
+  .section, .exec-summary, .scorecard, .kpi, figure { box-shadow: none; break-inside: avoid; page-break-inside: avoid; }
+  .verdict-banner { break-inside: avoid; page-break-inside: avoid; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  header, footer { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .scorecard, .rating-badge, .kpi .kpi-value { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  pre { background: #f4f4f4 !important; color: #111 !important; border: 1px solid #ccc; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .to-top-btn, .copy-btn, .expand-all-btn, .reading-progress { display: none !important; }
+  .js-fx .section { opacity: 1 !important; transform: none !important; }
+  figure.full-bleed { margin-left: 0; margin-right: 0; width: 100%; max-width: 100%; }
+  figure.full-bleed img, figure.full-bleed svg { border-radius: 10px; }
+}
+</style>
+</head>
+<body class="fx">
+
+<header>
+  <span class="header-badge">Teknisk kodegennemgang</span>
+  <h1>Polaris Operations Base App</h1>
+  <p>Uafhængig teknisk gennemgang af Microsoft Dynamics 365 Business Central operations-udvidelsen for <strong>Polaris Foods A/S</strong> — 563&nbsp;AL-objekter på tværs af 9 moduler, gennemgået modul for modul mod AL best practices.</p>
+  <div class="header-pills">
+    <span class="pill">App v27.0.0.10</span>
+    <span class="pill">BC Cloud · Platform 25</span>
+    <span class="pill">Runtime 16</span>
+    <span class="pill">Objekt-ID'er 50000–50149</span>
+    <span class="pill">Samlet karakter: C</span>
+  </div>
+</header>
+
+<!-- Full-bleed hero illustration -->
+<figure class="figure full-bleed" aria-hidden="true">
+  <svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="img">
+    <defs>
+      <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#16213A"/><stop offset="0.55" stop-color="#1B2A41"/><stop offset="1" stop-color="#2C4366"/>
+      </linearGradient>
+      <linearGradient id="goldln" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="#C9A227" stop-opacity="0.25"/><stop offset="0.5" stop-color="#E4C25A"/><stop offset="1" stop-color="#C9A227" stop-opacity="0.25"/>
+      </linearGradient>
+    </defs>
+    <rect width="1200" height="420" fill="#1B2A41"/>
+    <rect width="1200" height="420" fill="url(#bg)"/>
+    <g fill="#5C7CA8" opacity="0.18">
+      <circle cx="80" cy="60" r="2"/><circle cx="160" cy="120" r="2"/><circle cx="240" cy="50" r="2"/><circle cx="1120" cy="90" r="2"/><circle cx="1040" cy="160" r="2"/><circle cx="980" cy="60" r="2"/><circle cx="600" cy="40" r="2"/><circle cx="700" cy="380" r="2"/><circle cx="320" cy="370" r="2"/>
+    </g>
+    <g fill="none" stroke="url(#goldln)" stroke-width="2.5">
+      <path d="M250 210 C 380 130, 470 130, 600 210"/>
+      <path d="M600 210 C 730 290, 820 290, 950 210"/>
+      <path d="M250 210 C 420 300, 470 300, 600 210"/>
+      <path d="M600 210 C 760 120, 820 120, 950 210"/>
+    </g>
+    <g>
+      <rect x="150" y="160" width="200" height="100" rx="14" fill="#22324d" stroke="#5C7CA8" stroke-width="1.5"/>
+      <rect x="500" y="160" width="200" height="100" rx="14" fill="#22324d" stroke="#C9A227" stroke-width="2"/>
+      <rect x="850" y="160" width="200" height="100" rx="14" fill="#22324d" stroke="#5C7CA8" stroke-width="1.5"/>
+    </g>
+    <g transform="translate(200,196)" stroke="#C9A227" stroke-width="3" stroke-linecap="round" fill="none">
+      <line x1="0" y1="14" x2="100" y2="14"/><circle cx="14" cy="14" r="9" fill="#1B2A41"/><circle cx="50" cy="14" r="9" fill="#1B2A41"/><circle cx="86" cy="14" r="9" fill="#1B2A41"/>
+    </g>
+    <g transform="translate(560,186)" stroke="#E4C25A" stroke-width="3" fill="none" stroke-linejoin="round">
+      <path d="M10 40 L40 14 L70 40 Z"/><rect x="20" y="40" width="40" height="24"/>
+    </g>
+    <g transform="translate(900,196)" stroke="#5C7CA8" stroke-width="3" fill="none" stroke-linecap="round">
+      <path d="M14 36 a16 16 0 0 1 4 -31 a20 20 0 0 1 38 6 a14 14 0 0 1 -4 25 Z"/>
+    </g>
+    <g fill="#E4C25A">
+      <circle cx="250" cy="210" r="6"><animate attributeName="r" values="6;9;6" dur="2.4s" repeatCount="indefinite"/></circle>
+      <circle cx="600" cy="210" r="7"><animate attributeName="r" values="7;11;7" dur="2.4s" begin="0.4s" repeatCount="indefinite"/></circle>
+      <circle cx="950" cy="210" r="6"><animate attributeName="r" values="6;9;6" dur="2.4s" begin="0.8s" repeatCount="indefinite"/></circle>
+    </g>
+    <g fill="#E4C25A">
+      <circle r="4.5"><animateMotion dur="3.4s" repeatCount="indefinite" path="M250 210 C 380 130, 470 130, 600 210"/></circle>
+      <circle r="4.5"><animateMotion dur="3.4s" begin="1.1s" repeatCount="indefinite" path="M600 210 C 730 290, 820 290, 950 210"/></circle>
+      <circle r="3.5" opacity="0.75"><animateMotion dur="4.2s" begin="0.5s" repeatCount="indefinite" path="M250 210 C 420 300, 470 300, 600 210"/></circle>
+      <circle r="3.5" opacity="0.75"><animateMotion dur="4.2s" begin="1.7s" repeatCount="indefinite" path="M600 210 C 760 120, 820 120, 950 210"/></circle>
+    </g>
+  </svg>
+  <figcaption class="figure-caption">Systemlandskab — produktionslinjer, lager og cloud-integrationer bundet sammen af operations-udvidelsen. (Illustrativt.)</figcaption>
+</figure>
+
+<div class="container">
+
+  <!-- Resumé til ledelsen -->
+  <section class="exec-summary">
+    <h2>Resumé til ledelsen</h2>
+    <p>Polaris Operations Base App er en <strong>forretningskritisk udvidelse</strong>, der driver virksomhedens produktionsrapportering, lagerbevægelser og eksterne integrationer (WMS, EDI, OEE-platformen, etiketprint og cloud-filudveksling). Den er i aktiv produktion og <strong>kompilerer rent uden fejl</strong>, og modulstrukturen er solid.</p>
+    <p>Gennemgangen fandt dog <strong>materielle risici, der er usynlige i daglig drift</strong>: en klynge af korrekthedsfejl, der stille skriver produktionsdata i de forkerte tabeller, intet automatiseret testsikkerhedsnet på tværs af 563 objekter, og ujævn fejlhåndtering i integrationerne, der stille kan stoppe lagerjobs eller efterlade filer ubehandlede.</p>
+    <p>Ingen af disse er akutte, men tilsammen <strong>øger de omkostningen og risikoen ved enhver fremtidig ændring</strong>. Vi anbefaler en fokuseret oprydning på cirka to til tre sprints — først rettelse af dataintegritetsfejlene, dernæst hærdning af integrationerne og opbygning af en grundlæggende testsuite — før næste bølge af feature-arbejde.</p>
+  </section>
+
+  <!-- Samlet vurdering -->
+  <div class="verdict-banner">
+    <div class="verdict-score" data-score="60"><span class="grade">C</span><span class="out">60 / 100</span></div>
+    <div class="verdict-body">
+      <div class="verdict-label">Repo-vurdering</div>
+      <div class="verdict-title">Solidt fundament, væsentlige huller at lukke</div>
+      <div class="verdict-text">En velstruktureret, produktionsafprøvet kodebase, der har brug for målrettet hærdning af korrekthed, testdækning og integrationsrobusthed, før den skaleres yderligere.</div>
+    </div>
+  </div>
+
+  <!-- Status-dashboard -->
+  <div class="dashboard">
+    <div class="scorecard rag-amber">
+      <div class="sc-head"><span class="sc-title">Kodekvalitet</span><span class="rating-badge">Tilstrækkelig</span></div>
+      <div class="sc-score" data-countup="68">68</div>
+      <div class="sc-verdict">Kompilerer uden fejl, men en P1-korrekthedsklynge og ~23 analyzer-advarsler udestår.</div>
+    </div>
+    <div class="scorecard rag-red">
+      <div class="sc-head"><span class="sc-title">Testdækning</span><span class="rating-badge">Risiko</span></div>
+      <div class="sc-score" data-countup="38">38</div>
+      <div class="sc-verdict">Ingen automatiserede AL-test-codeunits på tværs af de 563 objekter — intet regressionssikkerhedsnet.</div>
+    </div>
+    <div class="scorecard rag-amber">
+      <div class="sc-head"><span class="sc-title">Arkitektur</span><span class="rating-badge">Tilstrækkelig</span></div>
+      <div class="sc-score" data-countup="71">71</div>
+      <div class="sc-verdict">Ren modulopdeling; hardcodet konfiguration og dødt kode giver vedligeholdelsesfriktion.</div>
+    </div>
+    <div class="scorecard rag-amber">
+      <div class="sc-head"><span class="sc-title">Sikkerhed &amp; opgradering</span><span class="rating-badge">Tilstrækkelig</span></div>
+      <div class="sc-score" data-countup="64">64</div>
+      <div class="sc-verdict">På en aktuel platform, men huller i integration/baggrundssikkerhed og manglende dataklassifikation.</div>
+    </div>
+  </div>
+
+  <!-- KPI-fliser -->
+  <div class="kpi-row">
+    <div class="kpi"><div class="kpi-value" data-countup="563">563</div><div class="kpi-label">AL-objekter</div></div>
+    <div class="kpi"><div class="kpi-value is-good" data-countup="0">0</div><div class="kpi-label">Kompileringsfejl</div></div>
+    <div class="kpi"><div class="kpi-value is-warn" data-countup="23">23</div><div class="kpi-label">Advarsler</div></div>
+    <div class="kpi"><div class="kpi-value is-bad" data-countup="0">0</div><div class="kpi-label">Test-codeunits</div></div>
+    <div class="kpi"><div class="kpi-value is-warn" data-countup="40">40</div><div class="kpi-label">Fund</div></div>
+  </div>
+
+  <!-- Indhold -->
+  <nav class="toc">
+    <h2>Indhold</h2>
+    <ol>
+      <li><a href="#d1">1 · Kodekvalitet &amp; korrekthed</a></li>
+      <li><a href="#d2">2 · Testdækning</a></li>
+      <li><a href="#d3">3 · Arkitektur &amp; vedligeholdelse</a></li>
+      <li><a href="#d4">4 · Sikkerhed &amp; opgraderingsparathed</a></li>
+      <li><a href="#recs">5 · Prioriterede anbefalinger</a></li>
+      <li><a href="#tasks">6 · Teknisk opgave-checkliste</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================== DIMENSION 1 ===================== -->
+  <section class="section" id="d1">
+    <div class="section-header"><div class="section-icon">1</div><h2>Kodekvalitet &amp; korrekthed <span class="rating-badge amber" style="vertical-align:middle;margin-left:8px">Tilstrækkelig · 68</span></h2></div>
+    <p>Applikationen kompilerer med <span class="badge-ok">0 fejl</span>, og den statiske analyzer rapporterer cirka 23 advarsler. Den primære bekymring er ikke antallet af advarsler, men en lille klynge af <strong>stille korrekthedsfejl</strong> i Operation-modulet, plus et udbredt mønster af ubeskyttede record-læsninger.</p>
+
+    <figure class="figure breakout-right" aria-hidden="true">
+      <svg viewBox="0 0 480 360" xmlns="http://www.w3.org/2000/svg" role="img">
+        <rect width="480" height="360" rx="10" fill="#1B2A41"/>
+        <g transform="translate(60,70)">
+          <rect x="0" y="0" width="160" height="64" rx="10" fill="#22324d" stroke="#5C7CA8" stroke-width="1.5"/>
+          <text x="80" y="38" text-anchor="middle" fill="#C7D3E6" font-family="Inter,sans-serif" font-size="16" font-weight="600">NEST</text>
+          <rect x="0" y="156" width="160" height="64" rx="10" fill="#22324d" stroke="#C9A227" stroke-width="2"/>
+          <text x="80" y="194" text-anchor="middle" fill="#E4C25A" font-family="Inter,sans-serif" font-size="16" font-weight="600">PASTA</text>
+          <g stroke="#C0392B" stroke-width="3" fill="none" stroke-linecap="round">
+            <path d="M160 188 C 250 188, 250 32, 320 32" stroke-dasharray="7 6"/>
+            <polygon points="318,24 334,32 318,40" fill="#C0392B" stroke="none"/>
+          </g>
+          <rect x="300" y="0" width="100" height="64" rx="10" fill="#2a1d1d" stroke="#C0392B" stroke-width="1.5"/>
+          <text x="350" y="33" text-anchor="middle" fill="#F0C6BF" font-family="Inter,sans-serif" font-size="12" font-weight="600">NEST-</text>
+          <text x="350" y="50" text-anchor="middle" fill="#F0C6BF" font-family="Inter,sans-serif" font-size="12" font-weight="600">tabeller</text>
+        </g>
+        <text x="240" y="320" text-anchor="middle" fill="#94A3B8" font-family="Inter,sans-serif" font-size="13" font-style="italic">PASTA-logik der skriver i NEST-tabeller</text>
+      </svg>
+      <figcaption class="figure-caption">Copy-paste-fejlen: PASTA-objekter refererer stadig NEST-records.</figcaption>
+    </figure>
+
+    <h3>Vigtigste fund</h3>
+
+    <p><span class="status-tag" style="background:var(--rag-red-bg);color:var(--rag-red);border-color:var(--rag-red-bd)">P1 · korrekthed</span> &nbsp;<strong>PASTA-operationsobjekter læser og skriver NEST-tabeller.</strong> Operation-modulet har parallelle objektsæt for <strong>NEST</strong>- og <strong>PASTA</strong>-produktionslinjerne. Flere PASTA-objekter er tydeligvis klonet fra NEST-versionerne uden at opdatere tabelreferencerne, så PASTA-logik gemmer vand- og færdigvareregistreringer i NEST-tabellerne. Der kastes ingen fejl — data lander blot det forkerte sted, hvilket giver forkert rapportering og forurenede NEST-data.</p>
+
+    <pre><code><span class="cmt">// OperationReportPasta.Table.al — OnValidate("Production Order")</span>
+<span class="kw">var</span>
+    FinishedGood: <span class="kw">Record</span> <span class="str">"Finished Good NEST"</span>;   <span class="cmt">// bør være "Finished Good Pasta" (50041)</span>
+    WaterAcc:     <span class="kw">Record</span> <span class="str">"Water Accounting NEST"</span>; <span class="cmt">// bør være "Water Accounting Pasta" (50043)</span></code></pre>
+
+    <p><span class="status-tag" style="background:var(--rag-red-bg);color:var(--rag-red);border-color:var(--rag-red-bd)">P1 · mønster</span> &nbsp;<strong>Ubeskyttet <code>Get()</code> / <code>FindFirst()</code> før feltadgang.</strong> Det mest udbredte problem: setup- og master-records hentes uden at tjekke returværdien, hvorefter felter læses fra en muligvis tom record. Fejlen er stille — tomme værdier flyder videre, eller en validering fejler senere med en kryptisk besked langt fra årsagen.</p>
+
+    <p><span class="status-tag">P2/P3 · UX</span> &nbsp;<strong>Lokaliserings- &amp; hjælpehuller.</strong> Hardcodede danske brugervendte strenge i stedet for oversættbare <code>Label</code>s, fejl rejst uden record-kontekst, manglende <code>ToolTip</code>/<code>Caption</code> på mange custom-felter, og en håndfuld stavefejl i captions.</p>
+
+    <h3>Repræsentative analyzer-fund</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Regel</th><th>Beskrivelse</th><th class="num">Antal</th><th>Severity</th></tr></thead>
+        <tbody>
+          <tr><td><code>AA0175</code></td><td>Returværdi af <code>Get</code> ikke brugt før feltadgang</td><td class="num">14</td><td><span class="status-tag" style="background:var(--rag-amber-bg);color:var(--rag-amber);border-color:var(--rag-amber-bd)">Advarsel</span></td></tr>
+          <tr><td><code>AA0206</code></td><td>Advarsel undertrykt via <code>#pragma</code> med refaktor-TODO</td><td class="num">9</td><td><span class="status-tag" style="background:var(--rag-amber-bg);color:var(--rag-amber);border-color:var(--rag-amber-bd)">Advarsel</span></td></tr>
+          <tr><td><code>AL0667</code></td><td>Reference til obsolet objekt / medlem</td><td class="num">8</td><td><span class="status-tag" style="background:var(--rag-amber-bg);color:var(--rag-amber);border-color:var(--rag-amber-bd)">Advarsel</span></td></tr>
+          <tr><td>—</td><td>Caption/OptionMember-mismatch, stavefejl i labels</td><td class="num">6</td><td><span class="status-tag">Info</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <details class="tech"><summary>Vis teknisk detalje</summary><div class="tech-body">
+      <p>Krydstabel-skrivninger verificeret i <code>OperationReportPasta.Table.al:29-80</code> og <code>StartStopSnailPASTA.Table.al:26-29,153-170</code> (næste <code>Entry No.</code> beregnet fra NEST-tabellen). Repræsentative ubeskyttede læsninger: <code>SalesHeader.TableExt.al:132</code>, <code>SalesLineSubscribers.Codeunit.al:98,123</code>, <code>ItemJnlPostEventFunctions.Codeunit.al:116</code>. Anbefalet mønster: <code>if not Setup.Get() then Error(...)</code> via fælles setup-getter-hjælpere, og aktivér regel <code>AA0175</code> i <code>custom.ruleset.json</code>.</p>
+    </div></details>
+
+    <div class="note"><strong>Anbefaling:</strong> Behandl PASTA/NEST-klyngen som højeste prioritet — gennemgå hele <code>src/Operation/PASTA</code>-mappen mod NEST-pendanten og verificér hver tabel-/record-reference. Slå derefter <code>AA0175</code> til og fjern det ubeskyttede <code>Get()</code>-mønster via et lille sæt fælles setup-getter-hjælpere.</div>
+  </section>
+
+  <!-- ===================== DIMENSION 2 ===================== -->
+  <section class="section" id="d2">
+    <div class="section-header"><div class="section-icon">2</div><h2>Testdækning <span class="rating-badge red" style="vertical-align:middle;margin-left:8px">Risiko · 38</span></h2></div>
+    <p>Gennemgangen fandt <strong>ingen automatiserede AL-test-codeunits</strong> (<code>Subtype = Test</code>) nogen steder i den 563-objekt store kodebase. Enhver ændring — inklusive korrekthedsrettelserne ovenfor — valideres derfor kun ved manuel test, og der er intet regressionssikkerhedsnet, der beskytter integrationerne eller posteringsrutinerne.</p>
+    <p>For en så forretningskritisk kodebase er dette den største enkeltrisiko for <strong>ændringshastigheden</strong>: hver release bærer unødvendig usikkerhed, og det er sværere at refaktorere PASTA/NEST-fejlene sikkert uden test at læne sig op ad.</p>
+
+    <h3>Hvor man starter</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Første testmål</th><th>Hvorfor</th><th>Indsats</th></tr></thead>
+        <tbody>
+          <tr><td>Operation-rapportering (NEST &amp; PASTA)</td><td>Låser korrekthedsrettelserne fast; højeste dataintegritetsrisiko</td><td>M</td></tr>
+          <tr><td>WMS-import / posteringsflow</td><td>Mest komplekse integration; berører lagerpostering</td><td>L</td></tr>
+          <tr><td>Nummerserier &amp; modtagelseskontrol</td><td>Samtidighedsfølsom; let at asserte</td><td>S</td></tr>
+          <tr><td>Setup-getter-hjælpere</td><td>Billige unit-tests med høj dækning, efterhånden som de indføres</td><td>S</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="note"><strong>Anbefaling:</strong> Opret en test-app (eller test-mappe) med AL Test Toolkit, og skriv en tynd "happy path + én fejl"-test pr. kritisk flow. Tag Operation-modulet og WMS-postering først; kobl suiten ind i AL-Go-pipelinen, så den kører på hver pull request.</div>
+  </section>
+
+  <!-- ===================== DIMENSION 3 ===================== -->
+  <section class="section" id="d3">
+    <div class="section-header"><div class="section-icon">3</div><h2>Arkitektur &amp; vedligeholdelse <span class="rating-badge amber" style="vertical-align:middle;margin-left:8px">Tilstrækkelig · 71</span></h2></div>
+
+    <figure class="figure breakout-left" aria-hidden="true">
+      <svg viewBox="0 0 480 360" xmlns="http://www.w3.org/2000/svg" role="img">
+        <rect width="480" height="360" rx="10" fill="#1B2A41"/>
+        <g font-family="Inter,sans-serif">
+          <rect x="40" y="40" width="180" height="46" rx="8" fill="#22324d" stroke="#5C7CA8"/><text x="56" y="69" fill="#C7D3E6" font-size="14">Operation</text>
+          <rect x="40" y="100" width="180" height="46" rx="8" fill="#22324d" stroke="#5C7CA8"/><text x="56" y="129" fill="#C7D3E6" font-size="14">Lager</text>
+          <rect x="40" y="160" width="180" height="46" rx="8" fill="#22324d" stroke="#5C7CA8"/><text x="56" y="189" fill="#C7D3E6" font-size="14">Salg / Køb</text>
+          <rect x="40" y="220" width="180" height="46" rx="8" fill="#22324d" stroke="#5C7CA8"/><text x="56" y="249" fill="#C7D3E6" font-size="14">Integrationer</text>
+          <rect x="40" y="280" width="180" height="46" rx="8" fill="#22324d" stroke="#C9A227" stroke-width="2"/><text x="56" y="309" fill="#E4C25A" font-size="14">Setup (mangler)</text>
+        </g>
+        <g stroke="#C9A227" stroke-width="2.5" fill="none" opacity="0.8">
+          <path d="M220 63 C 300 63, 300 130, 360 130"/>
+          <path d="M220 123 C 300 123, 300 130, 360 130"/>
+          <path d="M220 183 C 300 183, 300 130, 360 130"/>
+          <path d="M220 243 C 300 243, 300 130, 360 130"/>
+        </g>
+        <circle cx="380" cy="130" r="34" fill="#22324d" stroke="#C9A227" stroke-width="2"/>
+        <text x="380" y="126" text-anchor="middle" fill="#E4C25A" font-family="Inter,sans-serif" font-size="13" font-weight="700">9</text>
+        <text x="380" y="142" text-anchor="middle" fill="#9fb1cc" font-family="Inter,sans-serif" font-size="10">moduler</text>
+      </svg>
+      <figcaption class="figure-caption">Modulstrukturen er sund; konfiguration hører til i en Setup-tabel, ikke i koden.</figcaption>
+    </figure>
+
+    <p>Kodebasen er <strong>rent opdelt i ni moduler</strong> med overvejende konsistent fil-/objektnavngivning, og gennemgangen bekræftede, at appen er ægte modulopdelt frem for monolitisk. Vedligeholdelsesfriktionen kommer fra konfiguration og gæld, ikke fra strukturen.</p>
+
+    <h4>Nøgletemaer</h4>
+    <ul class="bullets">
+      <li><strong>Hardcodet konfiguration.</strong> Journal-templates, batch-navne og posting-grupper vælges via hardcodede strenge (flere er allerede markeret <code>// TODO: Hardcoded values</code>). Hvis en opsætning omdøbes, fejler flowet stille. Disse hører til i en dedikeret <em>Polaris Setup</em>-tabel.</li>
+      <li><strong>Nummerserier via <code>FindLast() + 1</code>.</strong> Flere nøgler allokeres ved at inkrementere den sidste record frem for en <code>No. Series</code> — ikke samtidighedssikkert og omgår standardlogikken.</li>
+      <li><strong>Dødt / obsolet kode er stadig aktivt.</strong> Objekter markeret "slet dette" kører stadig; layout-rapporter undertrykker bredt advarsler bag en refaktor-TODO; legacy DotNet ("Ping Pong DLL")-referencer kan ikke køre i cloud.</li>
+      <li><strong>Navngivnings- &amp; performance-drift.</strong> Snail-tabellerne skifter navne for samme begreb; enkelte <code>CalcFields</code>-kald ligger inde i løkker.</li>
+    </ul>
+
+    <details class="tech"><summary>Vis teknisk detalje</summary><div class="tech-body">
+      <p>Objekt-inventar (ca.): 78 tabeller, 64 table extensions, 121 pages, 53 page extensions, 142 codeunits, 39 reports, 12 enums, 8 XMLports, 4 interfaces, 2 permission sets. Hardcodede værdier i <code>SampleScanning.Page.al:144-145</code>, <code>ProcessWMSImport.Codeunit.al:552</code>, <code>HandleLotNo.Report.al:82</code>. <code>FindLast()+1</code> i <code>SSCCPickRegistration.Page.al:130-133</code> og <code>ReceivingManagement.Codeunit.al:17-31</code>. Obsolet-men-aktivt i <code>AdjustOutputMgt.Codeunit.al:3</code>, <code>ItemVendor.TableExt.al:1</code>.</p>
+    </div></details>
+
+    <div class="note"><strong>Anbefaling:</strong> Indfør en <em>Polaris Setup</em>-tabel, og flyt alle hardcodede templates/grupper ind i den med <code>TestField</code>-validering — det rydder samtidig en stor del af <code>// TODO</code>-gælden. Skift nøgleallokering til <code>No. Series</code>, og træf én eksplicit beslutning for hvert obsolet objekt (fjern med et upgrade-step, eller fjern TODO'en).</div>
+  </section>
+
+  <!-- ===================== DIMENSION 4 ===================== -->
+  <section class="section" id="d4">
+    <div class="section-header"><div class="section-icon">4</div><h2>Sikkerhed &amp; opgraderingsparathed <span class="rating-badge amber" style="vertical-align:middle;margin-left:8px">Tilstrækkelig · 64</span></h2></div>
+    <p>Appen målretter en <strong>aktuel platform</strong> (BC Cloud, Platform 25 / Runtime 16) og leverer permission sets, så den er bredt opgraderingsklar. Risiciene her er <strong>integrationsrobusthed</strong>, <strong>baggrundssikkerhed</strong> og <strong>datastyring</strong>.</p>
+
+    <h4>Integrationsrobusthed</h4>
+    <ul class="bullets">
+      <li><strong><code>exit</code> inde i en fil-løkke</strong> springer commit og cloud-filsletning over — én ukendt fil efterlader alle resterende filer ubehandlede og uslettede.</li>
+      <li><strong><code>CODEUNIT.Run</code> af en posteringsbatch uden at tjekke resultatet</strong>, men batchen slettes uanset — en fejlet postering sletter stadig data.</li>
+      <li><strong>Uhåndteret HTTP-status</strong> i OEE-platform-kaldet: en HTTP 500 behandles som succes.</li>
+      <li><strong>Skrøbelig EDI-parsing</strong> skriver i et fast array uden grænsetjek, og indsamlede importfejl vises aldrig.</li>
+    </ul>
+
+    <h4>Baggrund &amp; datastyring</h4>
+    <ul class="bullets">
+      <li><strong><code>Message()</code> / <code>Confirm()</code> uden <code>GuiAllowed()</code></strong> i kode der kan køre fra Job Queue — fejler eller hænger i baggrunden. (Ét modul gør det allerede korrekt og er en god skabelon.)</li>
+      <li><strong>Manglende <code>DataClassification</code></strong> på en række felter, selvom tabel-headeren sætter den — værd at færdiggøre for GDPR-klarhed.</li>
+    </ul>
+
+    <details class="tech"><summary>Vis teknisk detalje</summary><div class="tech-body">
+      <p><code>ManualWhseImportFunction.Codeunit.al:44-50</code> (brug <code>continue</code> pr. fil; reservér <code>exit</code> til kritisk stop). <code>ProcessWMSImport.Codeunit.al:587</code> (tjek posteringsresultat før oprydning ved :591). <code>OeeProdOrderService.Codeunit.al:36-38</code> (parse <code>Response.HttpStatusCode()</code>). Baggrundsdialoger i <code>ReleaseSalesDocSubscribers.Codeunit.al:29</code>. Manglende per-felt <code>DataClassification</code> på <code>RawMaterialPackNEST.Table.al</code> (felter 8–88).</p>
+    </div></details>
+
+    <div class="note"><strong>Anbefaling:</strong> Standardisér integrationsfejlhåndtering — pak eksterne kald i <code>try</code>-mønstre med eksplicitte statustjek, sæt dokumenter til en "Failed"-tilstand ved fejl (så genforsøg muliggøres), og erstat baggrunds-<code>Message</code>/<code>Confirm</code> med <code>GuiAllowed()</code>-guards eller vedvarende logning. Færdiggør per-felt <code>DataClassification</code> i én samlet gennemgang.</div>
+  </section>
+
+  <!-- ===================== ANBEFALINGER ===================== -->
+  <section class="section" id="recs">
+    <div class="section-header"><div class="section-icon">★</div><h2>Prioriterede anbefalinger</h2></div>
+    <p>Foreslået rækkefølge — højeste korrektheds-/stabilitetseffekt først, med quick wins samlet ind:</p>
+    <ol class="steps">
+      <li><strong>Ret Operation PASTA/NEST-fejlene (P1).</strong> Højeste dataintegritetsrisiko og isolerede ændringer. Verificér hele PASTA-mappen mod NEST-pendanten. <em>Effekt: stopper stille datakorruption.</em></li>
+      <li><strong>Hærd integrationerne (P1).</strong> <code>exit</code>→<code>continue</code> i cloud-import, tjek posterings-<code>Run</code>-resultater, validér HTTP-status, tilføj EDI-grænsetjek. <em>Effekt: forhindrer datatab og hængende Job Queue-kørsler.</em></li>
+      <li><strong>Fjern det ubeskyttede <code>Get()</code>-mønster (P1).</strong> Slå <code>AA0175</code> til og før læsninger gennem fælles setup-getter-hjælpere. <em>Effekt: gør stille fejl til klare, handlbare fejl.</em></li>
+      <li><strong>Opbyg en grundlæggende testsuite (P1).</strong> Operation-rapportering + WMS-postering først, koblet ind i AL-Go CI. <em>Effekt: et regressionssikkerhedsnet for alt ovenstående.</em></li>
+      <li><strong>Flyt hardcodet config til en Setup-tabel (P2).</strong> Rydder samtidig en stor del af <code>// TODO</code>-gælden. <em>Effekt: færre stille fejl ved omdøbte opsætninger.</em></li>
+      <li><strong>Baggrundssikkerhed, nummerserier, governance (P2).</strong> <code>GuiAllowed()</code>-guards, <code>No. Series</code>-allokering, per-felt <code>DataClassification</code>. <em>Effekt: Job Queue-sikker, samtidighedssikker, GDPR-klar.</em></li>
+      <li><strong>Oprydning: lokalisering, dødt kode, performance (P3).</strong> Oversættbare labels, fjern obsolete objekter, løft <code>CalcFields</code> ud af løkker. <em>Effekt: lavere langsigtet vedligeholdelsesomkostning.</em></li>
+    </ol>
+
+    <div class="info-box"><strong>Metodenote:</strong> Fundene stammer fra en modulopdelt gennemgang af alle 563 <code>.al</code>-filer. "Verificeret" = læst direkte i kildekoden; "mønster" = forekommer flere steder, hvor de nævnte linjer er repræsentative. Flere automatisk rapporterede "kompilerer ikke"-påstande blev afvist ved verifikation og er udeladt — appen kompilerer. <em>Virksomhedsnavn og flere tal i dette eksempel er illustrative.</em></div>
+  </section>
+
+  <!-- ===================== OPGAVE-CHECKLISTE ===================== -->
+  <section class="section" id="tasks">
+    <div class="section-header"><div class="section-icon">✓</div><h2>Teknisk opgave-checkliste</h2></div>
+    <p>Disse 20 opgaver <strong>konsoliderer de 40 fund</strong> — én opgave løser ofte flere beslægtede fund (antallet vises på hver række). <strong>Fold en opgave ud</strong> for den tekniske detalje om hvad der skal ændres. Kryds af efterhånden som arbejdet skrider frem — <strong>din fremgang gemmes automatisk i denne browser</strong> — og filtrér efter prioritet for at planlægge et sprint.</p>
+    <div id="review-checklist"></div>
+    <noscript><p class="figure-caption" style="text-align:left">Aktivér JavaScript for at bruge den interaktive checkliste.</p></noscript>
+  </section>
+
+</div>
+
+<footer>
+  <strong>Polaris Operations Base App v27.0.0.10</strong> — Teknisk kodegennemgang · juni 2026 · 563 AL-objekter gennemgået på tværs af 9 moduler
+</footer>
+
+<script>
+/* ============================================================
+   html-guide — progressive enhancement layer  [inlined verbatim]
+   ============================================================ */
+(function () {
+  'use strict';
+
+  document.querySelectorAll('a[href^="#"]').forEach(function (link) {
+    link.addEventListener('click', function (e) {
+      var id = link.getAttribute('href').slice(1);
+      var target = id && document.getElementById(id);
+      if (!target) return;
+      e.preventDefault();
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if (history.replaceState) history.replaceState(null, '', '#' + id);
+    });
+  });
+
+  var tocLinks = Array.prototype.slice.call(
+    document.querySelectorAll('.toc a[href^="#"]')
+  );
+  if (tocLinks.length && 'IntersectionObserver' in window) {
+    var byId = {};
+    tocLinks.forEach(function (l) { byId[l.getAttribute('href').slice(1)] = l; });
+    var sections = tocLinks
+      .map(function (l) { return document.getElementById(l.getAttribute('href').slice(1)); })
+      .filter(Boolean);
+    var spy = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        var link = byId[entry.target.id];
+        if (link && entry.isIntersecting) {
+          tocLinks.forEach(function (l) { l.classList.remove('active'); });
+          link.classList.add('active');
+        }
+      });
+    }, { rootMargin: '0px 0px -75% 0px', threshold: 0 });
+    sections.forEach(function (s) { spy.observe(s); });
+  }
+
+  if (navigator.clipboard) {
+    document.querySelectorAll('pre').forEach(function (pre) {
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'copy-btn';
+      btn.textContent = 'Kopiér';
+      btn.addEventListener('click', function () {
+        var code = pre.querySelector('code') || pre;
+        navigator.clipboard.writeText(code.innerText).then(function () {
+          btn.textContent = 'Kopieret ✓';
+          setTimeout(function () { btn.textContent = 'Kopiér'; }, 1500);
+        });
+      });
+      pre.appendChild(btn);
+    });
+  }
+
+  var details = Array.prototype.slice.call(document.querySelectorAll('details'));
+  if (details.length > 1) {
+    var first = details[0];
+    var allOpen = false;
+    var toggle = document.createElement('button');
+    toggle.type = 'button';
+    toggle.className = 'expand-all-btn';
+    toggle.textContent = 'Fold alle tekniske detaljer ud';
+    toggle.addEventListener('click', function () {
+      allOpen = !allOpen;
+      details.forEach(function (d) { d.open = allOpen; });
+      toggle.textContent = allOpen ? 'Fold alle tekniske detaljer ind' : 'Fold alle tekniske detaljer ud';
+    });
+    if (first.parentNode) first.parentNode.insertBefore(toggle, first);
+  }
+
+  var toTop = document.createElement('button');
+  toTop.type = 'button';
+  toTop.className = 'to-top-btn';
+  toTop.setAttribute('aria-label', 'Til toppen');
+  toTop.textContent = '↑';
+  toTop.addEventListener('click', function () {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+  document.body.appendChild(toTop);
+  window.addEventListener('scroll', function () {
+    toTop.classList.toggle('visible', window.scrollY > 400);
+  }, { passive: true });
+
+  var progress = document.createElement('div');
+  progress.className = 'reading-progress';
+  document.body.appendChild(progress);
+  function updateProgress() {
+    var docEl = document.documentElement;
+    var scrolled = docEl.scrollTop || document.body.scrollTop;
+    var height = docEl.scrollHeight - docEl.clientHeight;
+    progress.style.width = (height > 0 ? (scrolled / height) * 100 : 0) + '%';
+  }
+  window.addEventListener('scroll', updateProgress, { passive: true });
+  updateProgress();
+
+  var wantsFx = document.body.classList.contains('fx');
+  var reduceMotion = window.matchMedia &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function countUp(el) {
+    var target = parseFloat(el.getAttribute('data-countup'));
+    if (isNaN(target)) return;
+    var dur = 900, start = null;
+    function step(ts) {
+      if (start === null) start = ts;
+      var p = Math.min((ts - start) / dur, 1);
+      el.textContent = String(Math.round(target * p));
+      if (p < 1) requestAnimationFrame(step); else el.textContent = String(target);
+    }
+    requestAnimationFrame(step);
+  }
+
+  if (wantsFx && !reduceMotion && 'IntersectionObserver' in window) {
+    document.body.classList.add('js-fx');
+    var revObserver = new IntersectionObserver(function (entries, obs) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add('in-view');
+        obs.unobserve(entry.target);
+        var counters = entry.target.querySelectorAll('[data-countup]');
+        for (var i = 0; i < counters.length; i++) countUp(counters[i]);
+      });
+    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
+    document.querySelectorAll('.section').forEach(function (s) { revObserver.observe(s); });
+  }
+
+  /* KPI-fliser ligger over folden (uden for .section) — tæl dem op ved load */
+  if (!reduceMotion) {
+    document.querySelectorAll('.kpi-row [data-countup]').forEach(countUp);
+  }
+})();
+</script>
+
+<script>
+/* ============================================================
+   review.enhance — dynamik + interaktiv opgave-checkliste
+   ============================================================ */
+window.REVIEW_CONFIG = {
+  storeKey: 'polaris-review-da',
+  i18n: { done: 'fuldført', reset: 'Nulstil', empty: 'Ingen opgaver matcher dette filter.', finding: 'fund', findings: 'fund',
+          filters: { all: 'Alle', P1: 'P1', P2: 'P2', P3: 'P3' } },
+  tasks: [
+    { id: 't1',  p: 'P1', dim: 'Kode',      findings: 1, text: 'Ret PASTA-operationsrapport der skriver i NEST-tabeller (OperationReportPasta).', detail: `<code>OperationReportPasta.Table.al:29-80</code> — <code>OnValidate("Production Order")</code> deklarerer <code>Record "Finished Good NEST"</code> og <code>Record "Water Accounting NEST"</code> og indsætter i dem. Peg om til <code>"Finished Good Pasta"</code> (50041) og <code>"Water Accounting Pasta"</code> (50043).` },
+    { id: 't2',  p: 'P1', dim: 'Kode',      findings: 1, text: 'Ret Start/Stop-Snail PASTA-opslag der rammer NEST-rapporten.', detail: `<code>StartStopSnailPASTA.Table.al:26-29</code> — <code>OnValidate("Operation Report Entry No.")</code> slår op i <code>Record "Operation Report NEST"</code> for at finde linjenummeret, selvom feltets <code>TableRelation</code> korrekt peger på <code>"Operation Report Pasta"</code>. Slå op mod Pasta-rapporten.` },
+    { id: 't3',  p: 'P1', dim: 'Kode',      findings: 1, text: 'Ret næste Entry No. der beregnes fra NEST-tabellen i PASTA.', detail: `<code>StartStopSnailPASTA.Table.al:153-170</code> — deklarerer <code>Snail: Record "Start/Stop-Snail NEST"</code> og beregner næste <code>Entry No.</code> fra NEST-tabellen, hvilket kan kollidere med Pasta-nøgler. Beregn det fra Pasta-tabellen.` },
+    { id: 't4',  p: 'P1', dim: 'Kode',      findings: 2, text: 'Gennemgå hele src/Operation/PASTA-mappen mod NEST-pendanten.', detail: `Copy-paste-mønstret går igen. Gennemgå hver tabel-/record-reference i <code>src/Operation/PASTA</code> mod NEST-pendanten, og ret også feltet <code>"Item No."</code> (type <code>Code[100]</code> med forkert lookup-formel) og Reason-option hvor <code>OptionCaption</code> (…,TEST) og <code>OptionMembers</code> (…,Maintainance) ikke stemmer.` },
+    { id: 't5',  p: 'P1', dim: 'Sikkerhed', findings: 1, text: 'Erstat exit med continue i cloud-filimport-løkken.', detail: `<code>ManualWhseImportFunction.Codeunit.al:44-50</code> — flere <code>exit</code> inde i fil-løkken springer <code>Commit()</code> og filsletningen (linje 68-70) over. Brug <code>continue</code> pr. fil; reservér <code>exit</code> til et reelt kritisk stop.` },
+    { id: 't6',  p: 'P1', dim: 'Sikkerhed', findings: 2, text: 'Tjek CODEUNIT.Run-posteringsresultatet før batchen slettes.', detail: `<code>ProcessWMSImport.Codeunit.al:587</code> — resultatet af <code>CODEUNIT.Run(… Item Jnl.-Post Batch …)</code> tjekkes ikke, men batchen slettes ved :591 uanset, så en fejlet postering mister data. Tjek resultatet før oprydning, og rejs en eksplicit fejl når hverken et salgs- eller overflytningsdokument matcher (:164-169, :505-517).` },
+    { id: 't7',  p: 'P1', dim: 'Sikkerhed', findings: 2, text: 'Håndtér HTTP-status i OEE-platform-kaldet (afvis ikke-2xx).', detail: `<code>OeeProdOrderService.Codeunit.al:36-38</code> — <code>Client.Post()</code> gemmer status/indhold men skelner ikke 2xx fra 4xx/5xx, så en HTTP 500 læses som succes. Parse <code>Response.HttpStatusCode()</code> og rejs fejl ved ikke-2xx. Sæt også dokumentets WMS-status til en fejltilstand ved upload-fejl, så genforsøg kan skelnes.` },
+    { id: 't8',  p: 'P1', dim: 'Sikkerhed', findings: 3, text: 'Tilføj EDI-grænsetjek og vis indsamlede importfejl.', detail: `EDI-importrapportens <code>SplitString</code> skriver i et fast <code>array[10]</code> uden at tjekke antallet af felter, og den indsamlede <code>ErrorList</code>/<code>SendError</code> vises aldrig. Tilføj grænsetjek og log/vis importfejl. Lad også SSCC→Lot-opslaget afvise tvetydige match i stedet for at tage <code>FindFirst()</code>.` },
+    { id: 't9',  p: 'P1', dim: 'Kode',      findings: 5, text: 'Beskyt alle Setup.Get()/Item.Get(); slå regel AA0175 til.', detail: `Repræsentative steder: <code>SalesHeader.TableExt.al:132</code>, <code>SalesLineSubscribers.Codeunit.al:98,123</code>, <code>ItemJnlPostEventFunctions.Codeunit.al:116</code>, <code>PurchaseLineEvents.Codeunit.al:21</code>. Erstat bare <code>Get()</code>/<code>FindFirst()</code> med <code>if not X.Get() then Error(...)</code>, giv tomme <code>if X.Get() then;</code>-kroppe en eksplicit not-found-handling, slå regel <code>AA0175</code> til, og saml det i fælles setup-getter-hjælpere.` },
+    { id: 't10', p: 'P1', dim: 'Test',      findings: 1, text: 'Opbyg en grundlæggende testsuite (Operation + WMS) koblet ind i AL-Go CI.', detail: `Der findes ingen <code>Subtype = Test</code>-codeunits. Tilføj en test-app/-mappe med AL Test Toolkit; start med Operation-rapportering (NEST & PASTA) og WMS-import/postering, én happy-path + én fejl-test pr. kritisk flow, og kør suiten i AL-Go CI på hver pull request.` },
+    { id: 't11', p: 'P2', dim: 'Arkitektur', findings: 5, text: 'Flyt hardcodede templates/batches/posting-grupper til en Polaris Setup-tabel.', detail: `Flyt hardcodede journal-templates/batches/posting-grupper til en <em>Polaris Setup</em>-tabel og <code>TestField</code> før brug: <code>SampleScanning.Page.al:144-145</code> ('OMPOSTER'/'SAMPLE'), <code>ProcessWMSImport.Codeunit.al:552</code> (<code>ItemTemplate := 'OVERFLYTNI'</code>), <code>HandleLotNo.Report.al:82</code>, <code>PurchaseLine.TableExt.al:14-22</code>.` },
+    { id: 't12', p: 'P2', dim: 'Arkitektur', findings: 3, text: 'Erstat FindLast()+1-nøgleallokering med No. Series.', detail: `<code>SSCCPickRegistration.Page.al:130-133</code> og <code>ReceivingManagement.Codeunit.al:17-31</code> allokerer nøgler via <code>FindLast() + 1</code> — en race mellem <code>FindLast</code> og <code>Insert</code>. Brug en <code>No. Series</code> + eksistenstjek; gate også <code>CreateLots</code> på varens lot-tracking-opsætning.` },
+    { id: 't13', p: 'P2', dim: 'Sikkerhed', findings: 2, text: 'Pak baggrunds-Message()/Confirm() i GuiAllowed()-guards.', detail: `<code>ReleaseSalesDocSubscribers.Codeunit.al:29</code> og dele af OEE-/filimport-tjenesterne kalder <code>Message</code>/<code>Confirm</code> i kode der kan nås fra Job Queue. Pak i <code>if GuiAllowed() then …</code> eller erstat med <code>ErrorInfo</code>/logning. <code>SiloConsumptionMgt</code> gør det allerede korrekt — brug som skabelon.` },
+    { id: 't14', p: 'P2', dim: 'Kode',      findings: 1, text: 'Fjern Sleep() fra forretningslogik.', detail: `<code>ShippingAgentReportMgt.Codeunit.al:83,179</code> — <code>Sleep(1000)</code> mellem e-mails blokerer brugeren og fejler i batch. Fjern den og stol på asynkron afsendelse eller en kø.` },
+    { id: 't15', p: 'P2', dim: 'Kode',      findings: 1, text: 'Konvertér brugervendte strenge til oversættbare Labels; kør update-translations.', detail: `Konvertér hardcodede brugervendte strenge (fx Truck-sidernes <code>'Vil du flytte hentet antal (%1)?'</code>) til <code>Label</code>s, og kør derefter <code>/claude4bc:update-translations</code> for at dække alle mål-XLIFF'er.` },
+    { id: 't16', p: 'P2', dim: 'Kode',      findings: 1, text: 'Brug ErrorInfo med record-kontekst og navigationshandlinger.', detail: `<code>OperationListProduction.Page.al:529,552</code> og operations-rapportens <code>Error5000x</code>-label-serie rejser fejl uden record-kontekst. Brug <code>ErrorInfo</code> med <code>AddNavigationAction</code>, så brugere kan hoppe til den fejlende record.` },
+    { id: 't17', p: 'P3', dim: 'Arkitektur', findings: 3, text: 'Træf beslutning for hvert obsolet/dødt objekt (fjern med upgrade-step, eller behold).', detail: `Træf beslutning for hvert obsolet-men-aktivt objekt — fjern med <code>[Obsolete]</code> + upgrade-step, eller fjern TODO'en med en begrundelse: <code>AdjustOutputMgt.Codeunit.al:3</code>, <code>CreateOutputPallet.XmlPort.al:10</code>, <code>ItemVendor.TableExt.al:1</code>, samt de legacy DotNet "Ping Pong DLL"-referencer der ikke kan køre i cloud, og den udkommenterede kode / TODO-spørgsmål i Truck-/overflytningssiderne.` },
+    { id: 't18', p: 'P3', dim: 'Sikkerhed', findings: 1, text: 'Tilføj per-felt DataClassification på custom-felter.', detail: `<code>RawMaterialPackNEST.Table.al</code> (felter 8-88) mangler per-felt <code>DataClassification</code>, selvom tabel-headeren sætter en. Tilføj den pr. felt for GDPR-klarhed.` },
+    { id: 't19', p: 'P3', dim: 'Arkitektur', findings: 2, text: 'Løft CalcFields ud af løkker; gør SetLoadFields-brug konsistent.', detail: `Flyt <code>CalcFields</code> ud af løkker og undgå redundant genberegning: <code>ReplanProdOrder.Report.al:27,34</code>, <code>BarcodeManagement.Codeunit.al:540-543</code>, <code>StartStopSnail.Table.al:39</code>. Brug <code>SetLoadFields</code> konsistent hvor felter læses enkeltvis.` },
+    { id: 't20', p: 'P3', dim: 'Kode',      findings: 2, text: 'Ret stavefejl i captions og tilføj manglende ToolTips/Captions.', detail: `Ret caption-stavefejl og tilføj manglende hjælpetekst: <code>UserSetup.TableExt.al:18-44</code> ('Specfies'→'Specifies'), <code>PurchaseLine.TableExt.al:91</code> ('orderes'→'ordered'), <code>SalesLine.TableExt.al:49</code> ('%2is'→'%2 is'); tilføj <code>ToolTip</code>/<code>Caption</code> til 50000-seriens felt-extensions.` }
+  ]
+};
+
+(function () {
+  'use strict';
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!document.body.classList.contains('js-fx') && !reduce) document.body.classList.add('js-fx');
+
+  function countUp(el, dur) {
+    var t = parseFloat(el.getAttribute('data-countup')); if (isNaN(t)) return;
+    if (reduce) { el.textContent = String(t); return; }
+    dur = dur || 1100; var s = null;
+    (function step(ts){ if (s === null) s = ts; var p = Math.min((ts - s) / dur, 1);
+      el.textContent = String(Math.round(t * p)); if (p < 1) requestAnimationFrame(step); else el.textContent = String(t);
+    })(performance.now());
+  }
+
+  /* verdict gauge ring */
+  var vs = document.querySelector('.verdict-score[data-score]');
+  if (vs) {
+    var NS = 'http://www.w3.org/2000/svg';
+    var svg = document.createElementNS(NS, 'svg'); svg.setAttribute('class', 'gauge'); svg.setAttribute('viewBox', '0 0 104 104');
+    function ring(cls) { var c = document.createElementNS(NS, 'circle'); c.setAttribute('class', cls); c.setAttribute('cx', '52'); c.setAttribute('cy', '52'); c.setAttribute('r', '48'); return c; }
+    var track = ring('g-track'), fill = ring('g-fill');
+    var C = 2 * Math.PI * 48; fill.setAttribute('stroke-dasharray', C.toFixed(1)); fill.setAttribute('stroke-dashoffset', C.toFixed(1));
+    svg.appendChild(track); svg.appendChild(fill); vs.insertBefore(svg, vs.firstChild); vs.classList.add('has-gauge');
+    vs._gauge = { fill: fill, C: C, score: parseFloat(vs.getAttribute('data-score')) || 0 };
+  }
+
+  /* scorecard score bars */
+  document.querySelectorAll('.scorecard').forEach(function (card) {
+    var sc = card.querySelector('.sc-score'); if (!sc) return;
+    var val = parseFloat(sc.getAttribute('data-countup') || sc.textContent) || 0;
+    var bar = document.createElement('div'); bar.className = 'sc-bar';
+    var fill = document.createElement('span'); fill.className = 'sc-bar-fill'; bar.appendChild(fill);
+    card.appendChild(bar); card._bar = { fill: fill, val: val };
+  });
+
+  /* staggered reveal + side effects */
+  var targets = [];
+  ['.exec-summary', '.verdict-banner', '.scorecard', '.kpi', 'figure.breakout-left', 'figure.breakout-right'].forEach(function (sel) {
+    document.querySelectorAll(sel).forEach(function (el) { el.classList.add('reveal'); targets.push(el); });
+  });
+  function stagger(group, child, gap) { document.querySelectorAll(group).forEach(function (g) {
+    Array.prototype.slice.call(g.querySelectorAll(child)).forEach(function (el, i) { el.style.transitionDelay = (i * gap) + 'ms'; }); }); }
+  stagger('.dashboard', '.scorecard', 90);
+  stagger('.kpi-row', '.kpi', 70);
+
+  function fire(el) {
+    el.classList.add('in-view');
+    el.querySelectorAll('[data-countup]').forEach(function (c) { countUp(c); });
+    if (el.classList.contains('verdict-banner') && vs && vs._gauge) {
+      var g = vs._gauge; requestAnimationFrame(function () { g.fill.setAttribute('stroke-dashoffset', (g.C * (1 - g.score / 100)).toFixed(1)); });
+    }
+    if (el.classList.contains('scorecard') && el._bar) {
+      var b = el._bar; requestAnimationFrame(function () { b.fill.style.width = b.val + '%'; });
+    }
+  }
+  if (reduce || !('IntersectionObserver' in window)) { targets.forEach(fire); }
+  else {
+    var ob = new IntersectionObserver(function (es, o) { es.forEach(function (e) { if (e.isIntersecting) { fire(e.target); o.unobserve(e.target); } }); },
+      { rootMargin: '0px 0px -8% 0px', threshold: 0.12 });
+    targets.forEach(function (el) { ob.observe(el); });
+  }
+
+  /* respektér reduceret bevægelse for hero'ens SMIL-animationer */
+  if (reduce) { document.querySelectorAll('svg').forEach(function (s) { if (s.pauseAnimations) { try { s.pauseAnimations(); } catch (e) {} } }); }
+
+  /* ── interaktiv opgave-checkliste ── */
+  var cfg = window.REVIEW_CONFIG, host = document.getElementById('review-checklist');
+  if (!cfg || !host) return;
+  function esc(s) { return String(s).replace(/[&<>]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]; }); }
+
+  var key = cfg.storeKey, i18n = cfg.i18n, done = {};
+  try { done = JSON.parse(localStorage.getItem(key) || '{}') || {}; } catch (e) { done = {}; }
+  var current = 'all';
+
+  var head = document.createElement('div'); head.className = 'checklist-head';
+  var prog = document.createElement('div'); prog.className = 'checklist-progress';
+  prog.innerHTML = '<div class="cp-top"><span class="cp-label"></span><span class="cp-pct">0%</span></div><div class="cp-track"><span class="cp-fill"></span></div>';
+  var filters = document.createElement('div'); filters.className = 'checklist-filters';
+  [['all', i18n.filters.all], ['P1', i18n.filters.P1], ['P2', i18n.filters.P2], ['P3', i18n.filters.P3]].forEach(function (f) {
+    var b = document.createElement('button'); b.type = 'button'; b.className = 'filter-btn' + (f[0] === 'all' ? ' active' : ''); b.textContent = f[1]; b.setAttribute('data-f', f[0]); filters.appendChild(b);
+  });
+  var resetBtn = document.createElement('button'); resetBtn.type = 'button'; resetBtn.className = 'filter-btn'; resetBtn.textContent = i18n.reset; filters.appendChild(resetBtn);
+  head.appendChild(prog); head.appendChild(filters);
+
+  var ul = document.createElement('ul'); ul.className = 'checklist';
+  cfg.tasks.forEach(function (t) {
+    var li = document.createElement('li'); li.className = 'task' + (done[t.id] ? ' done' : ''); li.setAttribute('data-p', t.p);
+    var cb = document.createElement('input'); cb.type = 'checkbox'; cb.checked = !!done[t.id]; cb.setAttribute('aria-label', i18n.done);
+    var acc = document.createElement('details'); acc.className = 'task-acc';
+    var sum = document.createElement('summary');
+    var fc = t.findings || 1, fl = (fc === 1 ? (i18n.finding || 'finding') : (i18n.findings || 'findings'));
+    sum.innerHTML = '<span class="task-text">' + esc(t.text) + '</span><span class="task-tags">' +
+      '<span class="p-tag ' + t.p + '">' + t.p + '</span>' +
+      '<span class="dim-tag">' + esc(t.dim) + '</span>' +
+      '<span class="f-tag">' + fc + ' ' + esc(fl) + '</span></span>';
+    var bodyEl = document.createElement('div'); bodyEl.className = 'task-detail-body'; bodyEl.innerHTML = t.detail || '';
+    acc.appendChild(sum); acc.appendChild(bodyEl);
+    li.appendChild(cb); li.appendChild(acc);
+    cb.addEventListener('click', function (e) { e.stopPropagation(); done[t.id] = cb.checked; li.classList.toggle('done', cb.checked); save(); render(); });
+    ul.appendChild(li);
+  });
+  var empty = document.createElement('div'); empty.className = 'checklist-empty'; empty.textContent = i18n.empty; empty.style.display = 'none';
+
+  host.appendChild(head); host.appendChild(ul); host.appendChild(empty);
+
+  var fillEl = prog.querySelector('.cp-fill'), pctEl = prog.querySelector('.cp-pct'), labelEl = prog.querySelector('.cp-label');
+  filters.querySelectorAll('.filter-btn[data-f]').forEach(function (b) {
+    b.addEventListener('click', function () { current = b.getAttribute('data-f');
+      filters.querySelectorAll('.filter-btn[data-f]').forEach(function (x) { x.classList.toggle('active', x === b); }); applyFilter(); });
+  });
+  resetBtn.addEventListener('click', function () { done = {}; save();
+    ul.querySelectorAll('.task').forEach(function (li) { li.classList.remove('done'); li.querySelector('input').checked = false; }); render(); });
+
+  function save() { try { localStorage.setItem(key, JSON.stringify(done)); } catch (e) {} }
+  function applyFilter() { var shown = 0; ul.querySelectorAll('.task').forEach(function (li) {
+    var ok = current === 'all' || li.getAttribute('data-p') === current; li.classList.toggle('hide', !ok); if (ok) shown++; });
+    empty.style.display = shown ? 'none' : 'block'; }
+  function render() { var total = cfg.tasks.length, d = 0; for (var k in done) { if (done[k]) d++; }
+    var pct = total ? Math.round(d * 100 / total) : 0; fillEl.style.width = pct + '%'; pctEl.textContent = pct + '%';
+    labelEl.textContent = d + ' / ' + total + ' ' + i18n.done; }
+  render(); applyFilter();
+})();
+</script>
+
+</body>
+</html>
