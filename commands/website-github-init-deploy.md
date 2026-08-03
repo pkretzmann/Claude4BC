@@ -8,7 +8,7 @@ argument-hint: "(valgfrit) sti til .website — standard er projektets .website-
 Opretter GitHub Actions-workflowfilen `.github/workflows/DeployDocsWebsite.yaml`, der
 automatisk bygger og udgiver projektets `.website`-site til **GitHub Pages**, hver gang
 der pushes til hovedgrenen. Workflowen er generisk: den fungerer uanset om `.website`
-ligger i repo-roden eller under en app-undermappe (fx `EbroFrost Base App/.website`),
+ligger i repo-roden eller under en app-undermappe (fx `Customer Base App/.website`),
 også når stien indeholder mellemrum.
 
 Kør denne kommando **én gang** pr. projekt, når dokumentationen skal lægges online.
@@ -49,7 +49,7 @@ Kør denne kommando **én gang** pr. projekt, når dokumentationen skal lægges 
   - **Flere fundet** (monorepo med flere apps) → vis listen og **spørg** brugeren, hvilken
     der skal publiceres. (Bemærk: én workflow publicerer ét site — se `## Bemærk`.)
 - Beregn `{{WEBSITE_PATH}}` = stien til den valgte mappe **relativ til repo-roden**, med
-  skråstreger. Eksempler: `.website` (roden) eller `EbroFrost Base App/.website` (app-undermappe).
+  skråstreger. Eksempler: `.website` (roden) eller `Customer Base App/.website` (app-undermappe).
   **Ingen** indledende `./`, **ingen** afsluttende `/`.
 
 ### 3. Bestem hovedgrenen

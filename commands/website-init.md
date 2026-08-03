@@ -80,7 +80,7 @@ Kør denne kommando **én gang** når et nyt projekt skal have dokumentation.
    - Find git-roden med `git rev-parse --show-toplevel`. Slår det fejl (intet git-repo),
      så spring dette trin over.
    - Beregn `.website`-stien **relativ til git-roden**, med skråstreger
-     (fx `.website` eller `EbroFrost Base App/.website`). Serveren peger på `.website`-**roden**,
+     (fx `.website` eller `Customer Base App/.website`). Serveren peger på `.website`-**roden**,
      så `http://localhost:8765/` rammer redirect-siden, der sender videre til standardsproget.
    - Målfilen er **`<git-rod>/.claude/launch.json`** — Claude Codes preview-værktøj læser
      **kun** `launch.json` i git-roden, så den kan ikke ligge i submodulet eller under `.website/`.
@@ -333,7 +333,7 @@ Hver emnemappe kan indeholde flere filtyper:
 ```
 
 `<WEBSITE_REL>` = `.website`-stien relativ til git-roden (fx `.website` eller
-`EbroFrost Base App/.website`). Start serveren i Claude Code via preview (konfigurationen
+`Customer Base App/.website`). Start serveren i Claude Code via preview (konfigurationen
 hedder `docs`); den serverer `.website`-roden på <http://localhost:8765/>, hvor redirect-siden
 sender videre til standardsproget.
 
