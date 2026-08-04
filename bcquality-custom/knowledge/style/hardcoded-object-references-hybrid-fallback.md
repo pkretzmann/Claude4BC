@@ -45,5 +45,5 @@ defects, or recommending pure setup-table lookups with no compile-checked defaul
 
 ## See also
 
-- `microsoft/knowledge/error-handling/unchecked-get-throws-when-record-not-found.md` (in the BCQuality clone, e.g. `.claude/bcquality/`)
+- `microsoft/knowledge/error-handling/unchecked-get-throws-when-record-not-found.md` (in the installed BCQuality plugin tree under `~/.claude/plugins/`)
   — the same "fail loudly, early" philosophy applied to record lookups.

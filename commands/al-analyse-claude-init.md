@@ -90,16 +90,17 @@ skal **ikke** indeholde build-, test- eller kodestils-instruktioner.
    8. **Pointers** — én linje om c4bc-dokumentationskommandoerne / `.website`-sitet,
       hvis det findes, samt **eksisterende analysedokumenter** i roden (fx
       `Analyse-*.md`).
-   9. **AL Quality Knowledge** — findes BCQuality-submodulet (typisk
-      `.claude/bcquality`, tjek `.gitmodules`), tilføj et kort afsnit: start i
-      `<sti>/skills/entry.md` (dispatch til action-skills) og slå regler op med
+   9. **AL Quality Knowledge** — er BCQuality-plugin'et installeret (tjek
+      `claude plugin list` for `bcquality@bcquality`), tilføj et kort afsnit:
+      BCQuality er installeret som Claude Code-plugin; kald plugin-skill'en
+      `bcquality-al-review` ved review, og slå regler op med
       precedensen **claude4bc-submodulets `bcquality-custom/knowledge/`** →
-      klonens `community/` → `microsoft/`; vidensområderne ligger pr. lag (fx
+      plugin'ets `community/` → `microsoft/`; vidensområderne ligger pr. lag (fx
       `microsoft/knowledge/performance/`, `security/`, `data-modeling/`,
       `error-handling/`, `style/`). Partner-/kundepolitikker bor i claude4bc
-      (`bcquality-custom/`), IKKE i BCQuality-klonen, som holdes ren mod
-      Microsofts repo. Findes BCQuality-submodulet ikke, udelades afsnittet
-      (installation: `/al-bcquality-init`).
+      (`bcquality-custom/`), IKKE i plugin'ets `custom/`-mappe, som er pr.
+      bruger og uden versionsstyring. Er plugin'et ikke installeret, udelades
+      afsnittet (installation: `/al-bcquality-init`).
 
    **Skrivestil:** koncis og skimbar; kun fakta Claude ikke selv billigt kan udlede;
    ingen tutorial-prosa; gentag ikke hvad en filliste alligevel viser.

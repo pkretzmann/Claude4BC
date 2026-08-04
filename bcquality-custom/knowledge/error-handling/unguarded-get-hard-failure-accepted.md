@@ -36,4 +36,4 @@ data and are frequently worse than the hard failure they replace.
 
 ## See also
 
-- `microsoft/knowledge/error-handling/unchecked-get-throws-when-record-not-found.md` (in the BCQuality clone, e.g. `.claude/bcquality/`)
+- `microsoft/knowledge/error-handling/unchecked-get-throws-when-record-not-found.md` (in the installed BCQuality plugin tree under `~/.claude/plugins/`)

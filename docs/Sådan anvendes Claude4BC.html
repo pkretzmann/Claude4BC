@@ -898,7 +898,7 @@ body { display: block; }
 /c4bc:al-code-review --no-images --out docs/review</code></pre>
 
     <h3 id="al-bcquality">BCQuality-vidensbase: <code>/c4bc:al-bcquality-init</code></h3>
-    <p>Installerer Microsofts <strong>BCQuality</strong>-vidensbase (<a href="https://github.com/microsoft/BCQuality">github.com/microsoft/BCQuality</a>) som git-submodule i <code>.claude/bcquality</code> og forbinder den til projektets CLAUDE.md, så review- og analyse-agenter kan bruge dens guardrails og skills. Egne partner-/kunderegler i bundtets <code>bcquality-custom/knowledge/</code> vinder over klonens community- og microsoft-lag. Opdateres senere med <code>update-bcquality.ps1</code>.</p>
+    <p>Installerer Microsofts <strong>BCQuality</strong>-vidensbase (<a href="https://github.com/microsoft/BCQuality">github.com/microsoft/BCQuality</a>) som <strong>Claude Code-plugin</strong> (user scope, én gang pr. udvikler) og forbinder den til projektets CLAUDE.md, så review- og analyse-agenter kan bruge dens guardrails og skills — bl.a. bridge-skill'en <code>bcquality-al-review</code>. Egne partner-/kunderegler i bundtets <code>bcquality-custom/knowledge/</code> vinder over plugin'ets community- og microsoft-lag. Klon aldrig BCQuality ind i et AL-workspace — dens eksempel-<code>.al</code>-filer knækker AL-buildet. Kan også køres manuelt med <code>install-bcquality.ps1</code>; opdatering sker via plugin-manageren (<code>/plugin</code>).</p>
   </div>
 
   <!-- ── 7 BC-skills ── -->
@@ -951,7 +951,7 @@ body { display: block; }
           <tr><td><code>/c4bc:al-analyse</code></td><td>Danner/opdaterer en dansk kodekvalitets-analyse af en downloadet AL-app — fund pr. fil med alvorlighedsgrader og handlingsliste</td></tr>
           <tr><td><code>/c4bc:al-analyse-claude-init</code></td><td>Danner/opdaterer CLAUDE.md (engelsk) for et analyse-repo; med <code>per-app</code> også lokale CLAUDE.md-filer pr. app</td></tr>
           <tr><td><code>/c4bc:al-code-review</code></td><td>Danner et ledelses-rettet teknisk kode-review af et AL-repo som selvstændig HTML + PDF med RAG-dashboard og anbefalinger</td></tr>
-          <tr><td><code>/c4bc:al-bcquality-init</code></td><td>Installerer Microsofts BCQuality-vidensbase som git-submodule i <code>.claude/bcquality</code> og forbinder den til CLAUDE.md</td></tr>
+          <tr><td><code>/c4bc:al-bcquality-init</code></td><td>Installerer Microsofts BCQuality-vidensbase som Claude Code-plugin og forbinder den til CLAUDE.md</td></tr>
         </tbody>
       </table>
     </div>

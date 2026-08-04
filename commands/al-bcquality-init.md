@@ -1,75 +1,71 @@
 ---
-description: Installér Microsofts BCQuality-vidensbase (github.com/microsoft/BCQuality) som git-submodule i .claude/bcquality og forbind den til projektets CLAUDE.md, så review-/analyse-agenter kan bruge dens guardrails og skills
-argument-hint: "(valgfrit) alternativ submodule-sti — standard .claude/bcquality"
+description: Installér Microsofts BCQuality-vidensbase (github.com/microsoft/BCQuality) som Claude Code-plugin og forbind den til projektets CLAUDE.md, så review-/analyse-agenter kan bruge dens guardrails og skills
 ---
 
-# al-bcquality-init — Installér BCQuality i projektet
+# al-bcquality-init — Installér BCQuality som plugin
 
-Tilføj **BCQuality** (`https://github.com/microsoft/BCQuality`) som git-submodule i
-projektet og gør den synlig for Claude via CLAUDE.md. BCQuality er Microsofts
-maskinlæsbare kvalitets-vidensbase for BC-udvikling (MIT-licens) med tre lag —
-`microsoft/` (officielle platform-guardrails), `community/` (fælles BC-mønstre) og
-`custom/` (partner-/kundespecifikke tilføjelser) — hver med `knowledge/`-filer og
-`skills/`. Konventionen er, at en agent starter i **`skills/entry.md`**, som
-dispatcher til de relevante action-skills.
+Installér **BCQuality** (`https://github.com/microsoft/BCQuality`) som Claude Code-
+**plugin** og gør den synlig for Claude via projektets CLAUDE.md. BCQuality er
+Microsofts maskinlæsbare kvalitets-vidensbase for BC-udvikling (MIT-licens) med tre
+lag — `microsoft/` (officielle platform-guardrails), `community/` (fælles BC-mønstre)
+og `custom/` (partner-/kundespecifikke tilføjelser) — hver med `knowledge/`-filer og
+`skills/`. Plugin'et eksponerer bridge-skill'en **`bcquality-al-review`**, som selv
+kører BCQualitys Entry-protokol (`skills/entry.md` → dispatch → action-skills).
 
 > ⚠️ **Kør autonomt.** Stil ingen spørgsmål undervejs — træf fornuftige valg og
-> rapportér dem til sidst. Kommandoen kører i **værtsprojektet**: submodulet
-> registreres i projektets `.gitmodules`, ikke i claude4bc.
+> rapportér dem til sidst.
 
-`$ARGUMENTS` = valgfri alternativ sti til submodulet. Standard: `.claude/bcquality`
-(bevidst **ikke** `.claude/skills/` — BCQuality bruger sin egen `entry.md`-konvention,
-ikke Claude Codes `SKILL.md`-format, og skal ikke ind i skill-auto-discovery).
+> ⚠️ **Klon ALDRIG BCQuality ind i et AL-workspace** (hverken som submodule eller
+> almindelig klon): vidensbasen indeholder ~400 eksempel-`.al`-filer
+> (`*.good.al`/`*.bad.al`), som AL-compileren opfatter som projektkilde og fejler
+> på — compileren har ingen mappe-eksklusion. Plugin-installationen lægger filerne
+> under brugerens `~/.claude/plugins/`, uden for workspacet.
 
 ## Fremgangsmåde
 
-1. **Validér:**
-   - Projektroden skal være et git-repo (`git rev-parse --git-dir`) — ellers stop
-     med besked om at køre `git init` først.
-   - **Findes submodulet allerede** (stien optræder i `.gitmodules`): kør
-     `git submodule update --init <sti>`, rapportér "allerede installeret —
-     initialiseret/opdateret" og hop til trin 3 (idempotent).
+1. **Tjek om plugin'et allerede er installeret:** kør `claude plugin list` —
+   optræder `bcquality@bcquality`, rapportér "allerede installeret" og hop til
+   trin 3 (idempotent).
 
-2. **Installér:**
+2. **Installér** (samme trin ligger i scriptet
+   `${CLAUDE_PLUGIN_ROOT}/install-bcquality.ps1` til manuel kørsel):
    ```
-   git submodule add https://github.com/microsoft/BCQuality <sti>
-   git submodule update --init <sti>
+   claude plugin marketplace add microsoft/BCQuality
+   claude plugin install bcquality@bcquality
    ```
-   Fejler add (fx intet netværk, eller mappen findes i forvejen uden at være
-   registreret), rapportér fejlen og stop — ryd ikke op i eksisterende filer.
+   Fejler installationen (fx intet netværk eller manglende `claude` CLI),
+   rapportér fejlen og stop.
 
 3. **Forbind til CLAUDE.md** (idempotent — spring over, hvis afsnittet findes):
    Tilføj et kort afsnit i projektets CLAUDE.md, fx under Tooling:
 
-   > **BCQuality** (Microsoft, MIT) ligger som submodule i `<sti>` — en
-   > maskinlæsbar kvalitets-vidensbase for BC/AL. Ved code review og
-   > kvalitetsanalyse (fx `/c4bc:al-analyse`): start i `<sti>/skills/entry.md`
-   > (dispatch til action-skills) og slå konkrete regler op med precedensen
-   > claude4bc-submodulets `bcquality-custom/knowledge/` → klonens `community/`
-   > → `microsoft/` (mest autoritative først).
+   > **BCQuality** (Microsoft, MIT) — en maskinlæsbar kvalitets-vidensbase for
+   > BC/AL — er installeret som Claude Code-**plugin** (`bcquality` fra
+   > `microsoft/BCQuality`-marketplacet); hver udvikler installerer den én gang
+   > med `/c4bc:al-bcquality-init`. Ved code review og kvalitetsanalyse: kald
+   > plugin-skill'en **`bcquality-al-review`**. Ved direkte regelopslag gælder
+   > precedensen claude4bc-submodulets `bcquality-custom/knowledge/` →
+   > plugin'ets `community/` → `microsoft/` (mest autoritative først). Klon
+   > aldrig BCQuality ind i workspacet — dens eksempel-`.al`-filer knækker
+   > AL-buildet.
 
    Findes ingen CLAUDE.md, udelades dette trin (nævn det i rapporten).
 
    > ⚠️ **Egne politikker:** Læg partner-/kundespecifikke regler i
-   > **claude4bc-submodulets `bcquality-custom/knowledge/`** — IKKE i klonens
-   > `custom/`-mappe. Klonen skal holdes ren, så den kan følge Microsofts repo
-   > uden fork eller lokale ændringer.
+   > **claude4bc-submodulets `bcquality-custom/knowledge/`** — IKKE i plugin'ets
+   > `custom/`-mappe, som er pr. bruger og uden versionsstyring.
 
-4. **Commit** ændringerne i værtsprojektet (`.gitmodules`, submodule-pointeren og
-   evt. CLAUDE.md) med beskeden `Add BCQuality knowledge base as submodule` —
-   medmindre brugeren har bedt om at lade være. Push aldrig uden aftale.
+4. **Commit** en evt. CLAUDE.md-ændring i værtsprojektet med beskeden
+   `Wire BCQuality plugin into CLAUDE.md` — medmindre brugeren har bedt om at
+   lade være. Push aldrig uden aftale.
 
-5. **Rapportér:** installeret eller allerede til stede (og om den blev opdateret),
-   den valgte sti, om CLAUDE.md blev opdateret, og evt. manuelle efterspil (fx
-   `git submodule update --init` på andre kloner). Udskriv til sidst:
-   `<promise>COMPLETE</promise>`
+5. **Rapportér:** installeret eller allerede til stede, om CLAUDE.md blev
+   opdateret, og at skill'en `bcquality-al-review` først er synlig i **nye**
+   Claude Code-sessioner. Udskriv til sidst: `<promise>COMPLETE</promise>`
 
 ## Vedligehold
 
-Opdatering til nyeste BCQuality sker med scriptet
-**`${CLAUDE_PLUGIN_ROOT}/update-bcquality.ps1`** (samme mønster som
-`update-claude4bc.ps1`): viser status og ændringerne siden din version
-(commit-liste + berørte filer pr. lag), spørger om bekræftelse og kører derefter
-`submodule update --remote` + commit + push. Kør det fra en terminal:
-`.\.claude\skills\c4bc\update-bcquality.ps1` (evt. med
-`-SubmodulePath <sti>`, hvis submodulet ligger et andet sted).
+- Plugin'et er **pr. udvikler** (user scope) — hvert teammedlem kører kommandoen
+  én gang. Der er ingen submodule-pointer at bumpe i projektet.
+- Opdatering sker via plugin-manageren (`/plugin`-UI'et i Claude Code) eller ved
+  at geninstallere: `claude plugin install bcquality@bcquality`.

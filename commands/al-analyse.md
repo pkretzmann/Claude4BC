@@ -90,17 +90,19 @@ foreslået rækkefølge (quick wins først).
    - **Efterprøv påstande:** kald ind i afhængige apps, hvis kilde ER i repoet, skal
      verificeres ved at læse/greppe den faktiske kode. Automatisk rapporterede fund,
      der afvises ved verifikation, udelades — og nævnes i metodenoten.
-   - **BCQuality-opslag:** Findes `.claude/bcquality` i projektet (Microsofts
-     kvalitets-vidensbase, installeres med `/al-bcquality-init`), så start i
-     `skills/entry.md` (dispatch) og brug de relevante `knowledge/`-områder
+   - **BCQuality-opslag:** Er BCQuality-plugin'et installeret (Microsofts
+     kvalitets-vidensbase som Claude Code-plugin, installeres med
+     `/al-bcquality-init`; tjek fx `claude plugin list` for
+     `bcquality@bcquality` — plugin-træet ligger under brugerens
+     `~/.claude/plugins/`), så start i plugin'ets `skills/entry.md` (dispatch)
+     og brug de relevante `knowledge/`-områder
      (performance, security, data-modeling, error-handling, style, …) som
      reference, når fund vurderes og fixes formuleres — citér gerne den konkrete
      regel/fil i fundets tekniske detalje. **Lag-precedens:** partner-/kunde-
      politikkerne i claude4bc-submodulets **`bcquality-custom/knowledge/`** vinder
-     over BCQuality-klonens `community/` og `microsoft/` (klonen holdes ren og
-     følger Microsofts repo). Findes BCQuality-submodulet ikke, springes dette
-     over (nævn evt. `/al-bcquality-init` i rapporten) — `bcquality-custom/`-
-     politikkerne gælder dog altid.
+     over plugin'ets `community/` og `microsoft/`. Er plugin'et ikke
+     installeret, springes dette over (nævn evt. `/al-bcquality-init` i
+     rapporten) — `bcquality-custom/`-politikkerne gælder dog altid.
 
 4. **Skriv dokumentet** — `Analyse-<AppNavn>.html` i projektroden, efter skabelonen:
    - **Header:** badge (app-navn), titel, manchet (lead), pills (app-version,

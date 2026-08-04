@@ -24,7 +24,7 @@ Claude4BC/
     al-analyse.md          ← AL-app-mappe (analyse-repo) → dansk kodekvalitets-analyse (Analyse-<AppNavn>.md)
     al-code-review.md      ← Ledelses-teknisk kode-review (HTML+PDF) af et AL-repo via al-mcp
     al-analyse-claude-init.md ← Analyse-repo (downloadet AL-kilde) → CLAUDE.md på engelsk til Claude Code
-    al-bcquality-init.md   ← Installér Microsofts BCQuality-vidensbase som submodule i .claude/bcquality
+    al-bcquality-init.md   ← Installér Microsofts BCQuality-vidensbase som Claude Code-plugin
     al-next-id.md          ← Find første ledige AL-objekt-ID for en objekttype (inden for app.json idRanges)
     website-implement-language-selector.md ← Eftermontér sprogvælger i ældre portaler
     nav-split-objects.md   ← Split en klassisk NAV C/SIDE-teksteksport i én fil pr. objekt
@@ -34,7 +34,7 @@ Claude4BC/
     al-testing/            ← Skill: AL-testcodeunits (Given/When/Then, handlers, libraries)
     bc-extensibility/      ← Skill: events, posting-hooks, nummerserier, dimensioner, enums/interfaces
   bcquality-custom/
-    knowledge/             ← Egne (partner-/kunde-) kvalitetsregler; vinder over BCQuality-klonens community/microsoft-lag
+    knowledge/             ← Egne (partner-/kunde-) kvalitetsregler; vinder over BCQuality-plugin'ets community/microsoft-lag
   al-analyse/
     Analyse-Skabelon.html  ← Kanonisk analyse-/rapportskabelon (bruges af al-analyse og website-build)
     styles.css             ← Stylesheet til analyse-skabelonen (editorial-tema)
@@ -60,7 +60,7 @@ Claude4BC/
   .mcp.json                ← MCP-konfiguration (BC MCP Server m.fl.)
   CLAUDE.md                ← Fælles Claude Code kontekst
   update-claude4bc.ps1     ← Opdatér submodulet til seneste version (PowerShell)
-  update-bcquality.ps1     ← Opdatér BCQuality-klonen i .claude/bcquality (PowerShell)
+  install-bcquality.ps1    ← Installér BCQuality-vidensbasen som Claude Code-plugin (PowerShell)
 ```
 
 ## Kom godt i gang
@@ -167,8 +167,8 @@ Finder det **første ledige AL-objekt-ID** for en given objekttype (codeunit, ta
 
 ---
 
-### `/al-bcquality-init [submodule-sti]`
-Installerer Microsofts **BCQuality**-vidensbase ([github.com/microsoft/BCQuality](https://github.com/microsoft/BCQuality)) som git-submodule i `.claude/bcquality` og forbinder den til projektets CLAUDE.md, så review-/analyse-agenter kan bruge dens guardrails og skills. Egne partner-/kunderegler i `bcquality-custom/knowledge/` vinder over klonens community/microsoft-lag. Opdateres senere med `update-bcquality.ps1`.
+### `/al-bcquality-init`
+Installerer Microsofts **BCQuality**-vidensbase ([github.com/microsoft/BCQuality](https://github.com/microsoft/BCQuality)) som **Claude Code-plugin** (user scope, én gang pr. udvikler) og forbinder den til projektets CLAUDE.md, så review-/analyse-agenter kan bruge dens guardrails og skills — bl.a. bridge-skill'en `bcquality-al-review`. Egne partner-/kunderegler i `bcquality-custom/knowledge/` vinder over plugin'ets community/microsoft-lag. Klon aldrig BCQuality ind i et AL-workspace — dens eksempel-`.al`-filer knækker AL-buildet. Kan også køres manuelt med `install-bcquality.ps1`; opdatering sker via plugin-manageren (`/plugin`).
 
 **Eksempler:**
 ```
