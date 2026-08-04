@@ -673,7 +673,7 @@ body { display: block; }
         <tbody>
           <tr>
             <td><strong>🌐 Website &amp; dokumentation</strong></td>
-            <td><code>website-init</code> · <code>website-create-css</code> · <code>website-theme</code> · <code>website-build</code> · <code>website-update-index</code> · <code>website-github-init-deploy</code> · <code>website-implement-language-selector</code> · <code>pdf-build</code></td>
+            <td><code>website-init</code> · <code>website-create-css</code> · <code>website-theme</code> · <code>website-build</code> · <code>website-update-index</code> · <code>website-update-portal</code> · <code>website-github-init-deploy</code> · <code>website-implement-language-selector</code> · <code>pdf-build</code></td>
             <td>Selvstændige HTML-vejledninger, dokumentationsportal (<code>.website/</code>), GitHub Pages-publicering, samlet PDF</td>
           </tr>
           <tr>
@@ -770,9 +770,10 @@ body { display: block; }
           <tr><td rowspan="3"><strong>🔧 Opsætning</strong></td><td>1</td><td><code>/c4bc:website-init</code></td><td><strong>Én gang</strong> pr. projekt — opretter <code>.website/</code>-strukturen</td></tr>
           <tr><td>2</td><td><code>/c4bc:website-create-css &lt;url&gt;</code></td><td><strong>Én gang</strong> — henter kundens brandfarver (tilføj evt. <code>--theme</code>)</td></tr>
           <tr><td>3</td><td><code>/c4bc:website-theme</code> · <code>/c4bc:website-github-init-deploy</code></td><td><em>Valgfrit</em> — skift layout / opsæt GitHub Pages-publicering</td></tr>
-          <tr><td rowspan="3"><strong>🔁 Gentages</strong></td><td>4</td><td><code>/c4bc:website-build &lt;md&gt;</code></td><td><strong>Hver gang</strong> du har nye/ændrede markdown-vejledninger</td></tr>
+          <tr><td rowspan="4"><strong>🔁 Gentages</strong></td><td>4</td><td><code>/c4bc:website-build &lt;md&gt;</code></td><td><strong>Hver gang</strong> du har nye/ændrede markdown-vejledninger</td></tr>
           <tr><td>5</td><td><code>/c4bc:website-update-index</code></td><td><strong>Hver gang</strong> efter build — opdaterer portal-menuen</td></tr>
-          <tr><td>6</td><td><code>/c4bc:pdf-build</code></td><td><em>Ved behov</em> — samler sitet til én PDF</td></tr>
+          <tr><td>6</td><td><code>/c4bc:website-update-portal</code></td><td><em>Alternativ til 4-5</em> — opdaterer portalen inkrementelt ud fra kode-commits, når <code>.md</code>-kilderne ikke er fulgt med</td></tr>
+          <tr><td>7</td><td><code>/c4bc:pdf-build</code></td><td><em>Ved behov</em> — samler sitet til én PDF</td></tr>
         </tbody>
       </table>
     </div>
@@ -809,6 +810,7 @@ body { display: block; }
     <h3 id="portal">Portal &amp; publicering</h3>
     <ul class="bullets">
       <li><code>/c4bc:website-update-index</code> — synkroniserer dokumentationsportalen pr. sprog (<code>.website/&lt;sprog&gt;/index.html</code>) med de HTML-sider, der ligger i sprogmappen, og holder rod-redirectens sprogliste opdateret. Kør den, hver gang du har bygget nye sider.</li>
+      <li><code>/c4bc:website-update-portal</code> — den <strong>inkrementelle vedligeholder</strong>: gennemgår projektets commits siden sidste portal-opdatering (statefilen <code>.website/.portal-state.json</code>), omskriver kildematerialet for de berørte sider efter din godkendelse, genbygger deres HTML og opdaterer menuen. Brug den, når koden er ændret, uden at <code>.md</code>-kilderne er fulgt med. Håndskrevne sider uden <code>.md</code>-kilde flagges kun — de omskrives aldrig.</li>
       <li><code>/c4bc:website-github-init-deploy</code> — initialiserer en GitHub Actions-workflow, der publicerer <code>.website/</code> til <strong>GitHub Pages</strong>, så dokumentationen får en offentlig URL.</li>
       <li><code>/c4bc:website-implement-language-selector</code> — eftermonterer sprogvælgeren på ældre portaler, der er dannet før sprogvælgeren fandtes — uden at miste oversat UI-tekst.</li>
     </ul>
@@ -936,6 +938,7 @@ body { display: block; }
           <tr><td><code>/c4bc:website-theme</code></td><td>Vælger eller skifter visuelt tema (layout/skin) for projektets dokumentationssite</td></tr>
           <tr><td><code>/c4bc:website-build</code></td><td>Konverterer en eller flere markdown-brugervejledninger til en selvstændig, interaktiv HTML-side</td></tr>
           <tr><td><code>/c4bc:website-update-index</code></td><td>Synkroniserer dokumentationsportalen pr. sprog med de HTML-sider, der ligger i sprogmappen</td></tr>
+          <tr><td><code>/c4bc:website-update-portal</code></td><td>Opdaterer portalen inkrementelt ud fra projektets commits — omskriver berørte kilder (efter godkendelse), genbygger HTML og menu</td></tr>
           <tr><td><code>/c4bc:website-github-init-deploy</code></td><td>Initialiserer en GitHub Actions-workflow, der publicerer <code>.website</code> til GitHub Pages</td></tr>
           <tr><td><code>/c4bc:website-implement-language-selector</code></td><td>Eftermonterer sprogvælgeren på ældre dokumentationsportaler — uden at miste oversat UI-tekst</td></tr>
           <tr><td><code>/c4bc:pdf-build</code></td><td>Danner én samlet PDF-brugervejledning (forside + indholdsfortegnelse + alle sider) ud af <code>.website</code>-sitet</td></tr>
