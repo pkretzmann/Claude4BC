@@ -13,8 +13,8 @@
       "al-mcp": {
         "command": "altool",
         "args": ["launchmcpserver", "--transport", "stdio",
-          "C:\\AL\\Toggl\\Toggl",
-          "--packagecachepath", "C:\\AL\\Toggl\\Toggl\\.alpackages"]
+          "${CLAUDE_PROJECT_DIR}",
+          "--packagecachepath", "${CLAUDE_PROJECT_DIR}\\.alpackages"]
       },
       "bc-mcp": {
         "command": "C:\\AL\\BcMCPProxy\\bin\\publish\\BcMCPProxy.exe",
