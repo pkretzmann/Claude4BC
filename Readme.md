@@ -14,6 +14,7 @@ Claude4BC/
     website-build.md       ← Konverter markdown til HTML-brugervejledning
     website-init.md        ← Initialisér dokumentationssitet (.website)
     website-update-index.md ← Synkronisér portalens NAV med .website/-sider
+    website-update-portal.md ← Opdatér portalens indhold ud fra projektets commits (inkrementelt)
     website-github-init-deploy.md ← Publicér .website til GitHub Pages via GitHub Actions
     pdf-build.md           ← Saml .website-sitet til én PDF-brugervejledning pr. sprog
     al-update-translations.md ← Opdatér XLIFF-oversættelsesfiler
@@ -253,6 +254,19 @@ Synkroniserer dokumentationsportalen `.website/index.html` med de HTML-sider der
 ```
 
 Findes `index.html` ikke i forvejen, oprettes den fra den kanoniske skabelon `html-guide/portal.html`. Findes den, opdateres **kun** `NAV`-listen (mellem `NAV:START`/`NAV:END`) — resten af portalen bevares. `/website-build` rører ikke `index.html`; det er denne kommandos opgave.
+
+---
+
+### `/website-update-portal [sti]`
+Den **inkrementelle vedligeholder** af dokumentationsportalen: gennemgår projektets **commits siden sidste portal-opdatering** (statefilen `.website/.portal-state.json`), udleder hvilke sider der er berørt af kodeændringerne, **omskriver kildematerialet** (`.md`) for de berørte sider — efter brugerens godkendelse af en ændringsoversigt — genbygger deres HTML og synkroniserer menuen. Beregnet til projekter, hvor koden ofte ændres uden at `.md`-kilderne følger med.
+
+**Eksempler:**
+```
+/website-update-portal
+/website-update-portal "Customer Base App/.website"
+```
+
+Første kørsel bruger den seneste commit der rørte `.website/` som baseline. Håndskrevne HTML-sider uden `.md`-kilde omskrives aldrig — de flagges kun som *muligvis forældede*. Ingen nye commits → »Portalen er ajour«. Enkeltfil-leverancer er fortsat `/website-build`s opgave.
 
 ---
 
