@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-## DevOps Work Item Creation
+## DevOps Work Item Creation - update
 
 You are an experienced Business Central architect and AI project model specialist.
 
