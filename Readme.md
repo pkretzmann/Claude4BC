@@ -28,11 +28,14 @@ Claude4BC/
     al-next-id.md          ← Find første ledige AL-objekt-ID for en objekttype (inden for app.json idRanges)
     website-implement-language-selector.md ← Eftermontér sprogvælger i ældre portaler
     nav-split-objects.md   ← Split en klassisk NAV C/SIDE-teksteksport i én fil pr. objekt
+    bc-verify-behavior.md  ← Efterprøv en rapporteret »BC respekterer ikke indstilling X« mod Base App-kilden
   skills/
     bc-page-design/        ← Skill: design af BC-sider (List/Card/Document, actions, tooltip-regler)
     bc-table-design/       ← Skill: design af BC-tabeller og table extensions (felter, nøgler, FlowFields)
     al-testing/            ← Skill: AL-testcodeunits (Given/When/Then, handlers, libraries)
     bc-extensibility/      ← Skill: events, posting-hooks, nummerserier, dimensioner, enums/interfaces
+    bc-baseapp-source/     ← Skill: hent og diff Microsofts Base App AL-kilde på tværs af BC-versioner
+      scripts/             ← bc-baseapp-source.sh — motoren (blobless clone af MSDyn365BC.Code.History)
   bcquality-custom/
     knowledge/             ← Egne (partner-/kunde-) kvalitetsregler; vinder over BCQuality-plugin'ets community/microsoft-lag
   al-analyse/
@@ -334,6 +337,19 @@ Default-output er mappen `<eksportnavn>-Objects` ved siden af kildefilen. `--lis
 
 ---
 
+### `/bc-verify-behavior <objekt> — <rapporteret adfærd>`
+Efterprøver en rapporteret »standard BC respekterer ikke indstilling X« **mod Microsofts faktiske Base App-kilde** — før du tror på den, før du afviser den, og før du søger på ét eneste forum. Henter objektet via skill'en `bc-baseapp-source`, finder den bagvedliggende variabel og eftersporer **hver eneste tildeling uden for request-siden** (tvungne overrides bor næsten altid i `OnPreReport`/`OnRun`/`OnOpenPage`). Konklusionen placeres i præcis én kasse: **By design**, **Regression**, **Not this object** eller **Undetermined** — og altid med *versionsspænd*, aldrig en påstand uden. Forum-søgning sker først til sidst; kilden slår forum-konsensus.
+
+**Eksempler:**
+```
+/bc-verify-behavior report 94 Close Income Statement — posterer detaljelinjer selvom Post to Retained Earnings Account er sat til Balance
+/bc-verify-behavior codeunit 80 Sales-Post — bogfører ikke dimensioner fra kundekortet
+```
+
+Er kunden dansk, hentes `dk-<major>` også — lokaliseret base app kan overskrive W1-adfærd. Guardrails i kommandoen forbyder at konkludere ud fra hukommelse eller at opfinde event-/feltnavne: findes det ikke i den hentede kilde, er det ikke evidens.
+
+---
+
 ## Skills
 
 Ud over kommandoerne indeholder bundtet **Agent Skills** i `skills/`-mappen. Forskellen på de to: kommandoer starter *du* med `/c4bc:…`, mens skills aktiveres **automatisk af Claude**, når opgaven matcher — fx når du beder om en ny BC-side eller -tabel. Hver skill bager de fælles husregler (Caption/ToolTip-krav, navngivning uden prefix/»Ext«, testkrav) direkte ind i mønstrene, og har en `references/examples.md` med komplette AL-eksempler, som Claude læser efter behov.
@@ -344,6 +360,9 @@ Ud over kommandoerne indeholder bundtet **Agent Skills** i `skills/`-mappen. For
 | `bc-table-design` | der designes/ændres tabeller eller tableextensions | Felter med Caption/ToolTip/DataClassification, datatyper, nøgler & SIFT, FlowFields/FlowFilters, TableRelation & validering, nummerserie-mønster |
 | `al-testing` | der skrives AL-tests (og efter nye codeunits/tableextensions — projektregel) | Testcodeunit-skelet, Given/When/Then, Assert, UI-handlers, TestPages, library-codeunits, isolation |
 | `bc-extensibility` | standard BC-logik skal udvides | Integration events & subscribers, posting-hooks (Sales/Purch), nummerserier (moderne »No. Series«-modul), dimensioner, enum extensions & interfaces |
+| `bc-baseapp-source` | der spørges til, hvordan et standard-BC-objekt **faktisk** er implementeret, eller om Microsoft har ændret det mellem versioner | Objektnavn → repo-sti i `StefanMaron/MSDyn365BC.Code.History`, hentning pr. branch (`w1-28`, `dk-28`, …), unified diff mellem majors, `-r sandbox` for hotfix-niveau. Slår både forum-søgning og gætteri fra hukommelsen — kilden er autoritativ og versionsfæstnet |
+
+> ℹ️ **`bc-baseapp-source` kræver bash.** Motoren er `skills/bc-baseapp-source/scripts/bc-baseapp-source.sh`; på Windows køres den gennem Git Bash, som følger med Git for Windows. Første kørsel laver en blobless shallow clone (~1 MB pr. branch) i `$CLAUDE4BC_CACHE` (default `~/.cache/claude4bc`) — der er **ingen** GitHub-API involveret, så du kan ikke løbe ind i rate limits. Hentede filer lander i `./.bc-source` i **dit** projekt: tilføj `.bc-source/` til projektets `.gitignore` — Microsofts kilde må aldrig committes ind i et kunde-repo, og skal bruges som read-only reference, ikke kopieres ind i en extension.
 
 Skills loades automatisk sammen med pluginnet — der kræves ingen opsætning ud over submodulet. Nye skills tilføjes som `skills/<navn>/SKILL.md` (hold den under ~200 linjer; større referencemateriale lægges i undermappen `references/`).
 

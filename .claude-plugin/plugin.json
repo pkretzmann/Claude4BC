@@ -1,6 +1,6 @@
 {
   "name": "c4bc",
-  "description": "Delt bundt af Business Central-kommandoer (website-build, website-create-css, website-init, website-update-index, website-github-init-deploy, pdf-build, website-implement-language-selector, al-update-translations, al-sort-usings, al-userdocs, al-techdocs, al-analyse, al-analyse-claude-init) + BC-skills (bc-page-design, bc-table-design, al-testing, bc-extensibility) + html-guide-designsystem til Claude Code.",
-  "version": "0.2.0",
+  "description": "Delt bundt af Business Central-kommandoer (website-build, website-create-css, website-init, website-update-index, website-github-init-deploy, pdf-build, website-implement-language-selector, al-update-translations, al-sort-usings, al-userdocs, al-techdocs, al-analyse, al-analyse-claude-init, bc-verify-behavior) + BC-skills (bc-page-design, bc-table-design, al-testing, bc-extensibility, bc-baseapp-source) + html-guide-designsystem til Claude Code.",
+  "version": "0.3.0",
   "author": { "name": "Peter Kretzmann" }
 }
