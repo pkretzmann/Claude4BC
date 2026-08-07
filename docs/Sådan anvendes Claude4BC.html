@@ -623,6 +623,7 @@ body { display: block; }
       <a href="#al-docs">Dokumentation fra AL-kode</a>
       <a href="#al-vedligehold">Vedligehold &amp; hjælpere</a>
       <a href="#nav-split">NAV C/SIDE-eksporter</a>
+      <a href="#bc-verify">Verificér standard BC-adfærd</a>
     </div>
     <div class="nav-group">
       <div class="nav-group-title">AL-analyse</div>
@@ -686,11 +687,16 @@ body { display: block; }
             <td><code>al-analyse</code> · <code>al-analyse-claude-init</code> · <code>al-code-review</code> · <code>al-bcquality-init</code></td>
             <td>Kodekvalitets-analyser (<code>Analyse-&lt;AppNavn&gt;.md</code>), CLAUDE.md-filer til analyse-repos, ledelses-rettet kode-review (HTML+PDF) og Microsofts BCQuality-vidensbase som guardrails</td>
           </tr>
+          <tr>
+            <td><strong>🔬 Standard BC (Base App)</strong></td>
+            <td><code>bc-verify-behavior</code></td>
+            <td>Svar på »gør standard BC virkelig sådan?« — efterprøvet mod Microsofts faktiske Base App-kilde, med versionsspænd, i stedet for forum-gæt</td>
+          </tr>
         </tbody>
       </table>
     </div>
     <p>Hver kommando er beskrevet i sin egen fil under pluginnets <code>commands/</code>-mappe — den fulde liste med argumenter står i <a href="#reference">kommando-referencen</a> nederst.</p>
-    <p>Ud over kommandoerne indeholder bundtet fire <strong>BC-skills</strong>, som Claude aktiverer <em>automatisk</em>, når du arbejder med sider, tabeller, tests eller udvidelse af standard-logik — se <a href="#skills">afsnittet om skills</a>.</p>
+    <p>Ud over kommandoerne indeholder bundtet fem <strong>BC-skills</strong>, som Claude aktiverer <em>automatisk</em>, når du arbejder med sider, tabeller, tests, udvidelse af standard-logik — eller har brug for Microsofts egen Base App-kilde — se <a href="#skills">afsnittet om skills</a>.</p>
   </div>
 
   <!-- ── 2 Submodul vs plugin ── -->
@@ -862,6 +868,30 @@ body { display: block; }
       <li>Splittet udføres af et bundtet PowerShell-script og er <strong>byte-bevarende</strong>: kodningen (UTF-8 eller OEM/CP850 med æøå) røres aldrig, og en sammenkædning af output-filerne genskaber kilden byte for byte. En 185 MB-eksport med 7.500+ objekter splittes på ca. 15 sekunder.</li>
       <li>Idempotent — genkørsel overskriver eksisterende output-filer.</li>
     </ul>
+
+    <h3 id="bc-verify">Verificér standard BC-adfærd: <code>/c4bc:bc-verify-behavior</code></h3>
+    <p>»BC respekterer ikke indstillingen« er en af de hyppigste kunde-meldinger — og en af de nemmeste at svare forkert på, fordi både forum-tråde og hukommelsen om, »hvordan BC plejer at gøre«, ofte er forældede eller versionsforvekslede. Denne kommando efterprøver meldingen mod <strong>Microsofts faktiske Base App-kilde</strong>, før du tror på den, før du afviser den, og før du søger på ét eneste forum.</p>
+    <pre><code>/c4bc:bc-verify-behavior report 94 Close Income Statement — posterer detaljelinjer selvom Post to Retained Earnings Account er sat til Balance
+/c4bc:bc-verify-behavior codeunit 80 Sales-Post — bogfører ikke dimensioner fra kundekortet</code></pre>
+    <p>Kommandoen henter objektet via skill'en <a href="#skills"><code>bc-baseapp-source</code></a>, finder den variabel der ligger bag indstillingen, og eftersporer <strong>hver eneste tildeling uden for request-siden</strong> — tvungne overrides bor næsten altid i <code>OnPreReport</code>, <code>OnRun</code> eller <code>OnOpenPage</code>. Konklusionen placeres i præcis én af fire kasser:</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Kasse</th><th>Betyder</th></tr></thead>
+        <tbody>
+          <tr><td><strong>By design</strong></td><td>Standardkoden overskriver bevidst indstillingen under en betingelse. Betingelsen citeres — sammen med den <code>Confirm</code>/<code>Message</code>, brugeren sandsynligvis har klikket forbi.</td></tr>
+          <tr><td><strong>Regression</strong></td><td>Diff'en viser, at Microsoft har ændret logikken mellem to versioner. Begge versioner navngives, og det relevante hunk vises.</td></tr>
+          <tr><td><strong>Not this object</strong></td><td>Ingen kodesti kan frembringe den beskrevne adfærd → en extension, en event subscriber eller en fejllæsning af kladden er skyldig.</td></tr>
+          <tr><td><strong>Undetermined</strong></td><td>Kilden kan læses på flere måder. Det siges rent ud — der vælges <em>ikke</em> den mest tilfredsstillende forklaring.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <ul class="bullets">
+      <li>Er kunden dansk, hentes <code>dk-&lt;major&gt;</code> også — lokaliseret base app kan overskrive W1-adfærd, så en konklusion truffet alene på <code>w1-*</code> kan være forkert for en dansk installation.</li>
+      <li>Svaret indeholder <strong>altid et versionsspænd</strong>. »Rapport 94 tvinger Details, når ACY er sat (uændret w1-25..w1-28)« er brugbart; »rapport 94 tvinger Details« er det ikke.</li>
+      <li>Forum-søgning (Dynamics Community, BCApps-issues, partnerblogs) sker <em>først til sidst</em>, og kilden slår forum-konsensus. Der skelnes mellem »der findes ingen offentlig rapport« og »jeg fandt ingen«.</li>
+      <li>Guardrails forbyder at konkludere ud fra hukommelsen eller at opfinde event-, felt- og optionsnavne: findes det ikke i den hentede kilde, er det ikke evidens.</li>
+    </ul>
+    <div class="note"><strong>Tip:</strong> Passer kundens beskrivelse ikke på nogen kodesti, er den mest sandsynlige forklaring, at symptomet er beskrevet upræcist. Kommandoen spørger, hvad der <em>faktisk</em> ses på skærmen (hvor mange linjer, på hvilke konti), frem for at opstille en teori.</div>
   </div>
 
   <!-- ── 6 AL-analyse ── -->
@@ -916,10 +946,12 @@ body { display: block; }
           <tr><td><code>bc-table-design</code></td><td>der designes eller ændres tabeller/tableextensions</td><td>Felter med Caption/ToolTip/DataClassification, datatyper, nøgler &amp; SIFT, FlowFields/FlowFilters, TableRelation &amp; validering, nummerserie-mønster</td></tr>
           <tr><td><code>al-testing</code></td><td>der skrives AL-tests — og efter nye codeunits/tableextensions (projektregel)</td><td>Testcodeunit-skelet, Given/When/Then, Assert, UI-handlers, TestPages, library-codeunits, isolation</td></tr>
           <tr><td><code>bc-extensibility</code></td><td>standard BC-logik skal udvides</td><td>Integration events &amp; subscribers, posting-hooks (Sales/Purch), nummerserier (moderne »No. Series«-modul), dimensioner, enum extensions &amp; interfaces</td></tr>
+          <tr><td><code>bc-baseapp-source</code></td><td>der spørges til, hvordan et standard-BC-objekt <em>faktisk</em> er implementeret, eller om Microsoft har ændret det mellem to versioner</td><td>Objektnavn → repo-sti i <code>StefanMaron/MSDyn365BC.Code.History</code>, hentning pr. branch (<code>w1-28</code>, <code>dk-28</code>, …), unified diff mellem majors, <code>-r sandbox</code> for hotfix-niveau. Fundamentet under <a href="#bc-verify"><code>/c4bc:bc-verify-behavior</code></a></td></tr>
         </tbody>
       </table>
     </div>
     <div class="info-box"><strong>Ingen opsætning:</strong> Skills loades automatisk sammen med pluginnet. Husk dog <a href="#kom-i-gang">import-linjen i trin 3</a>, så de fælles husregler også er i kontekst — skills og husregler supplerer hinanden.</div>
+    <div class="note"><strong><code>bc-baseapp-source</code> kræver bash.</strong> Motoren er et shell-script, som på Windows køres gennem <strong>Git Bash</strong> — det følger med Git for Windows, så der er intet at installere. Første kørsel laver en <em>blobless shallow clone</em> (ca. 1 MB pr. branch) i <code>$CLAUDE4BC_CACHE</code> (standard <code>~/.cache/claude4bc</code>); der er <strong>ingen</strong> GitHub-API involveret, så du kan ikke løbe ind i rate limits. Hentede filer lander i <code>./.bc-source</code> i <em>dit</em> projekt — tilføj <code>.bc-source/</code> til projektets <code>.gitignore</code>. Microsofts kilde er read-only reference: den må aldrig committes ind i et kunde-repo eller kopieres ind i en extension.</div>
   </div>
 
   <!-- ── 8 Reference ── -->
@@ -952,6 +984,7 @@ body { display: block; }
           <tr><td><code>/c4bc:al-analyse-claude-init</code></td><td>Danner/opdaterer CLAUDE.md (engelsk) for et analyse-repo; med <code>per-app</code> også lokale CLAUDE.md-filer pr. app</td></tr>
           <tr><td><code>/c4bc:al-code-review</code></td><td>Danner et ledelses-rettet teknisk kode-review af et AL-repo som selvstændig HTML + PDF med RAG-dashboard og anbefalinger</td></tr>
           <tr><td><code>/c4bc:al-bcquality-init</code></td><td>Installerer Microsofts BCQuality-vidensbase som Claude Code-plugin og forbinder den til CLAUDE.md</td></tr>
+          <tr><td><code>/c4bc:bc-verify-behavior</code></td><td>Efterprøver en rapporteret »BC respekterer ikke indstilling X« mod Microsofts faktiske Base App-kilde — verdict, evidens og versionsspænd</td></tr>
         </tbody>
       </table>
     </div>
